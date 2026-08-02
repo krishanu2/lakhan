@@ -3,7 +3,9 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 
 /* ============================================================
    FUNCTIONALCOACH101.COM — Lakhan Ahuja · The Weight Loss Coach
-   Editorial portfolio-style coaching site (Dominic structural ref)
+   Visual system matched to the Dominic editorial reference:
+   stone-grey monochrome, Anton condensed caps + Instrument
+   Serif italic accents, black pill buttons.
    ============================================================ */
 
 const images = {
@@ -52,6 +54,19 @@ function useIsMobile(breakpoint = 900) {
   return isMobile;
 }
 
+function PillLink({ href, children, light, ghost, style }) {
+  return (
+    <a
+      href={href}
+      className={`btn-pill${light ? ' btn-pill--light' : ''}${ghost ? ' btn-pill--ghost' : ''}`}
+      style={style}
+    >
+      {children}
+      <span className="btn-arrow">→</span>
+    </a>
+  );
+}
+
 /* ============================================================
    1. NAVBAR
    ============================================================ */
@@ -90,7 +105,7 @@ function Navbar() {
           right: 0,
           zIndex: 100,
           height: isMobile ? '60px' : '72px',
-          background: scrolled ? 'rgba(244,238,225,0.85)' : 'transparent',
+          background: scrolled ? 'rgba(236,234,228,0.85)' : 'transparent',
           backdropFilter: scrolled ? 'blur(16px)' : 'none',
           WebkitBackdropFilter: scrolled ? 'blur(16px)' : 'none',
           borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
@@ -107,12 +122,12 @@ function Navbar() {
             gap: '24px',
           }}
         >
-          {/* Wordmark */}
+          {/* Wordmark — "● LAKHAN" like the reference's "● DOMINIC" */}
           <a href="#top" style={{ textDecoration: 'none', lineHeight: 1 }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--gold)' }} />
-              <span style={{ fontFamily: 'Fraunces', fontWeight: 500, fontSize: '20px', letterSpacing: '0.04em', color: 'var(--ink)' }}>
-                LAKHAN
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--ink)' }} />
+              <span style={{ fontFamily: 'Anton', fontSize: '18px', letterSpacing: '0.06em', color: 'var(--ink)', textTransform: 'uppercase' }}>
+                Lakhan
               </span>
             </span>
             {!isMobile && (
@@ -122,7 +137,6 @@ function Navbar() {
             )}
           </a>
 
-          {/* Center links — desktop */}
           <nav className="desktop-only" style={{ gap: '32px', alignItems: 'center' }}>
             {links.map((l) => (
               <a
@@ -135,23 +149,9 @@ function Navbar() {
             ))}
           </nav>
 
-          {/* Right */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             {!isMobile && (
-              <a
-                href="#apply"
-                className="magnetic-btn"
-                style={{
-                  fontFamily: 'Inter',
-                  fontWeight: 600,
-                  fontSize: '13px',
-                  color: 'var(--ink)',
-                  background: 'var(--gold)',
-                  padding: '12px 22px',
-                  borderRadius: '4px',
-                  textDecoration: 'none',
-                }}
-              >
+              <a href="#apply" className="btn-pill" style={{ padding: '12px 22px' }}>
                 Apply for Coaching
               </a>
             )}
@@ -160,22 +160,25 @@ function Navbar() {
                 aria-label={drawerOpen ? 'Close menu' : 'Open menu'}
                 onClick={() => setDrawerOpen((v) => !v)}
                 style={{
-                  background: 'none',
+                  background: 'var(--ink)',
                   border: 'none',
                   cursor: 'pointer',
-                  padding: '10px',
+                  padding: '14px 12px',
+                  borderRadius: '999px',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '6px',
+                  gap: '5px',
+                  width: '48px',
+                  alignItems: 'center',
                 }}
               >
                 <motion.span
-                  animate={drawerOpen ? { rotate: 45, y: 4 } : { rotate: 0, y: 0 }}
-                  style={{ display: 'block', width: '24px', height: '2px', background: 'var(--ink)' }}
+                  animate={drawerOpen ? { rotate: 45, y: 3.5 } : { rotate: 0, y: 0 }}
+                  style={{ display: 'block', width: '20px', height: '2px', background: 'var(--paper)' }}
                 />
                 <motion.span
-                  animate={drawerOpen ? { rotate: -45, y: -4 } : { rotate: 0, y: 0 }}
-                  style={{ display: 'block', width: '24px', height: '2px', background: 'var(--ink)' }}
+                  animate={drawerOpen ? { rotate: -45, y: -3.5 } : { rotate: 0, y: 0 }}
+                  style={{ display: 'block', width: '20px', height: '2px', background: 'var(--paper)' }}
                 />
               </button>
             )}
@@ -183,7 +186,6 @@ function Navbar() {
         </div>
       </header>
 
-      {/* Mobile drawer — slides down from top */}
       <AnimatePresence>
         {drawerOpen && (
           <motion.div
@@ -210,7 +212,7 @@ function Navbar() {
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.15 + i * 0.08 }}
-                  style={{ fontFamily: 'Fraunces', fontWeight: 500, fontSize: '32px', color: 'var(--ink)', textDecoration: 'none' }}
+                  style={{ fontFamily: 'Anton', fontSize: '32px', color: 'var(--ink)', textDecoration: 'none', textTransform: 'uppercase', letterSpacing: '0.02em' }}
                 >
                   {l.label}
                 </motion.a>
@@ -219,21 +221,11 @@ function Navbar() {
             <motion.a
               href="#apply"
               onClick={() => setDrawerOpen(false)}
+              className="btn-pill"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.5 }}
-              style={{
-                display: 'block',
-                textAlign: 'center',
-                fontFamily: 'Inter',
-                fontWeight: 600,
-                fontSize: '14px',
-                color: 'var(--ink)',
-                background: 'var(--gold)',
-                padding: '16px',
-                borderRadius: '4px',
-                textDecoration: 'none',
-              }}
+              style={{ justifyContent: 'center', width: '100%' }}
             >
               Apply for Coaching
             </motion.a>
@@ -245,16 +237,12 @@ function Navbar() {
 }
 
 /* ============================================================
-   2. HERO
+   2. HERO — "FAT LOSS / isn't a willpower / PROBLEM." mixing
+   Anton caps with Instrument Serif italic, like the reference's
+   "A UI/UX / & Brand / DESIGNER"
    ============================================================ */
 
 function HeroSection() {
-  const headlineLines = [
-    { text: "Fat loss isn't", weight: 400, italic: false },
-    { text: 'a willpower', weight: 400, italic: true },
-    { text: 'PROBLEM.', weight: 600, italic: false },
-  ];
-
   return (
     <section
       id="top"
@@ -270,31 +258,39 @@ function HeroSection() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '28px' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}
           >
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--gold)' }} />
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--ink)' }} />
             <span className="text-caption" style={{ color: 'var(--ink-60)' }}>
               Functional Coach · United By Movement
             </span>
           </motion.div>
 
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-accent"
+            style={{ fontSize: 'clamp(1.25rem, 2.5vw, 1.6rem)', color: 'var(--ink)', marginBottom: '8px' }}
+          >
+            Hey, I'm Lakhan.
+          </motion.p>
+
           <div style={{ overflow: 'hidden' }}>
-            {headlineLines.map((line, i) => (
+            {[
+              <span key="1">Fat loss</span>,
+              <span key="2" className="serif-accent">isn't a willpower</span>,
+              <span key="3">Problem.</span>,
+            ].map((line, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.15 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-                style={{
-                  fontFamily: 'Fraunces',
-                  fontWeight: line.weight,
-                  fontStyle: line.italic ? 'italic' : 'normal',
-                  fontSize: 'clamp(2.5rem, 6.5vw, 4.25rem)',
-                  lineHeight: 1.05,
-                  color: 'var(--ink)',
-                }}
+                transition={{ duration: 0.6, delay: 0.2 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+                className="text-display"
+                style={{ color: 'var(--ink)' }}
               >
-                {line.text}
+                {line}
               </motion.div>
             ))}
           </div>
@@ -302,7 +298,7 @@ function HeroSection() {
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.55 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
             className="text-body"
             style={{ marginTop: '28px', maxWidth: '420px' }}
           >
@@ -313,43 +309,10 @@ function HeroSection() {
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.7 }}
+            transition={{ duration: 0.5, delay: 0.75 }}
             style={{ marginTop: '36px' }}
           >
-            <a
-              href="#learn"
-              className="magnetic-btn"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '10px',
-                fontFamily: 'Inter',
-                fontWeight: 600,
-                fontSize: '14px',
-                color: 'var(--paper)',
-                background: 'var(--ink)',
-                padding: '16px 28px',
-                borderRadius: '4px',
-                textDecoration: 'none',
-              }}
-            >
-              Start the 2-Minute Diagnostic
-              <span
-                style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '50%',
-                  background: 'var(--gold)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--ink)',
-                  fontSize: '13px',
-                }}
-              >
-                →
-              </span>
-            </a>
+            <PillLink href="#learn">Start the 2-Minute Diagnostic</PillLink>
           </motion.div>
 
           {/* Service tags row */}
@@ -406,7 +369,7 @@ function HeroSection() {
               boxShadow: 'var(--shadow-card)',
             }}
           >
-            <p className="text-data" style={{ color: 'var(--gold)', fontSize: '28px' }}>100+</p>
+            <p className="text-data" style={{ color: 'var(--ink)', fontSize: '28px' }}>100+</p>
             <p className="text-caption" style={{ color: 'var(--ink-60)', fontSize: '10px', marginTop: '4px' }}>
               Transformations Coached
             </p>
@@ -460,7 +423,7 @@ function CredentialStrip() {
 }
 
 /* ============================================================
-   4. STATS
+   4. STATS — big Anton numbers in the reference's %-grid rhythm
    ============================================================ */
 
 function StatCard({ num, suffix, label }) {
@@ -484,12 +447,12 @@ function StatCard({ num, suffix, label }) {
   }, [inView, num]);
 
   return (
-    <div ref={ref}>
+    <div ref={ref} style={{ borderLeft: '1px solid var(--border-strong)', paddingLeft: '16px' }}>
       <p className="text-data" style={{ color: 'var(--ink)' }}>
         {count}
         {suffix}
       </p>
-      <p className="text-caption" style={{ color: 'var(--ink-60)', marginTop: '6px' }}>{label}</p>
+      <p className="text-caption" style={{ color: 'var(--ink-60)', marginTop: '6px', fontSize: '10px' }}>{label}</p>
     </div>
   );
 }
@@ -508,36 +471,20 @@ function StatsSection() {
     <section style={{ background: 'var(--paper)', padding: 'clamp(64px, 10vw, 120px) 0' }}>
       <div className="container grid-2" style={{ gap: 'clamp(32px, 6vw, 80px)' }}>
         <motion.div {...revealProps}>
-          <h2 className="text-display" style={{ color: 'var(--ink)' }}>
+          <h2 className="text-h2" style={{ color: 'var(--ink)' }}>
             Coaching that reads
             <br />
-            your <span className="text-accent" style={{ color: 'var(--gold)' }}>biology</span>, not just your plate.
+            your <span className="serif-accent">biology,</span>
+            <br />
+            not just your plate.
           </h2>
           <p className="text-body" style={{ marginTop: '24px', maxWidth: '440px' }}>
             Every number below is a real outcome, tracked the same disciplined way we
             track a calorie deficit — plainly, honestly, no spin.
           </p>
-          <a
-            href="#apply"
-            className="magnetic-btn"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              marginTop: '32px',
-              fontFamily: 'Inter',
-              fontWeight: 600,
-              fontSize: '13px',
-              color: 'var(--ink)',
-              background: 'var(--paper)',
-              border: '1.5px solid var(--ink)',
-              padding: '14px 24px',
-              borderRadius: '4px',
-              textDecoration: 'none',
-            }}
-          >
-            Apply for Coaching →
-          </a>
+          <PillLink href="#apply" ghost style={{ marginTop: '32px' }}>
+            Apply for Coaching
+          </PillLink>
         </motion.div>
 
         <div className="stats-grid">
@@ -578,13 +525,13 @@ function ProcessSection() {
       <div className="container grid-2">
         <div>
           <motion.div {...revealProps}>
-            <span className="text-caption" style={{ color: 'var(--gold)', display: 'block', marginBottom: '16px' }}>
+            <span className="text-caption" style={{ color: 'var(--ink-60)', display: 'block', marginBottom: '16px' }}>
               The Method
             </span>
             <h2 className="text-h2" style={{ color: 'var(--ink)', marginBottom: '20px' }}>
               A calm system for
               <br />
-              changing how you <span className="text-accent">eat</span>
+              changing how you <span className="serif-accent">eat</span>
             </h2>
             <p className="text-body" style={{ marginBottom: '40px', maxWidth: '440px' }}>
               Not a meal plan you'll abandon in three weeks. A system built around
@@ -606,10 +553,10 @@ function ProcessSection() {
               }}
             >
               <div style={{ display: 'flex', gap: '16px', alignItems: 'baseline', marginBottom: '10px' }}>
-                <span className="text-data" style={{ fontSize: '16px', color: 'var(--gold)' }}>{step.num}</span>
+                <span style={{ fontFamily: 'Anton', fontSize: '15px', color: 'var(--ink-40)' }}>{step.num}</span>
                 <h3 className="text-h3" style={{ color: 'var(--ink)' }}>{step.title}</h3>
               </div>
-              <p className="text-body" style={{ paddingLeft: '32px' }}>{step.desc}</p>
+              <p className="text-body" style={{ paddingLeft: '34px' }}>{step.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -638,21 +585,23 @@ function ProcessSection() {
    ============================================================ */
 
 const mythTruths = [
-  { myth: 'Skipping dinner speeds up fat loss', truth: 'It just moves the binge to breakfast', tag: 'MYTH', color: 'brick' },
-  { myth: 'Roti is worse than bread for fat loss', truth: 'Portion and count matter more than the carb source', tag: 'MYTH', color: 'brick' },
-  { myth: 'You need 10,000 steps in one go', truth: '3 walks of 3,300 steps works identically', tag: 'TRUTH', color: 'olive' },
-  { myth: 'Paneer is off-limits on a cut', truth: "It's one of the best high-protein Indian foods available", tag: 'TRUTH', color: 'olive' },
-  { myth: 'Cheat days ruin your progress', truth: 'One meal ≠ one week — the math survives it', tag: 'TRUTH', color: 'olive' },
-  { myth: 'Fat loss requires giving up dal-chawal', truth: 'It requires counting it, not quitting it', tag: 'TRUTH', color: 'olive' },
+  { myth: 'Skipping dinner speeds up fat loss', truth: 'It just moves the binge to breakfast', tag: 'MYTH', color: 'bad' },
+  { myth: 'Roti is worse than bread for fat loss', truth: 'Portion and count matter more than the carb source', tag: 'MYTH', color: 'bad' },
+  { myth: 'You need 10,000 steps in one go', truth: '3 walks of 3,300 steps works identically', tag: 'TRUTH', color: 'good' },
+  { myth: 'Paneer is off-limits on a cut', truth: "It's one of the best high-protein Indian foods available", tag: 'TRUTH', color: 'good' },
+  { myth: 'Cheat days ruin your progress', truth: 'One meal ≠ one week — the math survives it', tag: 'TRUTH', color: 'good' },
+  { myth: 'Fat loss requires giving up dal-chawal', truth: 'It requires counting it, not quitting it', tag: 'TRUTH', color: 'good' },
 ];
 
 function MythTruthSection() {
   return (
     <section style={{ background: 'var(--paper)', padding: 'clamp(64px, 10vw, 140px) 0' }}>
       <motion.div {...revealProps} className="container" style={{ marginBottom: '48px' }}>
-        <span className="text-caption" style={{ color: 'var(--gold)' }}>Myth vs. Truth</span>
+        <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Myth vs. Truth</span>
         <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
-          What the internet gets <span className="text-accent">wrong</span> about fat loss
+          What the internet gets <span className="serif-accent">wrong</span>
+          <br />
+          about fat loss
         </h2>
       </motion.div>
 
@@ -669,17 +618,17 @@ function MythTruthSection() {
               background: 'var(--paper-dim)',
               borderRadius: '12px',
               padding: '28px',
-              borderTop: `3px solid var(${card.color === 'brick' ? '--brick' : '--olive'})`,
+              borderTop: `3px solid var(--${card.color})`,
             }}
           >
             <span
               style={{
-                fontFamily: 'IBM Plex Mono',
+                fontFamily: 'Inter',
                 fontSize: '11px',
                 fontWeight: 600,
                 letterSpacing: '2px',
-                color: `var(${card.color === 'brick' ? '--brick' : '--olive'})`,
-                background: card.color === 'brick' ? 'rgba(179,69,59,0.10)' : 'rgba(75,94,66,0.10)',
+                color: `var(--${card.color})`,
+                background: card.color === 'bad' ? 'rgba(168,69,60,0.10)' : 'rgba(75,94,66,0.10)',
                 padding: '4px 10px',
                 borderRadius: '4px',
               }}
@@ -796,7 +745,7 @@ function QuizSection() {
       background: 'var(--paper)',
       border: '1.5px solid var(--border-strong)',
       padding: '16px 18px',
-      borderRadius: '4px',
+      borderRadius: '999px',
       cursor: answered ? 'default' : 'pointer',
       transition: 'border-color 200ms ease, background 200ms ease',
       display: 'flex',
@@ -806,23 +755,25 @@ function QuizSection() {
     };
     if (!answered) return base;
     if (opt.correct) {
-      return { ...base, border: '1.5px solid var(--olive)', background: 'rgba(75,94,66,0.10)' };
+      return { ...base, border: '1.5px solid var(--good)', background: 'rgba(75,94,66,0.10)' };
     }
     if (i === selected && !opt.correct) {
-      return { ...base, border: '1.5px solid var(--brick)', background: 'rgba(179,69,59,0.08)' };
+      return { ...base, border: '1.5px solid var(--bad)', background: 'rgba(168,69,60,0.08)' };
     }
     return { ...base, opacity: 0.5 };
   };
 
   return (
-    <section id="learn" className="section-pad" style={{ background: 'var(--ink)' }}>
+    <section id="learn" className="section-pad" style={{ background: 'var(--paper-dim)' }}>
       <div className="container" style={{ maxWidth: '760px' }}>
         <motion.div {...revealProps} style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <span className="text-caption" style={{ color: 'var(--gold)' }}>The 2-Minute Diagnostic</span>
-          <h2 className="text-h2" style={{ color: 'var(--paper)', marginTop: '12px' }}>
-            How well do you actually <span className="text-accent" style={{ color: 'var(--gold)' }}>understand</span> fat loss?
+          <span className="text-caption" style={{ color: 'var(--ink-60)' }}>The 2-Minute Diagnostic</span>
+          <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
+            How well do you <span className="serif-accent">actually</span>
+            <br />
+            understand fat loss?
           </h2>
-          <p className="text-body" style={{ color: 'var(--paper-90)', opacity: 0.75, marginTop: '16px', maxWidth: '480px', marginLeft: 'auto', marginRight: 'auto' }}>
+          <p className="text-body" style={{ marginTop: '16px', maxWidth: '480px', marginLeft: 'auto', marginRight: 'auto' }}>
             Four questions. The same thinking every client learns in week one.
           </p>
         </motion.div>
@@ -831,7 +782,7 @@ function QuizSection() {
           {...revealProps}
           style={{
             background: 'var(--paper)',
-            borderRadius: '12px',
+            borderRadius: '24px',
             padding: 'clamp(24px, 4vw, 40px)',
             boxShadow: 'var(--shadow-card)',
           }}
@@ -839,10 +790,10 @@ function QuizSection() {
           {/* Progress bar */}
           <div style={{ marginBottom: '28px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-              <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '12px', fontWeight: 600, color: 'var(--ink-60)' }}>
-                {done ? 'COMPLETE' : `Q${current + 1} / ${quizQuestions.length}`}
+              <span className="text-caption" style={{ fontSize: '11px', color: 'var(--ink-60)' }}>
+                {done ? 'Complete' : `Q${current + 1} / ${quizQuestions.length}`}
               </span>
-              <span style={{ fontFamily: 'IBM Plex Mono', fontSize: '12px', fontWeight: 600, color: 'var(--gold)' }}>
+              <span className="text-caption" style={{ fontSize: '11px', color: 'var(--ink)' }}>
                 {score} correct
               </span>
             </div>
@@ -850,7 +801,7 @@ function QuizSection() {
               <motion.div
                 animate={{ width: `${(done ? quizQuestions.length : current + (answered ? 1 : 0)) / quizQuestions.length * 100}%` }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                style={{ height: '100%', background: 'var(--gold)' }}
+                style={{ height: '100%', background: 'var(--ink)' }}
               />
             </div>
           </div>
@@ -864,15 +815,15 @@ function QuizSection() {
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.35 }}
               >
-                <h3 style={{ fontFamily: 'Fraunces', fontWeight: 600, fontSize: 'clamp(1.25rem, 2.5vw, 1.6rem)', color: 'var(--ink)', marginBottom: '24px', lineHeight: 1.3 }}>
+                <h3 style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 'clamp(1.15rem, 2.2vw, 1.4rem)', color: 'var(--ink)', marginBottom: '24px', lineHeight: 1.35 }}>
                   {question.q}
                 </h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {question.options.map((opt, i) => (
                     <button key={i} onClick={() => selectOption(i)} style={optionStyle(opt, i)} disabled={answered}>
                       <span>{opt.text}</span>
-                      {answered && opt.correct && <span style={{ color: 'var(--olive)', fontWeight: 700 }}>✓</span>}
-                      {answered && i === selected && !opt.correct && <span style={{ color: 'var(--brick)', fontWeight: 700 }}>✕</span>}
+                      {answered && opt.correct && <span style={{ color: 'var(--good)', fontWeight: 700 }}>✓</span>}
+                      {answered && i === selected && !opt.correct && <span style={{ color: 'var(--bad)', fontWeight: 700 }}>✕</span>}
                     </button>
                   ))}
                 </div>
@@ -886,26 +837,12 @@ function QuizSection() {
                       transition={{ duration: 0.35 }}
                       style={{ overflow: 'hidden' }}
                     >
-                      <p className="text-accent" style={{ fontSize: '16px', color: 'var(--ink)', margin: '24px 0 0', lineHeight: 1.6 }}>
+                      <p className="text-accent" style={{ fontSize: '17px', color: 'var(--ink)', margin: '24px 0 0', lineHeight: 1.6 }}>
                         {question.explain}
                       </p>
-                      <button
-                        onClick={next}
-                        className="magnetic-btn"
-                        style={{
-                          marginTop: '24px',
-                          fontFamily: 'Inter',
-                          fontWeight: 600,
-                          fontSize: '14px',
-                          color: 'var(--ink)',
-                          background: 'var(--gold)',
-                          padding: '14px 28px',
-                          borderRadius: '4px',
-                          border: 'none',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        {current + 1 >= quizQuestions.length ? 'See my result →' : 'Next question →'}
+                      <button onClick={next} className="btn-pill" style={{ marginTop: '24px' }}>
+                        {current + 1 >= quizQuestions.length ? 'See my result' : 'Next question'}
+                        <span className="btn-arrow">→</span>
                       </button>
                     </motion.div>
                   )}
@@ -919,15 +856,15 @@ function QuizSection() {
                 transition={{ duration: 0.4 }}
                 style={{ textAlign: 'center', padding: '12px 0' }}
               >
-                <p className="text-data" style={{ color: 'var(--gold)', fontSize: 'clamp(2.5rem, 6vw, 3.5rem)' }}>
+                <p className="text-data" style={{ color: 'var(--ink)', fontSize: 'clamp(2.5rem, 6vw, 3.5rem)' }}>
                   {score}/{quizQuestions.length}
                 </p>
-                <h3 style={{ fontFamily: 'Fraunces', fontWeight: 600, fontSize: '24px', color: 'var(--ink)', margin: '16px 0 12px' }}>
+                <h3 style={{ fontFamily: 'Anton', fontSize: '24px', color: 'var(--ink)', margin: '16px 0 12px', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
                   {score === quizQuestions.length
                     ? 'You think in systems already.'
                     : score >= 2
                       ? 'Good instincts — the gaps are fixable.'
-                      : "The internet has been lying to you."}
+                      : 'The internet has been lying to you.'}
                 </h3>
                 <p className="text-body" style={{ maxWidth: '400px', margin: '0 auto 28px' }}>
                   {score === quizQuestions.length
@@ -935,36 +872,8 @@ function QuizSection() {
                     : 'None of this is about willpower. It’s about knowing which lever actually moves the outcome — that’s what coaching fixes.'}
                 </p>
                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                  <a
-                    href="#apply"
-                    className="magnetic-btn"
-                    style={{
-                      fontFamily: 'Inter',
-                      fontWeight: 600,
-                      fontSize: '14px',
-                      color: 'var(--ink)',
-                      background: 'var(--gold)',
-                      padding: '14px 28px',
-                      borderRadius: '4px',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    Apply for Coaching →
-                  </a>
-                  <button
-                    onClick={restart}
-                    style={{
-                      fontFamily: 'Inter',
-                      fontWeight: 600,
-                      fontSize: '14px',
-                      color: 'var(--ink)',
-                      background: 'transparent',
-                      border: '1.5px solid var(--border-strong)',
-                      padding: '14px 28px',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                    }}
-                  >
+                  <PillLink href="#apply">Apply for Coaching</PillLink>
+                  <button onClick={restart} className="btn-pill btn-pill--ghost">
                     Retake
                   </button>
                 </div>
@@ -993,9 +902,11 @@ function GallerySection() {
     <section style={{ background: 'var(--paper)', padding: 'clamp(64px, 10vw, 120px) 0' }}>
       <div className="container">
         <motion.div {...revealProps} style={{ marginBottom: '48px' }}>
-          <span className="text-caption" style={{ color: 'var(--gold)' }}>The Real Work</span>
+          <span className="text-caption" style={{ color: 'var(--ink-60)' }}>The Real Work</span>
           <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
-            No gym flexing. Just <span className="text-accent">real food, real rooms.</span>
+            No gym flexing. Just
+            <br />
+            <span className="serif-accent">real food, real rooms.</span>
           </h2>
         </motion.div>
 
@@ -1047,20 +958,18 @@ function TestimonialCard({ name, condition, result, quote, img }) {
       }}
     >
       <span
+        className="text-caption"
         style={{
-          fontFamily: 'IBM Plex Mono',
-          fontSize: '11px',
-          fontWeight: 600,
-          letterSpacing: '1px',
-          color: 'var(--olive)',
-          background: 'rgba(75,94,66,0.10)',
-          padding: '5px 10px',
-          borderRadius: '4px',
+          fontSize: '10px',
+          color: 'var(--ink-60)',
+          background: 'var(--paper-dim)',
+          padding: '5px 12px',
+          borderRadius: '999px',
         }}
       >
         {condition}
       </span>
-      <p className="text-accent" style={{ fontSize: '16px', color: 'var(--ink)', margin: '20px 0', lineHeight: 1.6 }}>
+      <p className="text-accent" style={{ fontSize: '17px', color: 'var(--ink)', margin: '20px 0', lineHeight: 1.6 }}>
         "{quote}"
       </p>
       <div
@@ -1075,7 +984,7 @@ function TestimonialCard({ name, condition, result, quote, img }) {
         <img src={img} alt={name} loading="lazy" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
         <div>
           <p style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '13px', color: 'var(--ink)' }}>{name}</p>
-          <p style={{ fontFamily: 'IBM Plex Mono', fontSize: '11px', color: 'var(--gold)', marginTop: '2px' }}>{result}</p>
+          <p style={{ fontFamily: 'Inter', fontWeight: 500, fontSize: '11px', color: 'var(--ink-60)', marginTop: '2px' }}>{result}</p>
         </div>
       </div>
     </div>
@@ -1086,9 +995,11 @@ function TestimonialsAutoScroll() {
   return (
     <section id="results" style={{ background: 'var(--paper-dim)', padding: 'clamp(64px, 10vw, 120px) 0', overflow: 'hidden' }}>
       <motion.div {...revealProps} className="container" style={{ marginBottom: '48px' }}>
-        <span className="text-caption" style={{ color: 'var(--gold)' }}>Real Results</span>
+        <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Real Results</span>
         <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
-          Not before/afters. <span className="text-accent">Health markers.</span>
+          Not before/afters.
+          <br />
+          <span className="serif-accent">Health markers.</span>
         </h2>
       </motion.div>
 
@@ -1112,7 +1023,7 @@ function TestimonialsAutoScroll() {
 }
 
 /* ============================================================
-   10. PROGRAMS
+   10. PROGRAMS — light cards + black pill CTAs, per reference
    ============================================================ */
 
 const programs = [
@@ -1144,9 +1055,9 @@ function ProgramsSection() {
     <section id="programs" style={{ background: 'var(--paper)', padding: 'clamp(64px, 10vw, 140px) 0' }}>
       <div className="container">
         <motion.div {...revealProps} style={{ marginBottom: '56px' }}>
-          <span className="text-caption" style={{ color: 'var(--gold)' }}>Work With Lakhan</span>
+          <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Work With Lakhan</span>
           <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
-            Choose your <span className="text-accent">starting point</span>
+            Choose your <span className="serif-accent">starting point</span>
           </h2>
         </motion.div>
 
@@ -1155,69 +1066,49 @@ function ProgramsSection() {
             <div
               key={i}
               style={{
-                background: plan.highlight ? 'var(--ink)' : 'var(--paper)',
+                background: 'var(--paper)',
                 padding: 'clamp(28px, 3vw, 40px)',
                 display: 'flex',
                 flexDirection: 'column',
               }}
             >
-              <p className="text-caption" style={{ color: 'var(--gold)' }}>{plan.duration}</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <p className="text-caption" style={{ color: 'var(--ink-60)' }}>{plan.duration}</p>
+                {plan.highlight && (
+                  <span
+                    className="text-caption"
+                    style={{ fontSize: '10px', color: 'var(--paper)', background: 'var(--ink)', padding: '5px 12px', borderRadius: '999px' }}
+                  >
+                    Most Chosen
+                  </span>
+                )}
+              </div>
               <h3
                 style={{
-                  fontFamily: 'Fraunces',
-                  fontWeight: 600,
-                  fontSize: '28px',
-                  color: plan.highlight ? 'var(--paper)' : 'var(--ink)',
-                  margin: '12px 0 16px',
+                  fontFamily: 'Anton',
+                  fontSize: '26px',
+                  color: 'var(--ink)',
+                  margin: '14px 0 16px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.02em',
                 }}
               >
                 {plan.name}
               </h3>
-              <p
-                style={{
-                  fontFamily: 'Inter',
-                  fontSize: '14px',
-                  color: plan.highlight ? 'var(--paper-90)' : 'var(--ink-60)',
-                  lineHeight: 1.6,
-                  marginBottom: '24px',
-                }}
-              >
+              <p style={{ fontFamily: 'Inter', fontSize: '14px', color: 'var(--ink-60)', lineHeight: 1.6, marginBottom: '24px' }}>
                 {plan.desc}
               </p>
               <div style={{ flexGrow: 1, marginBottom: '28px' }}>
                 {plan.features.map((f, j) => (
                   <div key={j} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', marginBottom: '12px' }}>
-                    <span style={{ color: plan.highlight ? 'var(--gold)' : 'var(--olive)', fontSize: '14px' }}>✓</span>
-                    <span
-                      style={{
-                        fontFamily: 'Inter',
-                        fontSize: '13px',
-                        color: plan.highlight ? 'var(--paper-90)' : 'var(--ink-60)',
-                      }}
-                    >
-                      {f}
-                    </span>
+                    <span style={{ color: 'var(--ink)', fontSize: '14px' }}>✓</span>
+                    <span style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink-60)' }}>{f}</span>
                   </div>
                 ))}
               </div>
-              <a
-                href="#apply"
-                className="magnetic-btn"
-                style={{
-                  textAlign: 'center',
-                  fontFamily: 'Inter',
-                  fontWeight: 600,
-                  fontSize: '13px',
-                  color: 'var(--ink)',
-                  background: plan.highlight ? 'var(--gold)' : 'transparent',
-                  border: plan.highlight ? 'none' : '1.5px solid var(--ink)',
-                  padding: '14px',
-                  borderRadius: '4px',
-                  textDecoration: 'none',
-                }}
-              >
-                Apply Now →
-              </a>
+              <PillLink href="#apply" ghost={!plan.highlight} style={{ justifyContent: 'center' }}>
+                Apply Now
+              </PillLink>
             </div>
           ))}
         </motion.div>
@@ -1236,8 +1127,8 @@ const inputStyle = {
   color: 'var(--ink)',
   background: 'var(--paper)',
   border: '1.5px solid var(--border-strong)',
-  padding: '16px',
-  borderRadius: '4px',
+  padding: '16px 22px',
+  borderRadius: '999px',
   outline: 'none',
   width: '100%',
 };
@@ -1254,9 +1145,9 @@ function ApplySection() {
     <section id="apply" className="section-pad" style={{ background: 'var(--paper-dim)' }}>
       <div className="container" style={{ maxWidth: '640px', textAlign: 'center' }}>
         <motion.div {...revealProps}>
-          <span className="text-caption" style={{ color: 'var(--gold)' }}>Let's Talk</span>
+          <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Let's Talk</span>
           <h2 className="text-h2" style={{ color: 'var(--ink)', margin: '16px 0 20px' }}>
-            Tell me where you're <span className="text-accent">stuck.</span>
+            Tell me where <span className="serif-accent">you're stuck.</span>
           </h2>
           <p className="text-body" style={{ marginBottom: '40px' }}>
             No long forms. Just a real conversation — like DMing "Diet" on Instagram,
@@ -1270,13 +1161,13 @@ function ApplySection() {
             animate={{ opacity: 1, y: 0 }}
             style={{
               background: 'var(--paper)',
-              border: '1.5px solid var(--olive)',
-              borderRadius: '12px',
+              border: '1.5px solid var(--ink)',
+              borderRadius: '24px',
               padding: '40px 28px',
             }}
           >
-            <p style={{ fontFamily: 'Fraunces', fontWeight: 600, fontSize: '22px', color: 'var(--ink)', marginBottom: '10px' }}>
-              Got it. <span className="text-accent" style={{ color: 'var(--olive)' }}>Talk soon.</span>
+            <p style={{ fontFamily: 'Anton', fontSize: '22px', color: 'var(--ink)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+              Got it. <span className="serif-accent">Talk soon.</span>
             </p>
             <p className="text-body" style={{ fontSize: '15px' }}>
               Lakhan replies personally on WhatsApp — usually within a day.
@@ -1299,23 +1190,9 @@ function ApplySection() {
               <option>I've tried everything and nothing sticks</option>
               <option>I need help with Indian food specifically</option>
             </select>
-            <button
-              type="submit"
-              className="magnetic-btn"
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 600,
-                fontSize: '14px',
-                color: 'var(--ink)',
-                background: 'var(--gold)',
-                padding: '16px',
-                borderRadius: '4px',
-                border: 'none',
-                cursor: 'pointer',
-                marginTop: '8px',
-              }}
-            >
-              Start the Conversation →
+            <button type="submit" className="btn-pill" style={{ justifyContent: 'center', marginTop: '8px' }}>
+              Start the Conversation
+              <span className="btn-arrow">→</span>
             </button>
           </motion.form>
         )}
@@ -1376,7 +1253,7 @@ function FAQItem({ q, a, open, onToggle }) {
         <motion.span
           animate={{ rotate: open ? 45 : 0 }}
           transition={{ duration: 0.25 }}
-          style={{ fontFamily: 'Fraunces', fontWeight: 400, fontSize: '24px', color: 'var(--gold)', lineHeight: 1, flexShrink: 0 }}
+          style={{ fontFamily: 'Instrument Serif', fontSize: '26px', color: 'var(--ink)', lineHeight: 1, flexShrink: 0 }}
         >
           +
         </motion.span>
@@ -1405,9 +1282,9 @@ function FAQSection() {
     <section style={{ background: 'var(--paper)', padding: 'clamp(64px, 10vw, 140px) 0' }}>
       <div className="container" style={{ maxWidth: '800px' }}>
         <motion.div {...revealProps} style={{ marginBottom: '32px' }}>
-          <span className="text-caption" style={{ color: 'var(--gold)' }}>Frequently Asked</span>
+          <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Frequently Asked</span>
           <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
-            Honest answers, <span className="text-accent">upfront</span>
+            Honest answers, <span className="serif-accent">upfront</span>
           </h2>
         </motion.div>
         <motion.div {...revealProps} style={{ borderTop: '1px solid var(--border)' }}>
@@ -1439,43 +1316,29 @@ function FinalCTASection() {
       }}
     >
       <motion.div {...revealProps} style={{ maxWidth: '760px', margin: '0 auto' }}>
-        <p className="text-accent" style={{ color: 'var(--paper-90)', fontSize: '18px', marginBottom: '20px' }}>
+        <p className="text-accent" style={{ color: 'var(--paper-90)', fontSize: '19px', marginBottom: '20px' }}>
           Discipline through simple systems — not motivation.
         </p>
         <h2 className="text-display" style={{ color: 'var(--paper)', marginBottom: '40px' }}>
-          Ready to stop{' '}
-          <span style={{ color: 'var(--gold)', fontStyle: 'italic', fontWeight: 400 }}>guessing?</span>
+          Ready to stop <span className="serif-accent">guessing?</span>
         </h2>
-        <a
-          href="#apply"
-          className="magnetic-btn"
-          style={{
-            display: 'inline-block',
-            fontFamily: 'Inter',
-            fontWeight: 600,
-            fontSize: '14px',
-            color: 'var(--ink)',
-            background: 'var(--gold)',
-            padding: '18px 44px',
-            borderRadius: '4px',
-            textDecoration: 'none',
-          }}
-        >
+        <PillLink href="#apply" light style={{ padding: '18px 36px' }}>
           Apply for Coaching
-        </a>
+        </PillLink>
       </motion.div>
     </section>
   );
 }
 
 /* ============================================================
-   14. FOOTER
+   14. FOOTER — light, with the giant faded serif wordmark
+   exactly like the reference's "Dominic" treatment
    ============================================================ */
 
 function FooterColumn({ title, links }) {
   return (
     <div>
-      <p className="text-caption" style={{ color: 'var(--paper-90)', opacity: 0.5, marginBottom: '16px', fontSize: '11px' }}>
+      <p className="text-caption" style={{ color: 'var(--ink-40)', marginBottom: '16px', fontSize: '11px' }}>
         {title}
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -1483,7 +1346,7 @@ function FooterColumn({ title, links }) {
           <a
             key={l.label}
             href={l.href}
-            style={{ fontFamily: 'Inter', fontSize: '14px', color: 'var(--paper-90)', textDecoration: 'none', opacity: 0.8 }}
+            style={{ fontFamily: 'Inter', fontSize: '14px', color: 'var(--ink)', textDecoration: 'none', opacity: 0.7 }}
           >
             {l.label}
           </a>
@@ -1495,15 +1358,20 @@ function FooterColumn({ title, links }) {
 
 function Footer() {
   return (
-    <footer style={{ background: 'var(--ink)', padding: 'clamp(48px, 6vw, 80px) 0 0', borderTop: '1px solid rgba(244,238,225,0.12)' }}>
+    <footer style={{ background: 'var(--paper)', padding: 'clamp(48px, 6vw, 80px) 0 0', borderTop: '1px solid var(--border)' }}>
       <div className="container">
         <div
           className="footer-grid"
-          style={{ paddingBottom: '48px', borderBottom: '1px solid rgba(244,238,225,0.12)' }}
+          style={{ paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}
         >
           <div>
-            <p style={{ fontFamily: 'Fraunces', fontSize: '20px', color: 'var(--paper)' }}>Lakhan Ahuja</p>
-            <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--paper-90)', marginTop: '8px', opacity: 0.6 }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--ink)' }} />
+              <span style={{ fontFamily: 'Anton', fontSize: '18px', color: 'var(--ink)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                Lakhan
+              </span>
+            </span>
+            <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink-60)', marginTop: '10px' }}>
               The Weight Loss Coach · United By Movement
             </p>
           </div>
@@ -1538,8 +1406,7 @@ function Footer() {
             textAlign: 'center',
             fontFamily: 'Inter',
             fontSize: '12px',
-            color: 'var(--paper-90)',
-            opacity: 0.4,
+            color: 'var(--ink-40)',
             padding: '24px 0',
           }}
         >
@@ -1547,16 +1414,15 @@ function Footer() {
         </p>
       </div>
 
-      {/* Giant faded wordmark */}
+      {/* Giant faded wordmark — the reference's "Dominic" footer treatment */}
       <div style={{ overflow: 'hidden', textAlign: 'center' }}>
         <p
           aria-hidden="true"
           style={{
-            fontFamily: 'Fraunces',
-            fontWeight: 600,
-            fontStyle: 'italic',
-            fontSize: 'clamp(4rem, 18vw, 12rem)',
-            color: 'rgba(244,238,225,0.06)',
+            fontFamily: 'Instrument Serif',
+            fontWeight: 400,
+            fontSize: 'clamp(4.5rem, 19vw, 13rem)',
+            color: 'rgba(22, 22, 20, 0.07)',
             lineHeight: 0.8,
             marginBottom: '-2vw',
             whiteSpace: 'nowrap',
@@ -1611,21 +1477,7 @@ function StickyMobileCTA() {
             alignItems: 'center',
           }}
         >
-          <a
-            href="#apply"
-            style={{
-              flex: 1,
-              textAlign: 'center',
-              fontFamily: 'Inter',
-              fontWeight: 600,
-              fontSize: '13px',
-              color: 'var(--ink)',
-              background: 'var(--gold)',
-              padding: '14px',
-              borderRadius: '4px',
-              textDecoration: 'none',
-            }}
-          >
+          <a href="#apply" className="btn-pill" style={{ flex: 1, justifyContent: 'center' }}>
             Apply for Coaching
           </a>
         </motion.div>
