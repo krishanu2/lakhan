@@ -356,7 +356,7 @@ function HeroSection() {
             alt="Lakhan Ahuja, The Weight Loss Coach"
             animate={{ scale: [1, 1.03] }}
             transition={{ duration: 8, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '55% 30%' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '85% center' }}
           />
           <div
             style={{
