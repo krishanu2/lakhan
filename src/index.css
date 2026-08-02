@@ -1,0 +1,374 @@
+/* ============================================================
+   FUNCTIONALCOACH101 — Lakhan Ahuja design system
+   Tokens derived from Lakhan's Instagram visual language.
+   ============================================================ */
+
+:root {
+  --ink: #14130F;
+  --paper: #F4EEE1;
+  --paper-dim: #EAE2CF;
+  --gold: #C99A3D;
+  --olive: #4B5E42;
+  --brick: #B3453B;
+  --ink-60: rgba(20, 19, 15, 0.6);
+  --paper-90: rgba(244, 238, 225, 0.9);
+  --border: rgba(20, 19, 15, 0.10);
+  --border-strong: rgba(20, 19, 15, 0.20);
+  --shadow-card: 0 12px 32px rgba(20, 19, 15, 0.10);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+}
+
+/* ---------- Type scale ---------- */
+
+.text-display {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  line-height: 1.05;
+}
+
+.text-h2 {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  line-height: 1.1;
+}
+
+.text-h3 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  line-height: 1.3;
+}
+
+.text-body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: clamp(1rem, 1.2vw, 1.125rem);
+  line-height: 1.7;
+  color: var(--ink-60);
+}
+
+.text-caption {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.text-data {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 500;
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  line-height: 1;
+}
+
+.text-accent {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* ---------- Layout helpers ---------- */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: clamp(20px, 5vw, 64px);
+  padding-right: clamp(20px, 5vw, 64px);
+}
+
+.section-pad {
+  padding-top: clamp(64px, 10vw, 160px);
+  padding-bottom: clamp(64px, 10vw, 160px);
+}
+
+/* Two-column editorial grid: stacks on mobile */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Hero: portrait first on mobile */
+@media (max-width: 767px) {
+  .hero-portrait {
+    order: -1;
+    height: 380px !important;
+  }
+}
+
+/* Service tags row */
+.service-tags {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 640px) {
+  .service-tags {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Stats grid: 2-col at all sizes (matches Dominic rhythm) */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px 24px;
+}
+
+/* Myth/Truth: horizontal snap-scroll mobile, 3-col grid desktop */
+.myth-scroll {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 0 clamp(20px, 5vw, 64px) 16px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.myth-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.myth-card {
+  flex-shrink: 0;
+  width: clamp(260px, 78vw, 340px);
+  scroll-snap-align: start;
+}
+
+@media (min-width: 768px) {
+  .myth-scroll {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    overflow-x: visible;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .myth-card {
+    width: auto;
+  }
+}
+
+/* Gallery: 2-col mobile, 5-col desktop masonry rows */
+.gallery-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.gallery-row + .gallery-row {
+  margin-top: 10px;
+}
+
+.gallery-cell {
+  border-radius: 16px;
+  overflow: hidden;
+  height: 180px;
+}
+
+.gallery-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) {
+  .gallery-cell:hover img {
+    transform: scale(1.04);
+  }
+}
+
+@media (min-width: 768px) {
+  .gallery-row {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .gallery-cell {
+    height: 260px;
+  }
+
+  .gallery-row-b .gallery-cell {
+    height: 220px;
+  }
+
+  .gallery-span-2 {
+    grid-column: span 2;
+  }
+}
+
+/* Programs: stack mobile, 3-col desktop */
+.programs-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+  background: var(--border);
+}
+
+@media (min-width: 900px) {
+  .programs-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Footer columns */
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Desktop-only / mobile-only */
+.desktop-only {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .desktop-only {
+    display: flex;
+  }
+
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+/* ---------- Testimonial auto-scroll ---------- */
+
+@keyframes scrollLTR {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes scrollRTL {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+.testimonial-track-ltr {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  animation: scrollLTR 38s linear infinite;
+}
+
+.testimonial-track-rtl {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  animation: scrollRTL 42s linear infinite;
+}
+
+.testimonial-track-ltr:hover,
+.testimonial-track-rtl:hover {
+  animation-play-state: paused;
+}
+
+@media (max-width: 768px) {
+  .testimonial-track-ltr,
+  .testimonial-track-rtl {
+    animation-duration: 48s;
+  }
+}
+
+/* ---------- Buttons & interactions ---------- */
+
+.magnetic-btn {
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) {
+  .magnetic-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+  }
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+input::placeholder {
+  color: var(--ink-60);
+}
+
+/* ---------- Scrollbar ---------- */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--paper-dim);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  border-radius: 3px;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
