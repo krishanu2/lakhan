@@ -9,7 +9,7 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
    ============================================================ */
 
 const images = {
-  hero: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1200&q=85',
+  hero: 'https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?w=1200&q=85',
   hero_alt: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?w=1000&q=85',
   workout_home: 'https://images.unsplash.com/photo-1584735175315-9d5df23860e6?w=900&q=85',
   workout_2: 'https://images.unsplash.com/photo-1599058917765-a780eda07a3e?w=900&q=85',
@@ -25,7 +25,7 @@ const images = {
   gallery_4: 'https://images.unsplash.com/photo-1607914123792-11e10d3c9e37?w=700&q=80',
   gallery_5: 'https://images.unsplash.com/photo-1610276198568-eb6d0ff53e48?w=700&q=80',
   quiz_bg: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1000&q=80',
-  t1: 'https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?w=120&q=80',
+  t1: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&q=80',
   t2: 'https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?w=120&q=80',
   t3: 'https://images.unsplash.com/photo-1618835962148-cf177563c6c0?w=120&q=80',
   t4: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=120&q=80',
@@ -250,7 +250,7 @@ function HeroSection() {
     >
       <div
         className="container grid-2"
-        style={{ paddingTop: '120px', paddingBottom: '64px', width: '100%' }}
+        style={{ paddingTop: 'clamp(84px, 12vw, 120px)', paddingBottom: '64px', width: '100%' }}
       >
         {/* LEFT: text */}
         <div>
@@ -356,20 +356,20 @@ function HeroSection() {
             alt="Lakhan Ahuja, The Weight Loss Coach"
             animate={{ scale: [1, 1.03] }}
             transition={{ duration: 8, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '55% 30%' }}
           />
           <div
             style={{
               position: 'absolute',
-              bottom: '24px',
-              left: '24px',
+              bottom: '16px',
+              left: '16px',
               background: 'var(--paper)',
               borderRadius: '12px',
-              padding: '16px 20px',
+              padding: 'clamp(12px, 1.5vw, 16px) clamp(16px, 2vw, 20px)',
               boxShadow: 'var(--shadow-card)',
             }}
           >
-            <p className="text-data" style={{ color: 'var(--ink)', fontSize: '28px' }}>100+</p>
+            <p className="text-data" style={{ color: 'var(--ink)', fontSize: 'clamp(22px, 3vw, 28px)' }}>100+</p>
             <p className="text-caption" style={{ color: 'var(--ink-60)', fontSize: '10px', marginTop: '4px' }}>
               Transformations Coached
             </p>
@@ -744,8 +744,8 @@ function QuizSection() {
       color: 'var(--ink)',
       background: 'var(--paper)',
       border: '1.5px solid var(--border-strong)',
-      padding: '16px 18px',
-      borderRadius: '999px',
+      padding: '16px 20px',
+      borderRadius: '24px',
       cursor: answered ? 'default' : 'pointer',
       transition: 'border-color 200ms ease, background 200ms ease',
       display: 'flex',
@@ -950,7 +950,7 @@ function TestimonialCard({ name, condition, result, quote, img }) {
     <div
       style={{
         flexShrink: 0,
-        width: 'clamp(300px, 34vw, 380px)',
+        width: 'clamp(280px, 80vw, 380px)',
         background: 'var(--paper)',
         borderRadius: '16px',
         padding: '28px',
@@ -1121,9 +1121,10 @@ function ProgramsSection() {
    11. APPLICATION / ACTION
    ============================================================ */
 
+/* 16px minimum — smaller input text triggers auto-zoom on iOS Safari */
 const inputStyle = {
   fontFamily: 'Inter',
-  fontSize: '15px',
+  fontSize: '16px',
   color: 'var(--ink)',
   background: 'var(--paper)',
   border: '1.5px solid var(--border-strong)',
@@ -1471,13 +1472,13 @@ function StickyMobileCTA() {
             zIndex: 80,
             background: 'var(--paper)',
             borderTop: '1px solid var(--border)',
-            padding: '12px 16px',
+            padding: '12px 16px calc(12px + env(safe-area-inset-bottom))',
             display: 'flex',
             gap: '12px',
             alignItems: 'center',
           }}
         >
-          <a href="#apply" className="btn-pill" style={{ flex: 1, justifyContent: 'center' }}>
+          <a href="#apply" className="btn-pill" style={{ flex: 1, justifyContent: 'center', padding: '16px 24px' }}>
             Apply for Coaching
           </a>
         </motion.div>
