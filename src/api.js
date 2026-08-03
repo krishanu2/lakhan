@@ -12,11 +12,13 @@ const CONN = import.meta.env.VITE_NEON_CONN || '';
 
 export async function sql(query, params = []) {
   if (!CONN) throw new Error('Data connection is not configured');
+  /* No Content-Type header on purpose: the browser then sends text/plain,
+     which passes the endpoint's CORS preflight (application/json does not —
+     the endpoint's allow-headers list omits content-type). */
   const res = await fetch(ENDPOINT, {
     method: 'POST',
     headers: {
       'Neon-Connection-String': CONN,
-      'Content-Type': 'application/json',
     },
     body: JSON.stringify({ query, params }),
   });

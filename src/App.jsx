@@ -1159,18 +1159,12 @@ function TestimonialCard({ name, condition, result, quote, img }) {
       </p>
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
           borderTop: '1px solid var(--border)',
           paddingTop: '18px',
         }}
       >
-        <img src={img} alt={name} loading="lazy" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
-        <div>
-          <p style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '13px', color: 'var(--ink)' }}>{name}</p>
-          <p style={{ fontFamily: 'Inter', fontWeight: 500, fontSize: '11px', color: 'var(--ink-60)', marginTop: '2px' }}>{result}</p>
-        </div>
+        <p style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '13px', color: 'var(--ink)' }}>{name}</p>
+        <p style={{ fontFamily: 'Inter', fontWeight: 500, fontSize: '11px', color: 'var(--ink-60)', marginTop: '2px' }}>{result}</p>
       </div>
     </div>
   );
@@ -2102,25 +2096,6 @@ function AdminTestimonials() {
   const [draft, setDraft] = useState(EMPTY_TESTIMONIAL);
 
   const [savedId, setSavedId] = useState(null);
-  const avatarInput = useRef(null);
-  const avatarTarget = useRef(null);
-
-  const pickAvatar = (onChange) => {
-    avatarTarget.current = onChange;
-    avatarInput.current?.click();
-  };
-
-  const onAvatarFile = async (e) => {
-    const file = e.target.files && e.target.files[0];
-    e.target.value = '';
-    if (!file) return;
-    try {
-      const dataUrl = await compressImageFile(file, 300);
-      if (avatarTarget.current) avatarTarget.current('img', dataUrl);
-    } catch {
-      setError("Couldn't read that photo — try a different one.");
-    }
-  };
 
   const load = () => {
     fetchTestimonials()
@@ -2186,22 +2161,6 @@ function AdminTestimonials() {
           style={{ resize: 'vertical', borderRadius: '14px' }}
         />
       </AdminField>
-      <AdminField label="Client photo (optional)" hint="Upload a photo from your phone, or paste a link.">
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          {t.img && (
-            <img src={t.img} alt="" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-          )}
-          <input className="admin-input" value={t.img} onChange={(e) => onChange('img', e.target.value)} placeholder="https://…" />
-          <button
-            type="button"
-            className="btn-pill btn-pill--ghost"
-            style={{ padding: '9px 14px', fontSize: '11px', flexShrink: 0 }}
-            onClick={() => pickAvatar(onChange)}
-          >
-            Upload
-          </button>
-        </div>
-      </AdminField>
     </div>
   );
 
@@ -2211,8 +2170,6 @@ function AdminTestimonials() {
         These are the client reviews that scroll across your website. Changes go
         live for everyone as soon as you press Save.
       </p>
-
-      <input type="file" accept="image/*" hidden ref={avatarInput} onChange={onAvatarFile} />
 
       <div className="admin-card" style={{ marginBottom: '24px' }}>
         <p style={{ fontFamily: 'Anton', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: '16px' }}>
