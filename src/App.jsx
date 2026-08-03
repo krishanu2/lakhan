@@ -279,8 +279,8 @@ function HeroSection() {
           <div style={{ overflow: 'hidden' }}>
             {[
               <span key="1">Fat loss</span>,
-              <span key="2" className="serif-accent">isn't a willpower</span>,
-              <span key="3">Problem.</span>,
+              <span key="2" className="serif-accent">without a single</span>,
+              <span key="3">Diet plan.</span>,
             ].map((line, i) => (
               <motion.div
                 key={i}
@@ -302,8 +302,9 @@ function HeroSection() {
             className="text-body"
             style={{ marginTop: '28px', maxWidth: '420px' }}
           >
-            It's a system. For busy Indian professionals who've tried enough crash
-            diets — real coaching built around dal-chawal, not despite it.
+            Diet plans end — and their results end with them. I coach habits
+            instead: your food, your routine, rebuilt to last. Built around
+            dal-chawal, not despite it.
           </motion.p>
 
           <motion.div
@@ -324,8 +325,8 @@ function HeroSection() {
             style={{ marginTop: '64px', paddingTop: '32px', borderTop: '1px solid var(--border)' }}
           >
             {[
-              { title: 'Sustainable Systems', desc: 'No crash diets. Ever.' },
-              { title: 'Real Health Markers', desc: 'Thyroid, PCOS, pre-diabetes.' },
+              { title: 'Habit-First Coaching', desc: 'No diet plans. Nothing to start or quit.' },
+              { title: '1:1 Video Consults', desc: '45 minutes, every 7–10 days.' },
             ].map((item, i) => (
               <div key={i}>
                 <p className="text-caption" style={{ color: 'var(--ink)', marginBottom: '6px' }}>
@@ -405,10 +406,10 @@ function CredentialStrip() {
         }}
       >
         <p className="text-caption" style={{ color: 'var(--ink-60)', whiteSpace: 'nowrap' }}>
-          Real health markers, not vanity metrics
+          Built on habits, not diet plans
         </p>
         <div style={{ display: 'flex', gap: 'clamp(20px, 4vw, 48px)', flexWrap: 'wrap' }}>
-          {['Thyroid Managed', 'PCOS Improved', 'Pre-Diabetes Reversed', 'All-or-Nothing Mindset Fixed'].map((tag, i) => (
+          {['Habit Tracking', '45-Min Video Consults', 'Daily Workout Videos', 'Recipes & Supplement Guidance'].map((tag, i) => (
             <span
               key={i}
               style={{ fontFamily: 'Inter', fontWeight: 500, fontSize: '14px', color: 'var(--ink)', opacity: 0.7 }}
@@ -460,11 +461,11 @@ function StatCard({ num, suffix, label }) {
 function StatsSection() {
   const stats = [
     { num: 100, suffix: '+', label: 'Clients Coached' },
-    { num: 14, suffix: 'kg', label: 'Avg. Sustainable Loss' },
-    { num: 0, suffix: '', label: 'Crash Diets Prescribed' },
-    { num: 6, suffix: 'mo', label: 'Avg. Program Length' },
+    { num: 8, suffix: 'kg', label: 'Avg. Result in 3 Months' },
+    { num: 0, suffix: '', label: 'Diet Plans Given' },
+    { num: 45, suffix: 'min', label: 'Video Consult, Every 7–10 Days' },
+    { num: 7, suffix: '', label: 'New Workouts Every Week' },
     { num: 92, suffix: '%', label: 'Client Retention' },
-    { num: 3, suffix: 'yrs', label: 'Coaching Experience' },
   ];
 
   return (
@@ -472,15 +473,16 @@ function StatsSection() {
       <div className="container grid-2" style={{ gap: 'clamp(32px, 6vw, 80px)' }}>
         <motion.div {...revealProps}>
           <h2 className="text-h2" style={{ color: 'var(--ink)' }}>
-            Coaching that reads
+            The numbers a
             <br />
-            your <span className="serif-accent">biology,</span>
+            <span className="serif-accent">diet plan</span> can't
             <br />
-            not just your plate.
+            give you.
           </h2>
           <p className="text-body" style={{ marginTop: '24px', maxWidth: '440px' }}>
-            Every number below is a real outcome, tracked the same disciplined way we
-            track a calorie deficit — plainly, honestly, no spin.
+            Every number here comes from habit tracking — clean days counted
+            honestly, week after week. Most clients lose 4–8 kg in three months,
+            and keep it off, because nothing here expires.
           </p>
           <PillLink href="#apply" ghost style={{ marginTop: '32px' }}>
             Apply for Coaching
@@ -505,18 +507,18 @@ function ProcessSection() {
   const steps = [
     {
       num: '01',
-      title: 'Discover the Pattern',
-      desc: 'We map your actual eating behavior — not what you think you eat, what you actually eat. Deficit math, meal timing, trigger foods.',
+      title: 'Build the Habits',
+      desc: 'No diet plan to follow — we rebuild how you already eat, one habit at a time. Dal-chawal stays; the results come anyway.',
     },
     {
       num: '02',
-      title: 'Design the System',
-      desc: 'Sustainable swaps within your real life — dal-chawal stays, the deficit still works. No imported Western meal plans.',
+      title: 'Talk It Through, 1:1',
+      desc: 'A personal 45-minute video call every 7–10 days: travel weeks, eating out, what to order, what to skip. Strategy for your life, not a PDF.',
     },
     {
       num: '03',
-      title: 'Refine Through Data',
-      desc: "Weekly check-ins, real numbers, honest adjustments. Discipline through systems, not motivation you'll lose in week three.",
+      title: 'Track What Sticks',
+      desc: 'Habit tracking, week after week — clean days, movement, consistency. That’s how clients average 4–8 kg in three months, and keep it off.',
     },
   ];
 
@@ -534,8 +536,8 @@ function ProcessSection() {
               changing how you <span className="serif-accent">eat</span>
             </h2>
             <p className="text-body" style={{ marginBottom: '40px', maxWidth: '440px' }}>
-              Not a meal plan you'll abandon in three weeks. A system built around
-              behavior, culture, and biology — the same one used with 100+ clients.
+              Not a diet plan you'll start and quit. A habit practice built into
+              your real life — the same one used with 100+ clients.
             </p>
           </motion.div>
 
@@ -581,11 +583,83 @@ function ProcessSection() {
 }
 
 /* ============================================================
+   5b. THE DIFFERENCE — the client's core positioning: most
+   coaches hand over a diet plan; this is a coached practice.
+   The only dark section on the page, so it reads as the thesis.
+   ============================================================ */
+
+const differences = [
+  { them: 'A diet-plan PDF on day one', us: 'No diet plan — habits built into how you already eat' },
+  { them: '"Did you follow the plan?" texts', us: 'A 45-minute personal video call every 7–10 days' },
+  { them: 'One workout chart, repeated for a month', us: 'A fresh 45-minute workout video, every single day' },
+  { them: 'Generic "avoid junk food" advice', us: 'Recipes, supplements — even what to pick on Blinkit' },
+  { them: 'Results that end when the plan ends', us: 'Habits that stay long after coaching does' },
+];
+
+function DifferenceSection() {
+  return (
+    <section id="difference" className="section-pad" style={{ background: 'var(--ink)' }}>
+      <div className="container">
+        <motion.div {...revealProps} style={{ marginBottom: '48px' }}>
+          <span className="text-caption" style={{ color: 'rgba(236,234,228,0.5)' }}>The Difference</span>
+          <h2 className="text-h2" style={{ color: 'var(--paper)', marginTop: '12px' }}>
+            Most coaches hand you a plan.
+            <br />
+            <span className="serif-accent">This is a practice.</span>
+          </h2>
+        </motion.div>
+
+        <motion.div {...revealProps}>
+          <div className="diff-header">
+            <span className="text-caption" style={{ fontSize: '11px', color: 'rgba(236,234,228,0.4)' }}>
+              The usual coaching
+            </span>
+            <span className="text-caption" style={{ fontSize: '11px', color: 'var(--paper)' }}>
+              United By Movement
+            </span>
+          </div>
+
+          {differences.map((d, i) => (
+            <motion.div
+              key={i}
+              className="diff-row"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '0px 0px -60px 0px' }}
+              transition={{ duration: 0.5, delay: i * 0.08 }}
+            >
+              <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
+                <span style={{ color: 'rgba(236,234,228,0.35)', fontSize: '14px', flexShrink: 0, lineHeight: 1.6 }}>✕</span>
+                <p style={{ fontFamily: 'Inter', fontSize: '15px', color: 'rgba(236,234,228,0.45)', lineHeight: 1.6 }}>
+                  {d.them}
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
+                <span style={{ color: 'var(--paper)', fontSize: '14px', flexShrink: 0, lineHeight: 1.6 }}>✓</span>
+                <p style={{ fontFamily: 'Inter', fontWeight: 500, fontSize: '15px', color: 'var(--paper-90)', lineHeight: 1.6 }}>
+                  {d.us}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <motion.div {...revealProps} style={{ marginTop: '40px' }}>
+          <PillLink href="#programs" light>
+            See the Programs
+          </PillLink>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
    6. MYTH / TRUTH
    ============================================================ */
 
 const mythTruths = [
-  { myth: 'Skipping dinner speeds up fat loss', truth: 'It just moves the binge to breakfast', tag: 'MYTH', color: 'bad' },
+  { myth: 'You need a diet plan to lose fat', truth: "Plans end, and results end with them. Habits don't", tag: 'MYTH', color: 'bad' },
   { myth: 'Roti is worse than bread for fat loss', truth: 'Portion and count matter more than the carb source', tag: 'MYTH', color: 'bad' },
   { myth: 'You need 10,000 steps in one go', truth: '3 walks of 3,300 steps works identically', tag: 'TRUTH', color: 'good' },
   { myth: 'Paneer is off-limits on a cut', truth: "It's one of the best high-protein Indian foods available", tag: 'TRUTH', color: 'good' },
@@ -890,18 +964,46 @@ function QuizSection() {
    8. GALLERY
    ============================================================ */
 
+const gallerySlides = [
+  { src: images.food_dal, w: 420, caption: 'Dal-chawal stays' },
+  { src: images.workout_home, w: 300, caption: 'Home workouts' },
+  { src: images.food_street, w: 340, caption: 'Eating-out strategy' },
+  { src: images.method_1, w: 420, caption: 'Habits, tracked honestly' },
+  { src: images.workout_2, w: 300, caption: 'Strength, cardio, mobility' },
+  { src: images.gallery_3, w: 380, caption: 'Real recipes' },
+  { src: images.method_2, w: 340, caption: 'Calm consistency' },
+  { src: images.gallery_2, w: 300, caption: 'A new workout, daily' },
+];
+
 function GallerySection() {
-  const rowA = [images.food_dal, images.workout_home, images.food_street, images.method_1, images.workout_2];
-  const rowB = [
-    { src: images.gallery_1, span: 2 },
-    { src: images.gallery_2, span: 1 },
-    { src: images.gallery_3, span: 2 },
-  ];
+  const trackRef = useRef(null);
+  const drag = useRef({ down: false, startX: 0, startScroll: 0 });
+
+  const scrollByDir = (dir) => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * Math.min(600, el.clientWidth * 0.8), behavior: 'smooth' });
+  };
+
+  const onPointerDown = (e) => {
+    if (e.pointerType !== 'mouse') return;
+    drag.current = { down: true, startX: e.clientX, startScroll: trackRef.current.scrollLeft };
+  };
+  const onPointerMove = (e) => {
+    if (!drag.current.down) return;
+    trackRef.current.scrollLeft = drag.current.startScroll - (e.clientX - drag.current.startX);
+  };
+  const endDrag = () => {
+    drag.current.down = false;
+  };
 
   return (
     <section style={{ background: 'var(--paper)', padding: 'clamp(64px, 10vw, 120px) 0' }}>
-      <div className="container">
-        <motion.div {...revealProps} style={{ marginBottom: '48px' }}>
+      <div
+        className="container"
+        style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '24px', marginBottom: '40px' }}
+      >
+        <motion.div {...revealProps}>
           <span className="text-caption" style={{ color: 'var(--ink-60)' }}>The Real Work</span>
           <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
             No gym flexing. Just
@@ -909,22 +1011,34 @@ function GallerySection() {
             <span className="serif-accent">real food, real rooms.</span>
           </h2>
         </motion.div>
-
-        <motion.div {...revealProps} className="gallery-row">
-          {rowA.map((src, i) => (
-            <div key={i} className="gallery-cell">
-              <img src={src} alt="Real food and home workouts" loading="lazy" />
-            </div>
-          ))}
-        </motion.div>
-        <motion.div {...revealProps} className="gallery-row gallery-row-b">
-          {rowB.map((cell, i) => (
-            <div key={i} className={`gallery-cell ${cell.span === 2 ? 'gallery-span-2' : ''}`}>
-              <img src={cell.src} alt="Everyday coaching lifestyle" loading="lazy" />
-            </div>
-          ))}
+        <motion.div {...revealProps} className="desktop-only" style={{ gap: '10px' }}>
+          <button className="gallery-arrow" aria-label="Scroll gallery left" onClick={() => scrollByDir(-1)}>
+            ←
+          </button>
+          <button className="gallery-arrow" aria-label="Scroll gallery right" onClick={() => scrollByDir(1)}>
+            →
+          </button>
         </motion.div>
       </div>
+
+      <motion.div
+        {...revealProps}
+        ref={trackRef}
+        className="slide-gallery"
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerLeave={endDrag}
+      >
+        {gallerySlides.map((slide, i) => (
+          <div key={i} className="slide-cell" style={{ width: `min(${slide.w}px, 78vw)` }}>
+            <img src={slide.src} alt={slide.caption} loading="lazy" />
+            <div className="slide-caption">
+              <span className="text-caption" style={{ fontSize: '10px', color: 'var(--ink)' }}>{slide.caption}</span>
+            </div>
+          </div>
+        ))}
+      </motion.div>
     </section>
   );
 }
@@ -1030,22 +1144,22 @@ const programs = [
   {
     name: 'Foundation',
     duration: '3 Months',
-    desc: 'For first-timers ready to understand the system, not just follow a plan.',
-    features: ['Custom deficit calculation', 'Weekly check-ins', 'WhatsApp support', 'Food swap library access'],
+    desc: 'Rebuild your everyday eating habits — and watch the first 4–8 kg go.',
+    features: ['Habit-first coaching — zero diet plans', '45-min video consult every 7–10 days', 'Weekly habit tracking', 'A fresh 45-min workout video daily'],
     highlight: false,
   },
   {
     name: 'Transformation',
     duration: '6 Months',
-    desc: "The full system — the program behind every testimonial you've read.",
-    features: ['Everything in Foundation', 'Bi-weekly 1:1 calls', 'Health marker tracking', 'Festival/travel planning', 'Direct WhatsApp access'],
+    desc: "The full practice — the program behind every result you've read above.",
+    features: ['Everything in Foundation', 'Travel & eating-out strategy calls', 'Home or gym workout plans', 'Recipes & supplement guidance', 'Direct WhatsApp access'],
     highlight: true,
   },
   {
     name: 'Sustained',
     duration: '12 Months',
-    desc: 'For medical-condition management requiring longer, careful pacing.',
-    features: ['Everything in Transformation', 'Medical coordination support', 'Quarterly deep reviews', 'Lifetime community access'],
+    desc: 'For deeper lifestyle change that needs longer, careful pacing.',
+    features: ['Everything in Transformation', 'Quarterly deep reviews', 'Product guidance — down to your Blinkit cart', 'Lifetime community access'],
     highlight: false,
   },
 ];
@@ -1208,24 +1322,28 @@ function ApplySection() {
 
 const faqs = [
   {
+    q: "Why don't you give diet plans?",
+    a: "Because a diet plan is something you start and stop — and when it stops, the results stop with it. We rebuild your everyday eating habits instead, so there's nothing to quit and nothing to expire.",
+  },
+  {
     q: 'Do I have to give up dal-chawal / rice / roti?',
-    a: "No. The entire system is built around counting and portioning real Indian food, not replacing it with Western meal plans you'll abandon in two weeks.",
+    a: 'No. The habits are built around the food you already eat — real Indian food, portioned and timed sensibly, not replaced with a Western meal plan.',
   },
   {
-    q: 'I have thyroid/PCOS — does this still work for me?',
-    a: 'Yes — the pace is slower and more carefully managed, but the same systems-based approach applies. Several current testimonials are specifically thyroid and PCOS cases.',
+    q: 'What results can I realistically expect?',
+    a: 'Most clients lose 4–8 kg in the 3-month program — through habit changes that hold, not water-weight crashes. Slower than a fad, permanent unlike one.',
   },
   {
-    q: 'How much time does this actually take per day?',
-    a: 'Most clients spend 20–30 minutes daily on tracking and movement — this is a desk-job-compatible system, not a 2-hour gym commitment.',
+    q: 'What about workouts — I have no gym / no time?',
+    a: "You get a fresh 45-minute on-demand workout video every day — strength, cardio, flexibility, and mobility, doable at home on your schedule. Prefer the gym? You get a gym plan instead.",
   },
   {
-    q: 'What if I travel a lot or have festival season coming up?',
-    a: "Festival and travel planning is built into the Transformation and Sustained tiers specifically — the system flexes, it doesn't break.",
+    q: 'What if I travel a lot or eat out often?',
+    a: "That's exactly what the 45-minute video consults are for — travel-week strategy, what to order out, what to skip. The system flexes, it doesn't break.",
   },
   {
-    q: 'Do you provide meal plans?',
-    a: "No rigid meal plans — you get a swap framework and deficit math that works with whatever you're already eating, which is why it actually sticks.",
+    q: 'How is this different from other coaches?',
+    a: "Most coaching is a plan handed over and a 'did you follow it?' text. This is a personal video call every 7–10 days, weekly habit tracking, daily workout videos, and guidance down to recipes and supplements.",
   },
 ];
 
@@ -1318,7 +1436,7 @@ function FinalCTASection() {
     >
       <motion.div {...revealProps} style={{ maxWidth: '760px', margin: '0 auto' }}>
         <p className="text-accent" style={{ color: 'var(--paper-90)', fontSize: '19px', marginBottom: '20px' }}>
-          Discipline through simple systems — not motivation.
+          No diet plan. No expiry date. Just habits that hold.
         </p>
         <h2 className="text-display" style={{ color: 'var(--paper)', marginBottom: '40px' }}>
           Ready to stop <span className="serif-accent">guessing?</span>
@@ -1500,6 +1618,7 @@ export default function App() {
         <CredentialStrip />
         <StatsSection />
         <ProcessSection />
+        <DifferenceSection />
         <MythTruthSection />
         <QuizSection />
         <GallerySection />
