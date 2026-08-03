@@ -1099,7 +1099,6 @@ function GallerySection() {
           <div
             key={`${slide.id}-${i}`}
             className="slide-cell"
-            style={{ width: `min(${slide.width}px, 78vw)` }}
             aria-hidden={i >= slides.length ? 'true' : undefined}
           >
             <img src={slide.url} alt={slide.caption || 'From the camera roll'} loading="lazy" />
@@ -1727,11 +1726,33 @@ function StickyMobileCTA() {
 /* SHA-256 of the admin password — the plaintext never ships in the bundle */
 const ADMIN_PASS_HASH = 'eaa5385c07c06720a8d91368e981ab9bced89cbe1b776ccd87800ea6a546ea53';
 
-const WIDTH_OPTIONS = [
-  { label: 'Small', value: 300 },
-  { label: 'Medium', value: 340 },
-  { label: 'Wide', value: 420 },
-];
+/* Shrink an uploaded photo in the browser so every gallery image is a
+   consistent, fast-loading size before it's stored. */
+function compressImageFile(file, maxDim = 1200) {
+  return new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      let dataUrl = '';
+      for (const quality of [0.8, 0.65, 0.5]) {
+        dataUrl = canvas.toDataURL('image/jpeg', quality);
+        if (dataUrl.length < 700000) break;
+      }
+      dataUrl ? resolve(dataUrl) : reject(new Error('compress failed'));
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('not an image'));
+    };
+    img.src = objectUrl;
+  });
+}
 
 function AdminField({ label, hint, children }) {
   return (
@@ -1861,7 +1882,14 @@ function AdminPhotos() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [savedId, setSavedId] = useState(null);
-  const [draft, setDraft] = useState({ url: '', caption: '', width: 340 });
+  const [stage, setStage] = useState('');
+  const [staged, setStaged] = useState(null);
+  const [stagedCaption, setStagedCaption] = useState('');
+  const [dragOver, setDragOver] = useState(false);
+
+  const addInputRef = useRef(null);
+  const replaceInputRef = useRef(null);
+  const replaceId = useRef(null);
 
   const load = () => {
     fetchGallery()
@@ -1886,10 +1914,52 @@ function AdminPhotos() {
     setBusy(false);
   };
 
-  const add = () => {
-    if (!draft.url.trim()) return;
-    run(() => addGalleryItem(draft.url.trim(), draft.caption.trim(), Number(draft.width)));
-    setDraft({ url: '', caption: '', width: 340 });
+  const prepareFile = async (file) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setError("That file isn't a photo — try a JPG or PNG.");
+      return;
+    }
+    setError('');
+    setStage('reading');
+    try {
+      const dataUrl = await compressImageFile(file);
+      setStaged(dataUrl);
+      setStagedCaption('');
+    } catch {
+      setError("Couldn't read that photo — try a different one.");
+    }
+    setStage('');
+  };
+
+  const publishStaged = async () => {
+    if (!staged) return;
+    await run(() => addGalleryItem(staged, stagedCaption.trim(), 320));
+    setStaged(null);
+    setStagedCaption('');
+    setStage('done');
+    setTimeout(() => setStage(''), 3500);
+  };
+
+  const startReplace = (id) => {
+    replaceId.current = id;
+    replaceInputRef.current?.click();
+  };
+
+  const onReplaceFile = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    const id = replaceId.current;
+    if (!file || !id) return;
+    setStage('reading');
+    try {
+      const dataUrl = await compressImageFile(file);
+      const it = items.find((x) => x.id === id);
+      await run(() => updateGalleryItem(id, dataUrl, it ? it.caption : '', 320), id);
+    } catch {
+      setError("Couldn't read that photo — try a different one.");
+    }
+    setStage('');
   };
 
   const remove = (it) => {
@@ -1905,53 +1975,70 @@ function AdminPhotos() {
   return (
     <div>
       <p className="text-body" style={{ fontSize: '14px', marginBottom: '20px' }}>
-        These photos appear in the sliding gallery on your website, in this order.
-        Changes go live for everyone as soon as you press Save.
+        These photos appear in the sliding gallery on your website. Every photo is
+        automatically resized to the same size, so just upload and go — changes are
+        live for everyone instantly.
       </p>
 
-      <div className="admin-card" style={{ marginBottom: '24px' }}>
-        <p style={{ fontFamily: 'Anton', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: '16px' }}>
-          Add a photo
-        </p>
-        <div style={{ display: 'grid', gap: '14px' }}>
-          <AdminField
-            label="Photo link"
-            hint="Paste a link to any photo on the internet. Tip: right-click a photo in your browser and choose 'Copy image address'."
-          >
+      <input type="file" accept="image/*" hidden ref={addInputRef} onChange={(e) => { prepareFile(e.target.files && e.target.files[0]); e.target.value = ''; }} />
+      <input type="file" accept="image/*" hidden ref={replaceInputRef} onChange={onReplaceFile} />
+
+      {!staged && (
+        <div
+          className={`drop-zone${dragOver ? ' dragging' : ''}`}
+          style={{ marginBottom: '16px' }}
+          onClick={() => addInputRef.current?.click()}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragOver(true);
+          }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDragOver(false);
+            prepareFile(e.dataTransfer.files && e.dataTransfer.files[0]);
+          }}
+        >
+          <p style={{ fontSize: '32px', marginBottom: '8px' }}>📸</p>
+          <p style={{ fontFamily: 'Anton', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.03em', color: 'var(--ink)' }}>
+            {stage === 'reading' ? 'Getting your photo ready…' : 'Add a photo'}
+          </p>
+          <p className="text-body" style={{ fontSize: '13px', marginTop: '6px' }}>
+            Tap here to choose one from your phone or computer — or drag it in.
+          </p>
+        </div>
+      )}
+
+      {staged && (
+        <div className="admin-card" style={{ marginBottom: '16px', display: 'grid', gap: '14px' }}>
+          <p style={{ fontFamily: 'Anton', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+            Looking good — ready to go live?
+          </p>
+          <img src={staged} alt="Your new photo" style={{ maxHeight: '260px', width: 'auto', maxWidth: '100%', borderRadius: '12px', objectFit: 'cover', justifySelf: 'start' }} />
+          <AdminField label="Caption (optional)" hint="A short personal note shown on the photo. Leave empty for no caption.">
             <input
               className="admin-input"
-              value={draft.url}
-              onChange={(e) => setDraft({ ...draft, url: e.target.value })}
-              placeholder="https://…"
+              value={stagedCaption}
+              onChange={(e) => setStagedCaption(e.target.value)}
+              placeholder="e.g. Sunday long walk"
             />
           </AdminField>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 130px', gap: '12px' }}>
-            <AdminField label="Caption (optional)" hint="A short personal note shown on the photo. Leave empty for no caption.">
-              <input
-                className="admin-input"
-                value={draft.caption}
-                onChange={(e) => setDraft({ ...draft, caption: e.target.value })}
-                placeholder="e.g. Sunday long walk"
-              />
-            </AdminField>
-            <AdminField label="Size">
-              <select
-                className="admin-input"
-                value={draft.width}
-                onChange={(e) => setDraft({ ...draft, width: e.target.value })}
-              >
-                {WIDTH_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
-                ))}
-              </select>
-            </AdminField>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button className="btn-pill" disabled={busy} onClick={publishStaged}>
+              {busy ? 'Publishing…' : 'Put it on the website'}
+            </button>
+            <button className="btn-pill btn-pill--ghost" disabled={busy} onClick={() => setStaged(null)}>
+              Cancel
+            </button>
           </div>
-          <ImgPreview url={draft.url.trim()} />
-          <button className="btn-pill" style={{ justifySelf: 'start' }} disabled={busy || !draft.url.trim()} onClick={add}>
-            {busy ? 'Adding…' : 'Add photo to website'}
-          </button>
         </div>
-      </div>
+      )}
+
+      {stage === 'done' && (
+        <p style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '14px', color: 'var(--good)', background: 'rgba(75,94,66,0.10)', border: '1px solid rgba(75,94,66,0.3)', borderRadius: '10px', padding: '10px 14px', marginBottom: '16px' }}>
+          🎉 It's live! Your photo is now on the website.
+        </p>
+      )}
 
       {error && <p className="admin-error">{error}</p>}
       {!items && !error && <p className="text-body">Loading your photos…</p>}
@@ -1961,51 +2048,47 @@ function AdminPhotos() {
         </p>
       )}
 
-      {items && items.map((it) => (
-        <div key={it.id} className="admin-card admin-row">
-          <img src={it.url} alt="" style={{ width: '88px', height: '88px', borderRadius: '12px', objectFit: 'cover', flexShrink: 0 }} />
-          <div style={{ flexGrow: 1, display: 'grid', gap: '10px', minWidth: 0 }}>
-            <AdminField label="Photo link">
-              <input className="admin-input" value={it.url} onChange={(e) => edit(it.id, 'url', e.target.value)} />
-            </AdminField>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px', gap: '10px' }}>
-              <AdminField label="Caption (optional)">
-                <input
-                  className="admin-input"
-                  value={it.caption}
-                  placeholder="No caption"
-                  onChange={(e) => edit(it.id, 'caption', e.target.value)}
-                />
-              </AdminField>
-              <AdminField label="Size">
-                <select className="admin-input" value={it.width} onChange={(e) => edit(it.id, 'width', e.target.value)}>
-                  {WIDTH_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                  ))}
-                </select>
-              </AdminField>
+      {items && items.length > 0 && (
+        <div className="admin-photo-grid" style={{ marginTop: '8px' }}>
+          {items.map((it) => (
+            <div key={it.id} className="admin-card admin-photo-card" style={{ display: 'grid', gap: '10px', padding: '14px' }}>
+              <img src={it.url} alt="" className="admin-thumb" />
+              <input
+                className="admin-input"
+                value={it.caption}
+                placeholder="No caption"
+                onChange={(e) => edit(it.id, 'caption', e.target.value)}
+              />
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <button
+                  className="btn-pill"
+                  style={{ padding: '9px 14px', fontSize: '11px' }}
+                  disabled={busy}
+                  onClick={() => run(() => updateGalleryItem(it.id, it.url, it.caption, 320), it.id)}
+                >
+                  {savedId === it.id ? 'Saved ✓' : 'Save'}
+                </button>
+                <button
+                  className="btn-pill btn-pill--ghost"
+                  style={{ padding: '9px 14px', fontSize: '11px' }}
+                  disabled={busy}
+                  onClick={() => startReplace(it.id)}
+                >
+                  Change photo
+                </button>
+                <button
+                  className="btn-pill btn-pill--ghost"
+                  style={{ padding: '9px 14px', fontSize: '11px' }}
+                  disabled={busy}
+                  onClick={() => remove(it)}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flexShrink: 0 }}>
-            <button
-              className="btn-pill"
-              style={{ padding: '10px 18px' }}
-              disabled={busy}
-              onClick={() => run(() => updateGalleryItem(it.id, it.url, it.caption, Number(it.width)), it.id)}
-            >
-              {savedId === it.id ? 'Saved ✓' : 'Save'}
-            </button>
-            <button
-              className="btn-pill btn-pill--ghost"
-              style={{ padding: '10px 18px' }}
-              disabled={busy}
-              onClick={() => remove(it)}
-            >
-              Delete
-            </button>
-          </div>
+          ))}
         </div>
-      ))}
+      )}
     </div>
   );
 }
@@ -2019,6 +2102,25 @@ function AdminTestimonials() {
   const [draft, setDraft] = useState(EMPTY_TESTIMONIAL);
 
   const [savedId, setSavedId] = useState(null);
+  const avatarInput = useRef(null);
+  const avatarTarget = useRef(null);
+
+  const pickAvatar = (onChange) => {
+    avatarTarget.current = onChange;
+    avatarInput.current?.click();
+  };
+
+  const onAvatarFile = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const dataUrl = await compressImageFile(file, 300);
+      if (avatarTarget.current) avatarTarget.current('img', dataUrl);
+    } catch {
+      setError("Couldn't read that photo — try a different one.");
+    }
+  };
 
   const load = () => {
     fetchTestimonials()
@@ -2084,8 +2186,21 @@ function AdminTestimonials() {
           style={{ resize: 'vertical', borderRadius: '14px' }}
         />
       </AdminField>
-      <AdminField label="Photo URL (optional)">
-        <input className="admin-input" value={t.img} onChange={(e) => onChange('img', e.target.value)} placeholder="https://…" />
+      <AdminField label="Client photo (optional)" hint="Upload a photo from your phone, or paste a link.">
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {t.img && (
+            <img src={t.img} alt="" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+          )}
+          <input className="admin-input" value={t.img} onChange={(e) => onChange('img', e.target.value)} placeholder="https://…" />
+          <button
+            type="button"
+            className="btn-pill btn-pill--ghost"
+            style={{ padding: '9px 14px', fontSize: '11px', flexShrink: 0 }}
+            onClick={() => pickAvatar(onChange)}
+          >
+            Upload
+          </button>
+        </div>
       </AdminField>
     </div>
   );
@@ -2096,6 +2211,8 @@ function AdminTestimonials() {
         These are the client reviews that scroll across your website. Changes go
         live for everyone as soon as you press Save.
       </p>
+
+      <input type="file" accept="image/*" hidden ref={avatarInput} onChange={onAvatarFile} />
 
       <div className="admin-card" style={{ marginBottom: '24px' }}>
         <p style={{ fontFamily: 'Anton', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: '16px' }}>

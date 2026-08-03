@@ -283,9 +283,10 @@ button {
 .slide-cell {
   position: relative;
   flex-shrink: 0;
+  width: min(320px, 74vw);
   border-radius: 20px;
   overflow: hidden;
-  height: clamp(300px, 38vw, 420px);
+  height: clamp(300px, 38vw, 400px);
   background: var(--paper-dim);
 }
 
@@ -515,6 +516,36 @@ input::placeholder {
   padding: 10px 14px;
   margin-bottom: 16px;
   word-break: break-word;
+}
+
+.drop-zone {
+  border: 2px dashed var(--border-strong);
+  border-radius: 16px;
+  padding: 36px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 200ms ease, border-color 200ms ease;
+  background: var(--paper);
+}
+
+.drop-zone:hover,
+.drop-zone.dragging {
+  background: var(--paper-dim);
+  border-color: var(--ink);
+}
+
+.admin-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 16px;
+}
+
+.admin-photo-card img.admin-thumb {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 12px;
+  background: var(--paper-dim);
 }
 
 .stat-tiles {
