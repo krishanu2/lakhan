@@ -25,6 +25,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          VITE_NEON_CONN: ${{ secrets.VITE_NEON_CONN }}
       - uses: actions/configure-pages@v5
         with:
           enablement: true

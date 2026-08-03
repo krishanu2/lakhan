@@ -1,5 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
+import {
+  fetchGallery,
+  addGalleryItem,
+  updateGalleryItem,
+  deleteGalleryItem,
+  fetchTestimonials,
+  addTestimonial,
+  updateTestimonial,
+  deleteTestimonial,
+  logVisit,
+  fetchStats,
+  fetchDaily,
+} from './api.js';
+
+const CALENDLY_URL = 'https://calendly.com/unitedbymovement/30min';
 
 /* ============================================================
    FUNCTIONALCOACH101.COM — Lakhan Ahuja · The Weight Loss Coach
@@ -151,8 +166,8 @@ function Navbar() {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             {!isMobile && (
-              <a href="#apply" className="btn-pill" style={{ padding: '12px 22px' }}>
-                Apply for Coaching
+              <a href="#book" className="btn-pill" style={{ padding: '12px 22px' }}>
+                Book a Call
               </a>
             )}
             {isMobile && (
@@ -219,7 +234,7 @@ function Navbar() {
               ))}
             </nav>
             <motion.a
-              href="#apply"
+              href="#book"
               onClick={() => setDrawerOpen(false)}
               className="btn-pill"
               initial={{ opacity: 0, y: 16 }}
@@ -227,7 +242,7 @@ function Navbar() {
               transition={{ duration: 0.4, delay: 0.5 }}
               style={{ justifyContent: 'center', width: '100%' }}
             >
-              Apply for Coaching
+              Book a Call
             </motion.a>
           </motion.div>
         )}
@@ -484,8 +499,8 @@ function StatsSection() {
             honestly, week after week. Most clients lose 4–8 kg in three months,
             and keep it off, because nothing here expires.
           </p>
-          <PillLink href="#apply" ghost style={{ marginTop: '32px' }}>
-            Apply for Coaching
+          <PillLink href="#book" ghost style={{ marginTop: '32px' }}>
+            Book a Call
           </PillLink>
         </motion.div>
 
@@ -946,7 +961,7 @@ function QuizSection() {
                     : 'None of this is about willpower. It’s about knowing which lever actually moves the outcome — that’s what coaching fixes.'}
                 </p>
                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                  <PillLink href="#apply">Apply for Coaching</PillLink>
+                  <PillLink href="#book">Book a Call</PillLink>
                   <button onClick={restart} className="btn-pill btn-pill--ghost">
                     Retake
                   </button>
@@ -964,18 +979,25 @@ function QuizSection() {
    8. GALLERY
    ============================================================ */
 
-const gallerySlides = [
-  { src: images.food_dal, w: 420, caption: 'Dal-chawal stays' },
-  { src: images.workout_home, w: 300, caption: 'Home workouts' },
-  { src: images.food_street, w: 340, caption: 'Eating-out strategy' },
-  { src: images.method_1, w: 420, caption: 'Habits, tracked honestly' },
-  { src: images.workout_2, w: 300, caption: 'Strength, cardio, mobility' },
-  { src: images.gallery_3, w: 380, caption: 'Real recipes' },
-  { src: images.method_2, w: 340, caption: 'Calm consistency' },
-  { src: images.gallery_2, w: 300, caption: 'A new workout, daily' },
+const fallbackSlides = [
+  { id: 'f1', url: images.hero, caption: '', width: 420 },
+  { id: 'f2', url: images.food_dal, caption: '', width: 300 },
+  { id: 'f3', url: images.workout_home, caption: '', width: 340 },
+  { id: 'f4', url: images.food_street, caption: '', width: 420 },
+  { id: 'f5', url: images.workout_2, caption: '', width: 300 },
+  { id: 'f6', url: images.gallery_3, caption: '', width: 380 },
+  { id: 'f7', url: images.method_2, caption: '', width: 340 },
+  { id: 'f8', url: images.method_1, caption: '', width: 300 },
 ];
 
 function GallerySection() {
+  const [slides, setSlides] = useState(fallbackSlides);
+  useEffect(() => {
+    fetchGallery()
+      .then((rows) => rows.length && setSlides(rows))
+      .catch(() => {});
+  }, []);
+
   const trackRef = useRef(null);
   const drag = useRef({ down: false, startX: 0, startScroll: 0 });
 
@@ -1004,11 +1026,11 @@ function GallerySection() {
         style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '24px', marginBottom: '40px' }}
       >
         <motion.div {...revealProps}>
-          <span className="text-caption" style={{ color: 'var(--ink-60)' }}>The Real Work</span>
+          <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Off the Feed</span>
           <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
-            No gym flexing. Just
+            The camera roll,
             <br />
-            <span className="serif-accent">real food, real rooms.</span>
+            <span className="serif-accent">unfiltered.</span>
           </h2>
         </motion.div>
         <motion.div {...revealProps} className="desktop-only" style={{ gap: '10px' }}>
@@ -1030,12 +1052,14 @@ function GallerySection() {
         onPointerUp={endDrag}
         onPointerLeave={endDrag}
       >
-        {gallerySlides.map((slide, i) => (
-          <div key={i} className="slide-cell" style={{ width: `min(${slide.w}px, 78vw)` }}>
-            <img src={slide.src} alt={slide.caption} loading="lazy" />
-            <div className="slide-caption">
-              <span className="text-caption" style={{ fontSize: '10px', color: 'var(--ink)' }}>{slide.caption}</span>
-            </div>
+        {slides.map((slide) => (
+          <div key={slide.id} className="slide-cell" style={{ width: `min(${slide.width}px, 78vw)` }}>
+            <img src={slide.url} alt={slide.caption || 'From the camera roll'} loading="lazy" />
+            {slide.caption ? (
+              <div className="slide-caption">
+                <span className="text-caption" style={{ fontSize: '10px', color: 'var(--ink)' }}>{slide.caption}</span>
+              </div>
+            ) : null}
           </div>
         ))}
       </motion.div>
@@ -1106,6 +1130,21 @@ function TestimonialCard({ name, condition, result, quote, img }) {
 }
 
 function TestimonialsAutoScroll() {
+  const [setA, setSetA] = useState(testimonialsSetA);
+  const [setB, setSetB] = useState(testimonialsSetB);
+
+  useEffect(() => {
+    fetchTestimonials()
+      .then((rows) => {
+        if (!rows.length) return;
+        const a = rows.filter((r) => r.track !== 'b');
+        const b = rows.filter((r) => r.track === 'b');
+        if (a.length) setSetA(a);
+        setSetB(b.length ? b : a);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <section id="results" style={{ background: 'var(--paper-dim)', padding: 'clamp(64px, 10vw, 120px) 0', overflow: 'hidden' }}>
       <motion.div {...revealProps} className="container" style={{ marginBottom: '48px' }}>
@@ -1119,7 +1158,7 @@ function TestimonialsAutoScroll() {
 
       <div style={{ overflow: 'hidden', marginBottom: '16px' }}>
         <div className="testimonial-track-ltr">
-          {[...testimonialsSetA, ...testimonialsSetA].map((t, i) => (
+          {[...setA, ...setA].map((t, i) => (
             <TestimonialCard key={i} {...t} />
           ))}
         </div>
@@ -1127,7 +1166,7 @@ function TestimonialsAutoScroll() {
 
       <div style={{ overflow: 'hidden' }}>
         <div className="testimonial-track-rtl">
-          {[...testimonialsSetB, ...testimonialsSetB].map((t, i) => (
+          {[...setB, ...setB].map((t, i) => (
             <TestimonialCard key={i} {...t} />
           ))}
         </div>
@@ -1220,8 +1259,8 @@ function ProgramsSection() {
                   </div>
                 ))}
               </div>
-              <PillLink href="#apply" ghost={!plan.highlight} style={{ justifyContent: 'center' }}>
-                Apply Now
+              <PillLink href="#book" ghost={!plan.highlight} style={{ justifyContent: 'center' }}>
+                Book a Call
               </PillLink>
             </div>
           ))}
@@ -1235,42 +1274,55 @@ function ProgramsSection() {
    11. APPLICATION / ACTION
    ============================================================ */
 
-/* 16px minimum — smaller input text triggers auto-zoom on iOS Safari */
-const inputStyle = {
-  fontFamily: 'Inter',
-  fontSize: '16px',
-  color: 'var(--ink)',
-  background: 'var(--paper)',
-  border: '1.5px solid var(--border-strong)',
-  padding: '16px 22px',
-  borderRadius: '999px',
-  outline: 'none',
-  width: '100%',
-};
+function BookSection() {
+  const [booked, setBooked] = useState(() => {
+    try {
+      return localStorage.getItem('ubm_booked') === '1';
+    } catch {
+      return false;
+    }
+  });
 
-function ApplySection() {
-  const [sent, setSent] = useState(false);
+  useEffect(() => {
+    const onMsg = (e) => {
+      if (
+        typeof e.origin === 'string' &&
+        e.origin.includes('calendly.com') &&
+        e.data &&
+        e.data.event === 'calendly.event_scheduled'
+      ) {
+        try {
+          localStorage.setItem('ubm_booked', '1');
+        } catch {}
+        setBooked(true);
+      }
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
 
-  const submit = (e) => {
-    e.preventDefault();
-    setSent(true);
+  const bookAgain = () => {
+    try {
+      localStorage.removeItem('ubm_booked');
+    } catch {}
+    setBooked(false);
   };
 
   return (
-    <section id="apply" className="section-pad" style={{ background: 'var(--paper-dim)' }}>
-      <div className="container" style={{ maxWidth: '640px', textAlign: 'center' }}>
+    <section id="book" className="section-pad" style={{ background: 'var(--paper-dim)' }}>
+      <div className="container" style={{ maxWidth: '760px', textAlign: 'center' }}>
         <motion.div {...revealProps}>
           <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Let's Talk</span>
           <h2 className="text-h2" style={{ color: 'var(--ink)', margin: '16px 0 20px' }}>
-            Tell me where <span className="serif-accent">you're stuck.</span>
+            Book your <span className="serif-accent">30-minute call.</span>
           </h2>
-          <p className="text-body" style={{ marginBottom: '40px' }}>
-            No long forms. Just a real conversation — like DMing "Diet" on Instagram,
-            but with a bit more context so I can actually help.
+          <p className="text-body" style={{ marginBottom: '40px', maxWidth: '480px', marginLeft: 'auto', marginRight: 'auto' }}>
+            Pick a slot that works for you. We'll talk about where you're stuck and
+            whether this practice is the right fit — no pressure, no pitch.
           </p>
         </motion.div>
 
-        {sent ? (
+        {booked ? (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1278,38 +1330,47 @@ function ApplySection() {
               background: 'var(--paper)',
               border: '1.5px solid var(--ink)',
               borderRadius: '24px',
-              padding: '40px 28px',
+              padding: '48px 28px',
             }}
           >
-            <p style={{ fontFamily: 'Anton', fontSize: '22px', color: 'var(--ink)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
-              Got it. <span className="serif-accent">Talk soon.</span>
+            <div
+              style={{
+                width: '56px',
+                height: '56px',
+                borderRadius: '50%',
+                background: 'var(--ink)',
+                color: 'var(--paper)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '24px',
+                margin: '0 auto 20px',
+              }}
+            >
+              ✓
+            </div>
+            <p style={{ fontFamily: 'Anton', fontSize: '26px', color: 'var(--ink)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+              Booking done.
             </p>
-            <p className="text-body" style={{ fontSize: '15px' }}>
-              Lakhan replies personally on WhatsApp — usually within a day.
+            <p className="text-body" style={{ fontSize: '15px', maxWidth: '380px', margin: '0 auto 28px' }}>
+              You're on Lakhan's calendar — the invite and call link are in your
+              email. Talk soon.
             </p>
+            <button onClick={bookAgain} className="btn-pill btn-pill--ghost">
+              Book another call
+            </button>
           </motion.div>
         ) : (
-          <motion.form
+          <motion.div
             {...revealProps}
-            onSubmit={submit}
-            style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}
+            style={{ borderRadius: '24px', overflow: 'hidden', background: 'var(--paper)', border: '1px solid var(--border)' }}
           >
-            <input type="text" name="name" placeholder="Your name" required style={inputStyle} aria-label="Your name" />
-            <input type="tel" name="whatsapp" placeholder="WhatsApp number" required style={inputStyle} aria-label="WhatsApp number" />
-            <select name="challenge" defaultValue="" required style={inputStyle} aria-label="Your biggest challenge">
-              <option value="" disabled>
-                What's your biggest challenge right now?
-              </option>
-              <option>I don't know where to start</option>
-              <option>I have a medical condition (thyroid/PCOS/pre-diabetes)</option>
-              <option>I've tried everything and nothing sticks</option>
-              <option>I need help with Indian food specifically</option>
-            </select>
-            <button type="submit" className="btn-pill" style={{ justifyContent: 'center', marginTop: '8px' }}>
-              Start the Conversation
-              <span className="btn-arrow">→</span>
-            </button>
-          </motion.form>
+            <iframe
+              title="Book a call with Lakhan"
+              src={`${CALENDLY_URL}?embed_domain=${window.location.host}&embed_type=Inline&hide_gdpr_banner=1`}
+              style={{ width: '100%', height: '720px', border: 'none', display: 'block' }}
+            />
+          </motion.div>
         )}
       </div>
     </section>
@@ -1441,8 +1502,8 @@ function FinalCTASection() {
         <h2 className="text-display" style={{ color: 'var(--paper)', marginBottom: '40px' }}>
           Ready to stop <span className="serif-accent">guessing?</span>
         </h2>
-        <PillLink href="#apply" light style={{ padding: '18px 36px' }}>
-          Apply for Coaching
+        <PillLink href="#book" light style={{ padding: '18px 36px' }}>
+          Book a Call
         </PillLink>
       </motion.div>
     </section>
@@ -1493,6 +1554,9 @@ function Footer() {
             <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink-60)', marginTop: '10px' }}>
               The Weight Loss Coach · United By Movement
             </p>
+            <div style={{ marginTop: '20px' }}>
+              <PillLink href="#book">Book a Call</PillLink>
+            </div>
           </div>
           <FooterColumn
             title="Menu"
@@ -1507,7 +1571,7 @@ function Footer() {
             title="Navigation"
             links={[
               { label: 'About', href: '#top' },
-              { label: 'Apply', href: '#apply' },
+              { label: 'Book a Call', href: '#book' },
               { label: 'FAQ', href: '#top' },
               { label: 'Privacy', href: '#top' },
             ]}
@@ -1516,7 +1580,7 @@ function Footer() {
             title="Social"
             links={[
               { label: 'Instagram', href: 'https://instagram.com/functionalcoach101' },
-              { label: 'WhatsApp', href: '#apply' },
+              { label: 'WhatsApp', href: '#book' },
             ]}
           />
         </div>
@@ -1596,8 +1660,8 @@ function StickyMobileCTA() {
             alignItems: 'center',
           }}
         >
-          <a href="#apply" className="btn-pill" style={{ flex: 1, justifyContent: 'center', padding: '16px 24px' }}>
-            Apply for Coaching
+          <a href="#book" className="btn-pill" style={{ flex: 1, justifyContent: 'center', padding: '16px 24px' }}>
+            Book a Call
           </a>
         </motion.div>
       )}
@@ -1606,10 +1670,622 @@ function StickyMobileCTA() {
 }
 
 /* ============================================================
+   ADMIN — password-protected control panel at #/admin.
+   Built for a non-technical owner: plain language, previews,
+   confirmations before anything destructive, visible feedback
+   after every action.
+   ============================================================ */
+
+/* SHA-256 of the admin password — the plaintext never ships in the bundle */
+const ADMIN_PASS_HASH = 'eaa5385c07c06720a8d91368e981ab9bced89cbe1b776ccd87800ea6a546ea53';
+
+const WIDTH_OPTIONS = [
+  { label: 'Small', value: 300 },
+  { label: 'Medium', value: 340 },
+  { label: 'Wide', value: 420 },
+];
+
+function AdminField({ label, hint, children }) {
+  return (
+    <label style={{ display: 'block' }}>
+      <span className="text-caption" style={{ fontSize: '10px', color: 'var(--ink-60)', display: 'block', marginBottom: '6px' }}>
+        {label}
+      </span>
+      {children}
+      {hint && (
+        <span style={{ display: 'block', fontFamily: 'Inter', fontSize: '12px', color: 'var(--ink-40)', marginTop: '5px', lineHeight: 1.5 }}>
+          {hint}
+        </span>
+      )}
+    </label>
+  );
+}
+
+function ImgPreview({ url, size = 120 }) {
+  const [broken, setBroken] = useState(false);
+  useEffect(() => setBroken(false), [url]);
+  if (!url) return null;
+  if (broken) {
+    return (
+      <p style={{ fontFamily: 'Inter', fontSize: '12px', color: 'var(--bad)', margin: 0 }}>
+        ⚠ This link doesn't load as an image — double-check the URL.
+      </p>
+    );
+  }
+  return (
+    <img
+      src={url}
+      alt="Preview"
+      onError={() => setBroken(true)}
+      style={{ height: `${size}px`, width: 'auto', maxWidth: '100%', borderRadius: '12px', objectFit: 'cover' }}
+    />
+  );
+}
+
+async function sha256Hex(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+function AdminLogin({ onSuccess }) {
+  const [pw, setPw] = useState('');
+  const [show, setShow] = useState(false);
+  const [error, setError] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!pw) return;
+    setBusy(true);
+    setError(false);
+    const hex = await sha256Hex(pw);
+    if (hex === ADMIN_PASS_HASH) {
+      try {
+        localStorage.setItem('ubm_admin', '1');
+      } catch {}
+      onSuccess();
+    } else {
+      setError(true);
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', background: 'var(--paper)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+      <form onSubmit={submit} className="admin-card" style={{ width: '100%', maxWidth: '380px', padding: '32px 28px', textAlign: 'center' }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--ink)' }} />
+          <span style={{ fontFamily: 'Anton', fontSize: '20px', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink)' }}>
+            Lakhan — Admin
+          </span>
+        </span>
+        <p className="text-body" style={{ fontSize: '14px', marginBottom: '24px' }}>
+          Enter the admin password to manage your website.
+        </p>
+        <div style={{ position: 'relative', marginBottom: '12px' }}>
+          <input
+            type={show ? 'text' : 'password'}
+            className="admin-input"
+            value={pw}
+            autoFocus
+            onChange={(e) => {
+              setPw(e.target.value);
+              setError(false);
+            }}
+            placeholder="Password"
+            style={{ paddingRight: '64px', textAlign: 'center' }}
+          />
+          <button
+            type="button"
+            onClick={() => setShow((v) => !v)}
+            style={{
+              position: 'absolute',
+              right: '10px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: 'Inter',
+              fontWeight: 600,
+              fontSize: '12px',
+              color: 'var(--ink-60)',
+            }}
+          >
+            {show ? 'Hide' : 'Show'}
+          </button>
+        </div>
+        {error && (
+          <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--bad)', marginBottom: '12px' }}>
+            That password isn't right — try again.
+          </p>
+        )}
+        <button type="submit" className="btn-pill" style={{ width: '100%', justifyContent: 'center' }} disabled={busy || !pw}>
+          {busy ? 'Checking…' : 'Open Admin'}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+function AdminPhotos() {
+  const [items, setItems] = useState(null);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [savedId, setSavedId] = useState(null);
+  const [draft, setDraft] = useState({ url: '', caption: '', width: 340 });
+
+  const load = () => {
+    fetchGallery()
+      .then(setItems)
+      .catch(() => setError("Couldn't load the photos. Check your internet and refresh the page."));
+  };
+  useEffect(load, []);
+
+  const run = async (fn, id) => {
+    setBusy(true);
+    setError('');
+    try {
+      await fn();
+      load();
+      if (id) {
+        setSavedId(id);
+        setTimeout(() => setSavedId(null), 2500);
+      }
+    } catch {
+      setError("That didn't save. Check your internet and try again.");
+    }
+    setBusy(false);
+  };
+
+  const add = () => {
+    if (!draft.url.trim()) return;
+    run(() => addGalleryItem(draft.url.trim(), draft.caption.trim(), Number(draft.width)));
+    setDraft({ url: '', caption: '', width: 340 });
+  };
+
+  const remove = (it) => {
+    if (window.confirm('Delete this photo from the website? This cannot be undone.')) {
+      run(() => deleteGalleryItem(it.id));
+    }
+  };
+
+  const edit = (id, field, value) => {
+    setItems((prev) => prev.map((it) => (it.id === id ? { ...it, [field]: value } : it)));
+  };
+
+  return (
+    <div>
+      <p className="text-body" style={{ fontSize: '14px', marginBottom: '20px' }}>
+        These photos appear in the sliding gallery on your website, in this order.
+        Changes go live for everyone as soon as you press Save.
+      </p>
+
+      <div className="admin-card" style={{ marginBottom: '24px' }}>
+        <p style={{ fontFamily: 'Anton', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: '16px' }}>
+          Add a photo
+        </p>
+        <div style={{ display: 'grid', gap: '14px' }}>
+          <AdminField
+            label="Photo link"
+            hint="Paste a link to any photo on the internet. Tip: right-click a photo in your browser and choose 'Copy image address'."
+          >
+            <input
+              className="admin-input"
+              value={draft.url}
+              onChange={(e) => setDraft({ ...draft, url: e.target.value })}
+              placeholder="https://…"
+            />
+          </AdminField>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 130px', gap: '12px' }}>
+            <AdminField label="Caption (optional)" hint="A short personal note shown on the photo. Leave empty for no caption.">
+              <input
+                className="admin-input"
+                value={draft.caption}
+                onChange={(e) => setDraft({ ...draft, caption: e.target.value })}
+                placeholder="e.g. Sunday long walk"
+              />
+            </AdminField>
+            <AdminField label="Size">
+              <select
+                className="admin-input"
+                value={draft.width}
+                onChange={(e) => setDraft({ ...draft, width: e.target.value })}
+              >
+                {WIDTH_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </AdminField>
+          </div>
+          <ImgPreview url={draft.url.trim()} />
+          <button className="btn-pill" style={{ justifySelf: 'start' }} disabled={busy || !draft.url.trim()} onClick={add}>
+            {busy ? 'Adding…' : 'Add photo to website'}
+          </button>
+        </div>
+      </div>
+
+      {error && <p className="admin-error">{error}</p>}
+      {!items && !error && <p className="text-body">Loading your photos…</p>}
+      {items && items.length === 0 && (
+        <p className="text-body" style={{ textAlign: 'center', padding: '32px 0' }}>
+          No photos yet — add your first one above.
+        </p>
+      )}
+
+      {items && items.map((it) => (
+        <div key={it.id} className="admin-card admin-row">
+          <img src={it.url} alt="" style={{ width: '88px', height: '88px', borderRadius: '12px', objectFit: 'cover', flexShrink: 0 }} />
+          <div style={{ flexGrow: 1, display: 'grid', gap: '10px', minWidth: 0 }}>
+            <AdminField label="Photo link">
+              <input className="admin-input" value={it.url} onChange={(e) => edit(it.id, 'url', e.target.value)} />
+            </AdminField>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px', gap: '10px' }}>
+              <AdminField label="Caption (optional)">
+                <input
+                  className="admin-input"
+                  value={it.caption}
+                  placeholder="No caption"
+                  onChange={(e) => edit(it.id, 'caption', e.target.value)}
+                />
+              </AdminField>
+              <AdminField label="Size">
+                <select className="admin-input" value={it.width} onChange={(e) => edit(it.id, 'width', e.target.value)}>
+                  {WIDTH_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+              </AdminField>
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flexShrink: 0 }}>
+            <button
+              className="btn-pill"
+              style={{ padding: '10px 18px' }}
+              disabled={busy}
+              onClick={() => run(() => updateGalleryItem(it.id, it.url, it.caption, Number(it.width)), it.id)}
+            >
+              {savedId === it.id ? 'Saved ✓' : 'Save'}
+            </button>
+            <button
+              className="btn-pill btn-pill--ghost"
+              style={{ padding: '10px 18px' }}
+              disabled={busy}
+              onClick={() => remove(it)}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const EMPTY_TESTIMONIAL = { name: '', condition: '', result: '', quote: '', img: '', track: 'a' };
+
+function AdminTestimonials() {
+  const [items, setItems] = useState(null);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [draft, setDraft] = useState(EMPTY_TESTIMONIAL);
+
+  const [savedId, setSavedId] = useState(null);
+
+  const load = () => {
+    fetchTestimonials()
+      .then(setItems)
+      .catch(() => setError("Couldn't load the testimonials. Check your internet and refresh the page."));
+  };
+  useEffect(load, []);
+
+  const run = async (fn, id) => {
+    setBusy(true);
+    setError('');
+    try {
+      await fn();
+      load();
+      if (id) {
+        setSavedId(id);
+        setTimeout(() => setSavedId(null), 2500);
+      }
+    } catch {
+      setError("That didn't save. Check your internet and try again.");
+    }
+    setBusy(false);
+  };
+
+  const remove = (t) => {
+    if (window.confirm(`Delete ${t.name}'s testimonial from the website? This cannot be undone.`)) {
+      run(() => deleteTestimonial(t.id));
+    }
+  };
+
+  const edit = (id, field, value) => {
+    setItems((prev) => prev.map((it) => (it.id === id ? { ...it, [field]: value } : it)));
+  };
+
+  const fields = (t, onChange) => (
+    <div style={{ display: 'grid', gap: '10px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+        <AdminField label="Name">
+          <input className="admin-input" value={t.name} onChange={(e) => onChange('name', e.target.value)} placeholder="Rohit K." />
+        </AdminField>
+        <AdminField label="Tag (condition / context)">
+          <input className="admin-input" value={t.condition} onChange={(e) => onChange('condition', e.target.value)} placeholder="Thyroid Managed" />
+        </AdminField>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+        <AdminField label="Result line">
+          <input className="admin-input" value={t.result} onChange={(e) => onChange('result', e.target.value)} placeholder="14 kg lost in 7 months" />
+        </AdminField>
+        <AdminField label="Row (scroll direction)">
+          <select className="admin-input" value={t.track} onChange={(e) => onChange('track', e.target.value)}>
+            <option value="a">Top row</option>
+            <option value="b">Bottom row</option>
+          </select>
+        </AdminField>
+      </div>
+      <AdminField label="Quote">
+        <textarea
+          className="admin-input"
+          rows={3}
+          value={t.quote}
+          onChange={(e) => onChange('quote', e.target.value)}
+          placeholder="What the client said…"
+          style={{ resize: 'vertical', borderRadius: '14px' }}
+        />
+      </AdminField>
+      <AdminField label="Photo URL (optional)">
+        <input className="admin-input" value={t.img} onChange={(e) => onChange('img', e.target.value)} placeholder="https://…" />
+      </AdminField>
+    </div>
+  );
+
+  return (
+    <div>
+      <p className="text-body" style={{ fontSize: '14px', marginBottom: '20px' }}>
+        These are the client reviews that scroll across your website. Changes go
+        live for everyone as soon as you press Save.
+      </p>
+
+      <div className="admin-card" style={{ marginBottom: '24px' }}>
+        <p style={{ fontFamily: 'Anton', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: '16px' }}>
+          Add a testimonial
+        </p>
+        {fields(draft, (f, v) => setDraft({ ...draft, [f]: v }))}
+        <button
+          className="btn-pill"
+          style={{ marginTop: '14px' }}
+          disabled={busy || !draft.name.trim() || !draft.quote.trim()}
+          onClick={() => {
+            run(() => addTestimonial(draft));
+            setDraft(EMPTY_TESTIMONIAL);
+          }}
+        >
+          {busy ? 'Adding…' : 'Add to website'}
+        </button>
+      </div>
+
+      {error && <p className="admin-error">{error}</p>}
+      {!items && !error && <p className="text-body">Loading your testimonials…</p>}
+      {items && items.length === 0 && (
+        <p className="text-body" style={{ textAlign: 'center', padding: '32px 0' }}>
+          No testimonials yet — add your first one above.
+        </p>
+      )}
+
+      {items && items.map((t) => (
+        <div key={t.id} className="admin-card" style={{ marginBottom: '16px' }}>
+          {fields(t, (f, v) => edit(t.id, f, v))}
+          <div style={{ display: 'flex', gap: '10px', marginTop: '14px' }}>
+            <button
+              className="btn-pill"
+              style={{ padding: '10px 18px' }}
+              disabled={busy}
+              onClick={() => run(() => updateTestimonial(t), t.id)}
+            >
+              {savedId === t.id ? 'Saved ✓' : 'Save'}
+            </button>
+            <button
+              className="btn-pill btn-pill--ghost"
+              style={{ padding: '10px 18px' }}
+              disabled={busy}
+              onClick={() => remove(t)}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AdminStats() {
+  const [summary, setSummary] = useState(null);
+  const [daily, setDaily] = useState(null);
+  const [error, setError] = useState('');
+
+  const load = () => {
+    setError('');
+    fetchStats()
+      .then((rows) => setSummary(rows[0]))
+      .catch(() => setError("Couldn't load the statistics. Check your internet and press Refresh."));
+    fetchDaily()
+      .then(setDaily)
+      .catch(() => {});
+  };
+  useEffect(load, []);
+
+  const n = (v) => Number(v || 0);
+  const maxDaily = daily ? Math.max(1, ...daily.map((d) => n(d.visits))) : 1;
+
+  const tiles = summary
+    ? [
+        { label: 'Total visits', value: n(summary.total_visits) },
+        { label: 'Today', value: n(summary.visits_today) },
+        { label: 'Last 7 days', value: n(summary.visits_7d) },
+        { label: 'Last 30 days', value: n(summary.visits_30d) },
+        { label: 'From mobile', value: n(summary.mobile_visits) },
+        { label: 'From desktop', value: n(summary.desktop_visits) },
+      ]
+    : [];
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <p className="text-body" style={{ fontSize: '14px' }}>
+          Live from the database — every row is a real page visit.
+        </p>
+        <button className="btn-pill btn-pill--ghost" style={{ padding: '10px 18px' }} onClick={load}>
+          Refresh
+        </button>
+      </div>
+
+      {error && <p className="admin-error">{error}</p>}
+      {!summary && !error && <p className="text-body">Loading statistics…</p>}
+
+      {summary && (
+        <div className="stat-tiles">
+          {tiles.map((t) => (
+            <div key={t.label} className="admin-card" style={{ textAlign: 'center', padding: '20px 12px' }}>
+              <p style={{ fontFamily: 'Anton', fontSize: 'clamp(26px, 4vw, 36px)', color: 'var(--ink)', lineHeight: 1 }}>
+                {t.value.toLocaleString()}
+              </p>
+              <p className="text-caption" style={{ fontSize: '10px', color: 'var(--ink-60)', marginTop: '8px' }}>{t.label}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {daily && (
+        <div className="admin-card" style={{ marginTop: '20px' }}>
+          <p style={{ fontFamily: 'Anton', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: '20px' }}>
+            Visits — last 14 days
+          </p>
+          <div className="bars" role="img" aria-label={`Daily visits, last 14 days: ${daily.map((d) => `${d.day}: ${n(d.visits)}`).join(', ')}`}>
+            {daily.map((d) => (
+              <div key={d.day} className="bar-col" title={`${d.day} · ${n(d.visits)} visit${n(d.visits) === 1 ? '' : 's'}`}>
+                {n(d.visits) === maxDaily && n(d.visits) > 0 && (
+                  <span className="bar-label">{n(d.visits)}</span>
+                )}
+                <div className="bar" style={{ height: `${Math.max(3, (n(d.visits) / maxDaily) * 100)}%` }} />
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
+            <span className="text-caption" style={{ fontSize: '10px', color: 'var(--ink-40)' }}>{daily[0]?.day?.slice(5)}</span>
+            <span className="text-caption" style={{ fontSize: '10px', color: 'var(--ink-40)' }}>{daily[daily.length - 1]?.day?.slice(5)}</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AdminPage() {
+  const [authed, setAuthed] = useState(() => {
+    try {
+      return localStorage.getItem('ubm_admin') === '1';
+    } catch {
+      return false;
+    }
+  });
+  const [tab, setTab] = useState('photos');
+  const tabs = [
+    { id: 'photos', label: 'Photos' },
+    { id: 'testimonials', label: 'Testimonials' },
+    { id: 'stats', label: 'Statistics' },
+  ];
+
+  if (!authed) return <AdminLogin onSuccess={() => setAuthed(true)} />;
+
+  const logout = () => {
+    try {
+      localStorage.removeItem('ubm_admin');
+    } catch {}
+    setAuthed(false);
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', background: 'var(--paper)', paddingBottom: '80px' }}>
+      <header style={{ borderBottom: '1px solid var(--border)', padding: '20px 0' }}>
+        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--ink)' }} />
+            <span style={{ fontFamily: 'Anton', fontSize: '18px', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink)' }}>
+              Lakhan — Admin
+            </span>
+          </span>
+          <div style={{ display: 'flex', gap: '18px', alignItems: 'center' }}>
+            <a
+              href="#top"
+              onClick={() => {
+                window.location.hash = '';
+              }}
+              style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '13px', color: 'var(--ink)', textDecoration: 'none', opacity: 0.7 }}
+            >
+              ← View site
+            </a>
+            <button
+              onClick={logout}
+              style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '13px', color: 'var(--ink)', background: 'none', border: 'none', cursor: 'pointer', opacity: 0.7 }}
+            >
+              Log out
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div className="container" style={{ maxWidth: '860px', paddingTop: '32px' }}>
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '28px', flexWrap: 'wrap' }}>
+          {tabs.map((t) => (
+            <button
+              key={t.id}
+              className={tab === t.id ? 'btn-pill' : 'btn-pill btn-pill--ghost'}
+              style={{ padding: '10px 20px' }}
+              onClick={() => setTab(t.id)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {tab === 'photos' && <AdminPhotos />}
+        {tab === 'testimonials' && <AdminTestimonials />}
+        {tab === 'stats' && <AdminStats />}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
    APP
    ============================================================ */
 
 export default function App() {
+  const [hash, setHash] = useState(window.location.hash);
+
+  useEffect(() => {
+    const onHash = () => setHash(window.location.hash);
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+
+  const isAdmin = hash.replace(/^#\/?/, '').startsWith('admin');
+
+  useEffect(() => {
+    if (isAdmin) return;
+    try {
+      if (sessionStorage.getItem('ubm_visited')) return;
+      sessionStorage.setItem('ubm_visited', '1');
+    } catch {}
+    logVisit();
+  }, [isAdmin]);
+
+  if (isAdmin) return <AdminPage />;
+
   return (
     <>
       <Navbar />
@@ -1625,7 +2301,7 @@ export default function App() {
         <TestimonialsAutoScroll />
         <ProgramsSection />
         <FAQSection />
-        <ApplySection />
+        <BookSection />
         <FinalCTASection />
       </main>
       <Footer />
