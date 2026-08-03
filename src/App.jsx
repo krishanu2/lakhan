@@ -16,6 +16,8 @@ import {
 
 const CALENDLY_URL = 'https://calendly.com/unitedbymovement/30min';
 
+import heroPortrait from './assets/hero.jpg';
+
 /* ============================================================
    FUNCTIONALCOACH101.COM — Lakhan Ahuja · The Weight Loss Coach
    Visual system matched to the Dominic editorial reference:
@@ -24,7 +26,7 @@ const CALENDLY_URL = 'https://calendly.com/unitedbymovement/30min';
    ============================================================ */
 
 const images = {
-  hero: 'https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?w=1200&q=85',
+  hero: heroPortrait,
   hero_alt: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?w=1000&q=85',
   workout_home: 'https://images.unsplash.com/photo-1584735175315-9d5df23860e6?w=900&q=85',
   workout_2: 'https://images.unsplash.com/photo-1599058917765-a780eda07a3e?w=900&q=85',
@@ -372,7 +374,7 @@ function HeroSection() {
             alt="Lakhan Ahuja, The Weight Loss Coach"
             animate={{ scale: [1, 1.03] }}
             transition={{ duration: 8, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '85% center' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%' }}
           />
           <div
             style={{
