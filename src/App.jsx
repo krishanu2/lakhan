@@ -1000,10 +1000,43 @@ function GallerySection() {
 
   const trackRef = useRef(null);
   const drag = useRef({ down: false, startX: 0, startScroll: 0 });
+  const paused = useRef(false);
+  const pauseTimer = useRef(null);
+
+  const pauseFor = (ms) => {
+    paused.current = true;
+    clearTimeout(pauseTimer.current);
+    pauseTimer.current = setTimeout(() => {
+      paused.current = false;
+    }, ms);
+  };
+
+  /* Slow continuous drift; slides are rendered twice, so wrapping
+     scrollLeft at the halfway point loops seamlessly. */
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let raf;
+    const step = () => {
+      if (!paused.current && !drag.current.down) {
+        const half = el.scrollWidth / 2;
+        el.scrollLeft += 0.6;
+        if (half > 0 && el.scrollLeft >= half) el.scrollLeft -= half;
+      }
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(pauseTimer.current);
+    };
+  }, [slides]);
 
   const scrollByDir = (dir) => {
     const el = trackRef.current;
     if (!el) return;
+    pauseFor(1800);
     el.scrollBy({ left: dir * Math.min(600, el.clientWidth * 0.8), behavior: 'smooth' });
   };
 
@@ -1050,10 +1083,23 @@ function GallerySection() {
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
-        onPointerLeave={endDrag}
+        onPointerLeave={() => {
+          endDrag();
+          paused.current = false;
+        }}
+        onMouseEnter={() => {
+          paused.current = true;
+        }}
+        onTouchStart={() => pauseFor(4000)}
+        onWheel={() => pauseFor(2500)}
       >
-        {slides.map((slide) => (
-          <div key={slide.id} className="slide-cell" style={{ width: `min(${slide.width}px, 78vw)` }}>
+        {[...slides, ...slides].map((slide, i) => (
+          <div
+            key={`${slide.id}-${i}`}
+            className="slide-cell"
+            style={{ width: `min(${slide.width}px, 78vw)` }}
+            aria-hidden={i >= slides.length ? 'true' : undefined}
+          >
             <img src={slide.url} alt={slide.caption || 'From the camera roll'} loading="lazy" />
             {slide.caption ? (
               <div className="slide-caption">

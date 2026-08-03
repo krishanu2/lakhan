@@ -278,15 +278,7 @@ button {
   cursor: grabbing;
 }
 
-@media (max-width: 767px) {
-  .slide-gallery {
-    scroll-snap-type: x mandatory;
-  }
-
-  .slide-gallery > * {
-    scroll-snap-align: start;
-  }
-}
+/* No scroll-snap here: it fights the continuous auto-scroll drift */
 
 .slide-cell {
   position: relative;
