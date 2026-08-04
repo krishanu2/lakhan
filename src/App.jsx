@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useMotionValue, useTransform } from 'framer-motion';
 import {
   fetchGallery,
   addGalleryItem,
@@ -9,12 +9,17 @@ import {
   addTestimonial,
   updateTestimonial,
   deleteTestimonial,
+  fetchFaqs,
+  addFaq,
+  updateFaq,
+  deleteFaq,
+  addLead,
+  fetchLeads,
+  deleteLead,
   logVisit,
   fetchStats,
   fetchDaily,
 } from './api.js';
-
-const CALENDLY_URL = 'https://calendly.com/unitedbymovement/30min';
 
 import heroPortrait from './assets/hero.jpg';
 
@@ -81,6 +86,258 @@ function PillLink({ href, children, light, ghost, style }) {
       {children}
       <span className="btn-arrow">→</span>
     </a>
+  );
+}
+
+/* ============================================================
+   0. ENTRY GAME — "MYTH or FACT?"
+   A 20-second swipe game built from Lakhan's own myth/truth
+   content format. Swipe left = Myth, right = Fact. Real card
+   physics, instant feedback, score verdict, straight line to
+   booking. Skippable everywhere, shows once per session.
+   ============================================================ */
+
+const gameCards = [
+  { text: 'You must give up dal-chawal to lose fat', fact: false, why: 'Count it, don’t quit it — the maths still works.' },
+  { text: 'Skipping dinner speeds up fat loss', fact: false, why: 'It just moves the binge to breakfast.' },
+  { text: 'Diet plans stop working the day you stop them', fact: true, why: 'Exactly why Lakhan builds habits, not plans.' },
+  { text: '10,000 steps can be split into 3 short walks', fact: true, why: 'Same maths. Much easier life.' },
+  { text: 'Paneer is off-limits when losing weight', fact: false, why: 'One of the best high-protein Indian foods there is.' },
+];
+
+const gameVerdict = (score) => {
+  if (score === 5) return { title: 'You think in systems.', line: 'Rare. Now imagine that thinking applied to your actual week — with someone keeping the maths honest.' };
+  if (score >= 3) return { title: 'Good instincts.', line: 'The gaps you missed? They’re the exact things a diet plan never teaches — and coaching fixes.' };
+  return { title: 'The internet has been lying to you.', line: 'Not your fault — this is what most “fitness advice” gets wrong. It’s also exactly what Lakhan un-teaches.' };
+};
+
+function EntryGame({ onClose }) {
+  const [phase, setPhase] = useState('intro');
+  const [idx, setIdx] = useState(0);
+  const [score, setScore] = useState(0);
+  const [feedback, setFeedback] = useState(null);
+  const [exitDir, setExitDir] = useState(0);
+
+  const x = useMotionValue(0);
+  const rotate = useTransform(x, [-240, 240], [-14, 14]);
+  const mythStampOpacity = useTransform(x, [-110, -30], [1, 0]);
+  const factStampOpacity = useTransform(x, [30, 110], [0, 1]);
+
+  const card = gameCards[idx];
+
+  const answer = (saysFact) => {
+    if (feedback || phase !== 'play') return;
+    const correct = saysFact === card.fact;
+    if (correct) setScore((s) => s + 1);
+    setExitDir(saysFact ? 1 : -1);
+    setFeedback({ correct, why: card.why, fact: card.fact });
+    setTimeout(() => {
+      setFeedback(null);
+      setExitDir(0);
+      x.set(0);
+      if (idx + 1 >= gameCards.length) setPhase('result');
+      else setIdx((i) => i + 1);
+    }, 1600);
+  };
+
+  useEffect(() => {
+    if (phase !== 'play') return;
+    const onKey = (e) => {
+      if (e.key === 'ArrowLeft') answer(false);
+      if (e.key === 'ArrowRight') answer(true);
+      if (e.key === 'Escape') onClose(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
+  const verdict = gameVerdict(score);
+
+  return (
+    <motion.div
+      className="game-overlay"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.45 } }}
+    >
+      <div className="game-topbar">
+        <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--ink)' }} />
+          <span style={{ fontFamily: 'Anton', fontSize: '16px', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink)' }}>
+            Lakhan
+          </span>
+        </span>
+        <button className="game-skip" onClick={() => onClose(null)}>
+          Skip to website →
+        </button>
+      </div>
+
+      {phase === 'intro' && (
+        <motion.div
+          className="game-stage"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <p className="text-caption" style={{ color: 'var(--ink-60)', marginBottom: '16px' }}>
+            Before you scroll — a 20-second game
+          </p>
+          <h1 className="game-title">
+            Myth <span className="serif-accent">or</span> Fact?
+          </h1>
+          <p className="text-body" style={{ maxWidth: '400px', margin: '20px auto 0' }}>
+            5 cards about fat loss. Swipe left for myth, right for fact — and find
+            out how much the internet has been lying to you.
+          </p>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '32px', flexWrap: 'wrap' }}>
+            <button className="btn-pill" style={{ padding: '16px 32px' }} onClick={() => setPhase('play')}>
+              Play
+              <span className="btn-arrow">→</span>
+            </button>
+          </div>
+        </motion.div>
+      )}
+
+      {phase === 'play' && (
+        <div className="game-stage">
+          {/* progress dots */}
+          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '24px' }}>
+            {gameCards.map((_, i) => (
+              <span
+                key={i}
+                style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: i < idx || (i === idx && feedback) ? 'var(--ink)' : 'var(--border-strong)',
+                  transition: 'background 300ms ease',
+                }}
+              />
+            ))}
+          </div>
+
+          <div className="game-stack">
+            {/* card behind */}
+            {idx + 1 < gameCards.length && (
+              <div className="game-card game-card--under" aria-hidden="true">
+                <p className="game-card-text" style={{ opacity: 0.25 }}>{gameCards[idx + 1].text}</p>
+              </div>
+            )}
+
+            {/* top card */}
+            <motion.div
+              key={idx}
+              className="game-card"
+              drag={feedback ? false : 'x'}
+              dragSnapToOrigin
+              dragElastic={0.7}
+              style={{ x, rotate }}
+              initial={{ scale: 0.94, y: 14, opacity: 0 }}
+              animate={
+                feedback
+                  ? { x: exitDir * 640, rotate: exitDir * 18, opacity: 0, transition: { duration: 0.45, ease: 'easeIn' } }
+                  : { scale: 1, y: 0, opacity: 1, transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } }
+              }
+              onDragEnd={(e, info) => {
+                if (info.offset.x > 90 || info.velocity.x > 600) answer(true);
+                else if (info.offset.x < -90 || info.velocity.x < -600) answer(false);
+              }}
+            >
+              <motion.span className="game-stamp game-stamp--myth" style={{ opacity: mythStampOpacity }}>
+                Myth
+              </motion.span>
+              <motion.span className="game-stamp game-stamp--fact" style={{ opacity: factStampOpacity }}>
+                Fact
+              </motion.span>
+              <p className="game-card-text">{card.text}</p>
+              <p className="text-caption" style={{ color: 'var(--ink-40)', fontSize: '10px', position: 'absolute', bottom: '20px', left: 0, right: 0, textAlign: 'center' }}>
+                ← myth&nbsp;&nbsp;·&nbsp;&nbsp;fact →
+              </p>
+            </motion.div>
+          </div>
+
+          {/* feedback / controls area — fixed height so nothing jumps */}
+          <div className="game-belt">
+            <AnimatePresence mode="wait">
+              {feedback ? (
+                <motion.div
+                  key="fb"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  style={{ textAlign: 'center' }}
+                >
+                  <p
+                    style={{
+                      fontFamily: 'Anton',
+                      fontSize: '18px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                      color: feedback.correct ? 'var(--good)' : 'var(--bad)',
+                    }}
+                  >
+                    {feedback.correct ? '✓ You got it' : `✕ It’s a ${feedback.fact ? 'fact' : 'myth'}`}
+                  </p>
+                  <p className="text-accent" style={{ fontSize: '16px', color: 'var(--ink)', marginTop: '6px' }}>
+                    {feedback.why}
+                  </p>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="btns"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}
+                >
+                  <button className="btn-pill btn-pill--ghost game-choice" onClick={() => answer(false)}>
+                    ✕&nbsp; Myth
+                  </button>
+                  <button className="btn-pill game-choice" onClick={() => answer(true)}>
+                    ✓&nbsp; Fact
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      )}
+
+      {phase === 'result' && (
+        <motion.div
+          className="game-stage"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <p className="text-caption" style={{ color: 'var(--ink-60)', marginBottom: '12px' }}>Your score</p>
+          <p style={{ fontFamily: 'Anton', fontSize: 'clamp(4rem, 14vw, 6.5rem)', lineHeight: 1, color: 'var(--ink)' }}>
+            {score}<span style={{ color: 'var(--ink-40)' }}>/5</span>
+          </p>
+          <h2 className="game-title" style={{ fontSize: 'clamp(1.6rem, 5vw, 2.4rem)', marginTop: '16px' }}>
+            {verdict.title}
+          </h2>
+          <p className="text-body" style={{ maxWidth: '420px', margin: '16px auto 0' }}>{verdict.line}</p>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '32px', flexWrap: 'wrap' }}>
+            <button className="btn-pill" style={{ padding: '16px 28px' }} onClick={() => onClose('book')}>
+              Book a free call
+              <span className="btn-arrow">→</span>
+            </button>
+            <button className="btn-pill btn-pill--ghost" style={{ padding: '16px 28px' }} onClick={() => onClose(null)}>
+              Explore the website
+            </button>
+          </div>
+        </motion.div>
+      )}
+    </motion.div>
   );
 }
 
@@ -339,7 +596,7 @@ function HeroSection() {
             animate={{ opacity: 1 }}
             transition={{ delay: 1 }}
             className="service-tags"
-            style={{ marginTop: '64px', paddingTop: '32px', borderTop: '1px solid var(--border)' }}
+            style={{ marginTop: 'clamp(40px, 7vw, 64px)', paddingTop: '24px', borderTop: '1px solid var(--border)' }}
           >
             {[
               { title: 'Habit-First Coaching', desc: 'No diet plans. Nothing to start or quit.' },
@@ -1306,6 +1563,35 @@ function ProgramsSection() {
             </div>
           ))}
         </motion.div>
+
+        {/* One-time plan — single-purchase offer, no subscription */}
+        <motion.div
+          {...revealProps}
+          className="onetime-card"
+        >
+          <div style={{ maxWidth: '520px' }}>
+            <span className="text-caption" style={{ color: 'rgba(236,234,228,0.55)' }}>One-Time Plan</span>
+            <h3
+              style={{
+                fontFamily: 'Anton',
+                fontSize: 'clamp(22px, 3.5vw, 30px)',
+                color: 'var(--paper)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.02em',
+                margin: '10px 0 12px',
+              }}
+            >
+              Just need a plan, <span className="serif-accent">once?</span>
+            </h3>
+            <p style={{ fontFamily: 'Inter', fontSize: '14px', color: 'var(--paper-90)', opacity: 0.85, lineHeight: 1.6 }}>
+              A personalized nutrition or workout plan, built for you one time — no
+              subscription, no ongoing coaching. Perfect if you want to run it yourself.
+            </p>
+          </div>
+          <PillLink href="#book" light style={{ flexShrink: 0 }}>
+            Get a One-Time Plan
+          </PillLink>
+        </motion.div>
       </div>
     </section>
   );
@@ -1315,6 +1601,19 @@ function ProgramsSection() {
    11. APPLICATION / ACTION
    ============================================================ */
 
+/* 16px minimum font — smaller input text triggers auto-zoom on iOS Safari */
+const bookInputStyle = {
+  fontFamily: 'Inter',
+  fontSize: '16px',
+  color: 'var(--ink)',
+  background: 'var(--paper)',
+  border: '1.5px solid var(--border-strong)',
+  padding: '16px 22px',
+  borderRadius: '999px',
+  outline: 'none',
+  width: '100%',
+};
+
 function BookSection() {
   const [booked, setBooked] = useState(() => {
     try {
@@ -1323,43 +1622,51 @@ function BookSection() {
       return false;
     }
   });
+  const [form, setForm] = useState({ name: '', phone: '', email: '' });
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-    const onMsg = (e) => {
-      if (
-        typeof e.origin === 'string' &&
-        e.origin.includes('calendly.com') &&
-        e.data &&
-        e.data.event === 'calendly.event_scheduled'
-      ) {
-        try {
-          localStorage.setItem('ubm_booked', '1');
-        } catch {}
-        setBooked(true);
-      }
-    };
-    window.addEventListener('message', onMsg);
-    return () => window.removeEventListener('message', onMsg);
-  }, []);
+  const submit = async (e) => {
+    e.preventDefault();
+    const name = form.name.trim();
+    const phone = form.phone.trim();
+    if (!name || phone.replace(/\D/g, '').length < 8) {
+      setError('Please add your name and a valid phone number.');
+      return;
+    }
+    setBusy(true);
+    setError('');
+    try {
+      await addLead(name, phone, form.email.trim());
+      try {
+        localStorage.setItem('ubm_booked', '1');
+      } catch {}
+      setBooked(true);
+    } catch {
+      setError("That didn't go through — check your internet and try again.");
+    }
+    setBusy(false);
+  };
 
   const bookAgain = () => {
     try {
       localStorage.removeItem('ubm_booked');
     } catch {}
+    setForm({ name: '', phone: '', email: '' });
     setBooked(false);
   };
 
   return (
     <section id="book" className="section-pad" style={{ background: 'var(--paper-dim)' }}>
-      <div className="container" style={{ maxWidth: '760px', textAlign: 'center' }}>
+      <div className="container" style={{ maxWidth: '640px', textAlign: 'center' }}>
         <motion.div {...revealProps}>
           <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Let's Talk</span>
           <h2 className="text-h2" style={{ color: 'var(--ink)', margin: '16px 0 20px' }}>
             Book your <span className="serif-accent">30-minute call.</span>
           </h2>
-          <p className="text-body" style={{ marginBottom: '40px', maxWidth: '480px', marginLeft: 'auto', marginRight: 'auto' }}>
-            Pick a slot that works for you. We'll talk about where you're stuck and
-            whether this practice is the right fit — no pressure, no pitch.
+          <p className="text-body" style={{ marginBottom: '40px', maxWidth: '460px', marginLeft: 'auto', marginRight: 'auto' }}>
+            Leave your details — Lakhan will personally reach out to schedule your
+            call. No spam, no salesy follow-ups.
           </p>
         </motion.div>
 
@@ -1394,24 +1701,53 @@ function BookSection() {
               Booking done.
             </p>
             <p className="text-body" style={{ fontSize: '15px', maxWidth: '380px', margin: '0 auto 28px' }}>
-              You're on Lakhan's calendar — the invite and call link are in your
-              email. Talk soon.
+              Your details are with Lakhan — he'll personally call you to set up
+              your session, usually within a day.
             </p>
             <button onClick={bookAgain} className="btn-pill btn-pill--ghost">
-              Book another call
+              Send another enquiry
             </button>
           </motion.div>
         ) : (
-          <motion.div
+          <motion.form
             {...revealProps}
-            style={{ borderRadius: '24px', overflow: 'hidden', background: 'var(--paper)', border: '1px solid var(--border)' }}
+            onSubmit={submit}
+            style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}
           >
-            <iframe
-              title="Book a call with Lakhan"
-              src={`${CALENDLY_URL}?embed_domain=${window.location.host}&embed_type=Inline&hide_gdpr_banner=1`}
-              style={{ width: '100%', height: '720px', border: 'none', display: 'block' }}
+            <input
+              type="text"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              placeholder="Your name"
+              required
+              style={bookInputStyle}
+              aria-label="Your name"
             />
-          </motion.div>
+            <input
+              type="tel"
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              placeholder="Phone / WhatsApp number"
+              required
+              style={bookInputStyle}
+              aria-label="Phone number"
+            />
+            <input
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              placeholder="Email (optional)"
+              style={bookInputStyle}
+              aria-label="Email"
+            />
+            {error && (
+              <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--bad)', textAlign: 'center' }}>{error}</p>
+            )}
+            <button type="submit" className="btn-pill" style={{ justifyContent: 'center', marginTop: '8px' }} disabled={busy}>
+              {busy ? 'Sending…' : 'Book my call'}
+              <span className="btn-arrow">→</span>
+            </button>
+          </motion.form>
         )}
       </div>
     </section>
@@ -1422,7 +1758,7 @@ function BookSection() {
    12. FAQ
    ============================================================ */
 
-const faqs = [
+const fallbackFaqs = [
   {
     q: "Why don't you give diet plans?",
     a: "Because a diet plan is something you start and stop — and when it stops, the results stop with it. We rebuild your everyday eating habits instead, so there's nothing to quit and nothing to expire.",
@@ -1498,6 +1834,13 @@ function FAQItem({ q, a, open, onToggle }) {
 
 function FAQSection() {
   const [openIndex, setOpenIndex] = useState(0);
+  const [items, setItems] = useState(fallbackFaqs);
+
+  useEffect(() => {
+    fetchFaqs()
+      .then((rows) => rows.length && setItems(rows))
+      .catch(() => {});
+  }, []);
 
   return (
     <section style={{ background: 'var(--paper)', padding: 'clamp(64px, 10vw, 140px) 0' }}>
@@ -1509,10 +1852,11 @@ function FAQSection() {
           </h2>
         </motion.div>
         <motion.div {...revealProps} style={{ borderTop: '1px solid var(--border)' }}>
-          {faqs.map((faq, i) => (
+          {items.map((faq, i) => (
             <FAQItem
-              key={i}
-              {...faq}
+              key={faq.id || i}
+              q={faq.q}
+              a={faq.a}
               open={openIndex === i}
               onToggle={() => setOpenIndex(openIndex === i ? null : i)}
             />
@@ -2224,6 +2568,205 @@ function AdminTestimonials() {
   );
 }
 
+const EMPTY_FAQ = { q: '', a: '' };
+
+function AdminFaqs() {
+  const [items, setItems] = useState(null);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [savedId, setSavedId] = useState(null);
+  const [draft, setDraft] = useState(EMPTY_FAQ);
+
+  const load = () => {
+    fetchFaqs()
+      .then(setItems)
+      .catch(() => setError("Couldn't load the FAQs. Check your internet and refresh the page."));
+  };
+  useEffect(load, []);
+
+  const run = async (fn, id) => {
+    setBusy(true);
+    setError('');
+    try {
+      await fn();
+      load();
+      if (id) {
+        setSavedId(id);
+        setTimeout(() => setSavedId(null), 2500);
+      }
+    } catch {
+      setError("That didn't save. Check your internet and try again.");
+    }
+    setBusy(false);
+  };
+
+  const remove = (f) => {
+    if (window.confirm('Delete this question from the website? This cannot be undone.')) {
+      run(() => deleteFaq(f.id));
+    }
+  };
+
+  const edit = (id, field, value) => {
+    setItems((prev) => prev.map((it) => (it.id === id ? { ...it, [field]: value } : it)));
+  };
+
+  return (
+    <div>
+      <p className="text-body" style={{ fontSize: '14px', marginBottom: '20px' }}>
+        These are the questions and answers shown in the FAQ section of your
+        website. Changes go live for everyone as soon as you press Save.
+      </p>
+
+      <div className="admin-card" style={{ marginBottom: '24px', display: 'grid', gap: '12px' }}>
+        <p style={{ fontFamily: 'Anton', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+          Add a question
+        </p>
+        <AdminField label="Question">
+          <input
+            className="admin-input"
+            value={draft.q}
+            onChange={(e) => setDraft({ ...draft, q: e.target.value })}
+            placeholder="e.g. Do you offer plans for vegetarians?"
+          />
+        </AdminField>
+        <AdminField label="Answer">
+          <textarea
+            className="admin-input"
+            rows={3}
+            value={draft.a}
+            onChange={(e) => setDraft({ ...draft, a: e.target.value })}
+            placeholder="Write the answer the way you'd say it on a call…"
+            style={{ resize: 'vertical', borderRadius: '14px' }}
+          />
+        </AdminField>
+        <button
+          className="btn-pill"
+          style={{ justifySelf: 'start' }}
+          disabled={busy || !draft.q.trim() || !draft.a.trim()}
+          onClick={() => {
+            run(() => addFaq(draft.q.trim(), draft.a.trim()));
+            setDraft(EMPTY_FAQ);
+          }}
+        >
+          {busy ? 'Adding…' : 'Add to website'}
+        </button>
+      </div>
+
+      {error && <p className="admin-error">{error}</p>}
+      {!items && !error && <p className="text-body">Loading your FAQs…</p>}
+      {items && items.length === 0 && (
+        <p className="text-body" style={{ textAlign: 'center', padding: '32px 0' }}>
+          No questions yet — add your first one above.
+        </p>
+      )}
+
+      {items && items.map((f) => (
+        <div key={f.id} className="admin-card" style={{ marginBottom: '16px', display: 'grid', gap: '10px' }}>
+          <AdminField label="Question">
+            <input className="admin-input" value={f.q} onChange={(e) => edit(f.id, 'q', e.target.value)} />
+          </AdminField>
+          <AdminField label="Answer">
+            <textarea
+              className="admin-input"
+              rows={3}
+              value={f.a}
+              onChange={(e) => edit(f.id, 'a', e.target.value)}
+              style={{ resize: 'vertical', borderRadius: '14px' }}
+            />
+          </AdminField>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button
+              className="btn-pill"
+              style={{ padding: '10px 18px' }}
+              disabled={busy}
+              onClick={() => run(() => updateFaq(f.id, f.q, f.a), f.id)}
+            >
+              {savedId === f.id ? 'Saved ✓' : 'Save'}
+            </button>
+            <button className="btn-pill btn-pill--ghost" style={{ padding: '10px 18px' }} disabled={busy} onClick={() => remove(f)}>
+              Delete
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AdminLeads() {
+  const [items, setItems] = useState(null);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const load = () => {
+    setError('');
+    fetchLeads()
+      .then(setItems)
+      .catch(() => setError("Couldn't load the enquiries. Check your internet and press Refresh."));
+  };
+  useEffect(load, []);
+
+  const remove = async (lead) => {
+    if (!window.confirm(`Remove ${lead.name}'s enquiry? Make sure you've already contacted them.`)) return;
+    setBusy(true);
+    try {
+      await deleteLead(lead.id);
+      load();
+    } catch {
+      setError("Couldn't remove that one. Check your internet and try again.");
+    }
+    setBusy(false);
+  };
+
+  const waLink = (phone) => `https://wa.me/${phone.replace(/\D/g, '')}`;
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        <p className="text-body" style={{ fontSize: '14px' }}>
+          People who booked a call from your website land here — newest first.
+          Call or WhatsApp them, then remove the card when you're done.
+        </p>
+        <button className="btn-pill btn-pill--ghost" style={{ padding: '10px 18px' }} onClick={load}>
+          Refresh
+        </button>
+      </div>
+
+      {error && <p className="admin-error">{error}</p>}
+      {!items && !error && <p className="text-body">Loading enquiries…</p>}
+      {items && items.length === 0 && (
+        <p className="text-body" style={{ textAlign: 'center', padding: '32px 0' }}>
+          No enquiries yet — they'll appear here the moment someone books a call
+          on your website.
+        </p>
+      )}
+
+      {items && items.map((lead) => (
+        <div key={lead.id} className="admin-card" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ minWidth: 0 }}>
+            <p style={{ fontFamily: 'Anton', fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.03em', color: 'var(--ink)' }}>
+              {lead.name}
+            </p>
+            <p style={{ fontFamily: 'Inter', fontSize: '14px', color: 'var(--ink)', marginTop: '6px' }}>
+              📞 <a href={`tel:${lead.phone}`} style={{ color: 'var(--ink)' }}>{lead.phone}</a>
+              {lead.email && <span style={{ color: 'var(--ink-60)' }}> · ✉️ <a href={`mailto:${lead.email}`} style={{ color: 'var(--ink-60)' }}>{lead.email}</a></span>}
+            </p>
+            <p style={{ fontFamily: 'Inter', fontSize: '12px', color: 'var(--ink-40)', marginTop: '4px' }}>{lead.at}</p>
+          </div>
+          <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+            <a className="btn-pill" style={{ padding: '10px 16px', fontSize: '11px' }} href={waLink(lead.phone)} target="_blank" rel="noreferrer">
+              WhatsApp
+            </a>
+            <button className="btn-pill btn-pill--ghost" style={{ padding: '10px 16px', fontSize: '11px' }} disabled={busy} onClick={() => remove(lead)}>
+              Done, remove
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function AdminStats() {
   const [summary, setSummary] = useState(null);
   const [daily, setDaily] = useState(null);
@@ -2318,6 +2861,8 @@ function AdminPage() {
   const tabs = [
     { id: 'photos', label: 'Photos' },
     { id: 'testimonials', label: 'Testimonials' },
+    { id: 'faqs', label: 'FAQs' },
+    { id: 'leads', label: 'Enquiries' },
     { id: 'stats', label: 'Statistics' },
   ];
 
@@ -2376,6 +2921,8 @@ function AdminPage() {
 
         {tab === 'photos' && <AdminPhotos />}
         {tab === 'testimonials' && <AdminTestimonials />}
+        {tab === 'faqs' && <AdminFaqs />}
+        {tab === 'leads' && <AdminLeads />}
         {tab === 'stats' && <AdminStats />}
       </div>
     </div>
@@ -2388,6 +2935,13 @@ function AdminPage() {
 
 export default function App() {
   const [hash, setHash] = useState(window.location.hash);
+  const [gameOpen, setGameOpen] = useState(() => {
+    try {
+      return !sessionStorage.getItem('ubm_game_done') && !window.location.hash.replace(/^#\/?/, '').startsWith('admin');
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
     const onHash = () => setHash(window.location.hash);
@@ -2406,10 +2960,24 @@ export default function App() {
     logVisit();
   }, [isAdmin]);
 
+  const closeGame = (target) => {
+    try {
+      sessionStorage.setItem('ubm_game_done', '1');
+    } catch {}
+    setGameOpen(false);
+    if (target === 'book') {
+      setTimeout(() => {
+        const el = document.getElementById('book');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 500);
+    }
+  };
+
   if (isAdmin) return <AdminPage />;
 
   return (
     <>
+      <AnimatePresence>{gameOpen && <EntryGame onClose={closeGame} />}</AnimatePresence>
       <Navbar />
       <main>
         <HeroSection />

@@ -62,6 +62,27 @@ export const updateTestimonial = (t) =>
 
 export const deleteTestimonial = (id) => sql('DELETE FROM testimonials WHERE id = $1', [id]);
 
+/* ---------- FAQs ---------- */
+
+export const fetchFaqs = () => sql('SELECT id, q, a FROM faqs ORDER BY position, id');
+
+export const addFaq = (q, a) =>
+  sql('INSERT INTO faqs (q, a, position) VALUES ($1, $2, coalesce((SELECT max(position) FROM faqs), 0) + 1) RETURNING id', [q, a]);
+
+export const updateFaq = (id, q, a) => sql('UPDATE faqs SET q = $2, a = $3 WHERE id = $1', [id, q, a]);
+
+export const deleteFaq = (id) => sql('DELETE FROM faqs WHERE id = $1', [id]);
+
+/* ---------- Leads (booking enquiries) ---------- */
+
+export const addLead = (name, phone, email) =>
+  sql('INSERT INTO leads (name, phone, email) VALUES ($1, $2, $3) RETURNING id', [name, phone, email]);
+
+export const fetchLeads = () =>
+  sql("SELECT id, name, phone, email, to_char(created_at AT TIME ZONE 'Asia/Kolkata', 'DD Mon YYYY, HH12:MI AM') AS at FROM leads ORDER BY id DESC");
+
+export const deleteLead = (id) => sql('DELETE FROM leads WHERE id = $1', [id]);
+
 /* ---------- Visits & stats ---------- */
 
 export const logVisit = () => {
