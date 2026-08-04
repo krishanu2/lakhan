@@ -1499,6 +1499,14 @@ const programs = [
     features: ['Everything in Transformation', 'Quarterly deep reviews', 'Product guidance — down to your Blinkit cart', 'Lifetime community access'],
     highlight: false,
   },
+  {
+    name: 'One-Time Plan',
+    duration: 'Pay Once',
+    desc: 'Just need it once? Get it once — no subscription, no coaching commitment.',
+    features: ['One-time training videos', 'One-time nutrition plan videos', 'Yours to keep, forever', 'No lock-in of any kind'],
+    highlight: false,
+    price: '₹1,999',
+  },
 ];
 
 function ProgramsSection() {
@@ -1546,6 +1554,14 @@ function ProgramsSection() {
               >
                 {plan.name}
               </h3>
+              {plan.price && (
+                <p style={{ marginBottom: '14px' }}>
+                  <span style={{ fontFamily: 'Anton', fontSize: '24px', color: 'var(--ink)' }}>{plan.price}</span>
+                  <span style={{ fontFamily: 'Inter', fontWeight: 500, fontSize: '12px', color: 'var(--ink-60)', marginLeft: '8px' }}>
+                    starting price · only
+                  </span>
+                </p>
+              )}
               <p style={{ fontFamily: 'Inter', fontSize: '14px', color: 'var(--ink-60)', lineHeight: 1.6, marginBottom: '24px' }}>
                 {plan.desc}
               </p>
@@ -1564,34 +1580,6 @@ function ProgramsSection() {
           ))}
         </motion.div>
 
-        {/* One-time plan — single-purchase offer, no subscription */}
-        <motion.div
-          {...revealProps}
-          className="onetime-card"
-        >
-          <div style={{ maxWidth: '520px' }}>
-            <span className="text-caption" style={{ color: 'rgba(236,234,228,0.55)' }}>One-Time Plan</span>
-            <h3
-              style={{
-                fontFamily: 'Anton',
-                fontSize: 'clamp(22px, 3.5vw, 30px)',
-                color: 'var(--paper)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.02em',
-                margin: '10px 0 12px',
-              }}
-            >
-              Just need a plan, <span className="serif-accent">once?</span>
-            </h3>
-            <p style={{ fontFamily: 'Inter', fontSize: '14px', color: 'var(--paper-90)', opacity: 0.85, lineHeight: 1.6 }}>
-              A personalized nutrition or workout plan, built for you one time — no
-              subscription, no ongoing coaching. Perfect if you want to run it yourself.
-            </p>
-          </div>
-          <PillLink href="#book" light style={{ flexShrink: 0 }}>
-            Get a One-Time Plan
-          </PillLink>
-        </motion.div>
       </div>
     </section>
   );
