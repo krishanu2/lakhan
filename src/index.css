@@ -197,7 +197,19 @@ button {
   overflow: hidden;
 }
 
+/* Ambient drifting orbs — pure atmosphere, never above the content */
+.game-orb {
+  position: absolute;
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.16;
+  pointer-events: none;
+}
+
 .game-topbar {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -222,6 +234,8 @@ button {
 }
 
 .game-stage {
+  position: relative;
+  z-index: 1;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -268,8 +282,29 @@ button {
 }
 
 .game-card--under {
-  transform: scale(0.94) translateY(14px);
+  transform: scale(0.94) translateY(14px) rotate(-2.5deg);
   box-shadow: none;
+}
+
+/* Swipe-teaching hint — lives inside the first card, then gone for good */
+.game-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 20px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.game-hint span {
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-40);
 }
 
 .game-card-text {

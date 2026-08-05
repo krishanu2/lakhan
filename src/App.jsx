@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useMotionValue, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import {
   fetchGallery,
   addGalleryItem,
@@ -111,22 +111,70 @@ const gameVerdict = (score) => {
   return { title: 'The internet has been lying to you.', line: 'Not your fault — this is what most “fitness advice” gets wrong. It’s also exactly what Lakhan un-teaches.' };
 };
 
+function GameOrbs({ reduceMotion }) {
+  if (reduceMotion) return null;
+  return (
+    <>
+      <motion.div
+        className="game-orb"
+        style={{ width: '420px', height: '420px', background: 'var(--ink)', top: '-14%', left: '-12%' }}
+        animate={{ x: [0, 36, 0], y: [0, 26, 0] }}
+        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="game-orb"
+        style={{ width: '340px', height: '340px', background: 'var(--border-strong)', bottom: '-16%', right: '-8%' }}
+        animate={{ x: [0, -30, 0], y: [0, -34, 0] }}
+        transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+      />
+    </>
+  );
+}
+
+function GameButton({ children, onClick, className, style, disabled, type = 'button' }) {
+  return (
+    <motion.button
+      type={type}
+      className={className}
+      style={style}
+      onClick={onClick}
+      disabled={disabled}
+      whileHover={disabled ? undefined : { y: -2 }}
+      whileTap={disabled ? undefined : { scale: 0.95, y: 0 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+    >
+      {children}
+    </motion.button>
+  );
+}
+
 function EntryGame({ onClose }) {
   const [phase, setPhase] = useState('intro');
   const [idx, setIdx] = useState(0);
   const [score, setScore] = useState(0);
+  const [displayScore, setDisplayScore] = useState(0);
   const [feedback, setFeedback] = useState(null);
   const [exitDir, setExitDir] = useState(0);
+  const [interacted, setInteracted] = useState(false);
+  const [reduceMotion] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
 
   const x = useMotionValue(0);
-  const rotate = useTransform(x, [-240, 240], [-14, 14]);
+  const rawRotate = useTransform(x, [-240, 240], [-14, 14]);
+  const rotate = useSpring(rawRotate, { stiffness: 400, damping: 32 });
+  const rawScale = useTransform(x, [-240, 0, 240], [1.035, 1, 1.035]);
+  const dragScale = useSpring(rawScale, { stiffness: 400, damping: 32 });
   const mythStampOpacity = useTransform(x, [-110, -30], [1, 0]);
+  const mythStampScale = useTransform(x, [-110, -30], [1, 0.55]);
   const factStampOpacity = useTransform(x, [30, 110], [0, 1]);
+  const factStampScale = useTransform(x, [30, 110], [0.55, 1]);
 
   const card = gameCards[idx];
 
   const answer = (saysFact) => {
     if (feedback || phase !== 'play') return;
+    setInteracted(true);
     const correct = saysFact === card.fact;
     if (correct) setScore((s) => s + 1);
     setExitDir(saysFact ? 1 : -1);
@@ -158,7 +206,28 @@ function EntryGame({ onClose }) {
     };
   }, []);
 
+  /* Score counts up on the result screen instead of snapping in — small
+     touch, reads as far more satisfying than a static number. */
+  useEffect(() => {
+    if (phase !== 'result') return;
+    if (reduceMotion) {
+      setDisplayScore(score);
+      return;
+    }
+    let raf;
+    const start = performance.now();
+    const duration = 700;
+    const step = (t) => {
+      const p = Math.min((t - start) / duration, 1);
+      setDisplayScore(Math.round(p * score));
+      if (p < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [phase, score, reduceMotion]);
+
   const verdict = gameVerdict(score);
+  const showHint = phase === 'play' && idx === 0 && !interacted && !feedback;
 
   return (
     <motion.div
@@ -166,6 +235,8 @@ function EntryGame({ onClose }) {
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.45 } }}
     >
+      <GameOrbs reduceMotion={reduceMotion} />
+
       <div className="game-topbar">
         <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--ink)' }} />
@@ -185,22 +256,44 @@ function EntryGame({ onClose }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="text-caption" style={{ color: 'var(--ink-60)', marginBottom: '16px' }}>
+          <motion.p
+            className="text-caption"
+            style={{ color: 'var(--ink-60)', marginBottom: '16px' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.1, duration: 0.4 }}
+          >
             Before you scroll — a 20-second game
-          </p>
-          <h1 className="game-title">
+          </motion.p>
+          <motion.h1
+            className="game-title"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.18, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
             Myth <span className="serif-accent">or</span> Fact?
-          </h1>
-          <p className="text-body" style={{ maxWidth: '400px', margin: '20px auto 0' }}>
+          </motion.h1>
+          <motion.p
+            className="text-body"
+            style={{ maxWidth: '400px', margin: '20px auto 0' }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.32, duration: 0.5 }}
+          >
             5 cards about fat loss. Swipe left for myth, right for fact — and find
             out how much the internet has been lying to you.
-          </p>
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '32px', flexWrap: 'wrap' }}>
-            <button className="btn-pill" style={{ padding: '16px 32px' }} onClick={() => setPhase('play')}>
+          </motion.p>
+          <motion.div
+            style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '32px', flexWrap: 'wrap' }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.46, duration: 0.5 }}
+          >
+            <GameButton className="btn-pill" style={{ padding: '16px 32px' }} onClick={() => setPhase('play')}>
               Play
               <span className="btn-arrow">→</span>
-            </button>
-          </div>
+            </GameButton>
+          </motion.div>
         </motion.div>
       )}
 
@@ -209,8 +302,10 @@ function EntryGame({ onClose }) {
           {/* progress dots */}
           <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '24px' }}>
             {gameCards.map((_, i) => (
-              <span
+              <motion.span
                 key={i}
+                animate={{ scale: i === idx && !feedback ? 1.35 : 1 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 26 }}
                 style={{
                   width: '8px',
                   height: '8px',
@@ -223,7 +318,7 @@ function EntryGame({ onClose }) {
           </div>
 
           <div className="game-stack">
-            {/* card behind */}
+            {/* card behind — subtle fan for a "deck" feel */}
             {idx + 1 < gameCards.length && (
               <div className="game-card game-card--under" aria-hidden="true">
                 <p className="game-card-text" style={{ opacity: 0.25 }}>{gameCards[idx + 1].text}</p>
@@ -237,28 +332,46 @@ function EntryGame({ onClose }) {
               drag={feedback ? false : 'x'}
               dragSnapToOrigin
               dragElastic={0.7}
-              style={{ x, rotate }}
-              initial={{ scale: 0.94, y: 14, opacity: 0 }}
+              style={{ x, rotate, scale: feedback ? 1 : dragScale }}
+              initial={{ y: 18, opacity: 0 }}
               animate={
                 feedback
                   ? { x: exitDir * 640, rotate: exitDir * 18, opacity: 0, transition: { duration: 0.45, ease: 'easeIn' } }
-                  : { scale: 1, y: 0, opacity: 1, transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } }
+                  : { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 26 } }
               }
+              onDragStart={() => setInteracted(true)}
               onDragEnd={(e, info) => {
                 if (info.offset.x > 90 || info.velocity.x > 600) answer(true);
                 else if (info.offset.x < -90 || info.velocity.x < -600) answer(false);
               }}
             >
-              <motion.span className="game-stamp game-stamp--myth" style={{ opacity: mythStampOpacity }}>
+              <motion.span className="game-stamp game-stamp--myth" style={{ opacity: mythStampOpacity, scale: mythStampScale }}>
                 Myth
               </motion.span>
-              <motion.span className="game-stamp game-stamp--fact" style={{ opacity: factStampOpacity }}>
+              <motion.span className="game-stamp game-stamp--fact" style={{ opacity: factStampOpacity, scale: factStampScale }}>
                 Fact
               </motion.span>
               <p className="game-card-text">{card.text}</p>
-              <p className="text-caption" style={{ color: 'var(--ink-40)', fontSize: '10px', position: 'absolute', bottom: '20px', left: 0, right: 0, textAlign: 'center' }}>
-                ← myth&nbsp;&nbsp;·&nbsp;&nbsp;fact →
-              </p>
+
+              {/* swipe hint — teaches the gesture on card one, then gone for good */}
+              <AnimatePresence>
+                {showHint && (
+                  <motion.div
+                    className="game-hint"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0, transition: { duration: 0.25 } }}
+                    transition={{ delay: 0.6, duration: 0.4 }}
+                  >
+                    <motion.span
+                      animate={reduceMotion ? {} : { x: [-10, 10, -10] }}
+                      transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+                    >
+                      ← swipe →
+                    </motion.span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           </div>
 
@@ -268,10 +381,10 @@ function EntryGame({ onClose }) {
               {feedback ? (
                 <motion.div
                   key="fb"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 10, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25 }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 24 }}
                   style={{ textAlign: 'center' }}
                 >
                   <p
@@ -298,12 +411,12 @@ function EntryGame({ onClose }) {
                   transition={{ duration: 0.25 }}
                   style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}
                 >
-                  <button className="btn-pill btn-pill--ghost game-choice" onClick={() => answer(false)}>
+                  <GameButton className="btn-pill btn-pill--ghost game-choice" onClick={() => answer(false)}>
                     ✕&nbsp; Myth
-                  </button>
-                  <button className="btn-pill game-choice" onClick={() => answer(true)}>
+                  </GameButton>
+                  <GameButton className="btn-pill game-choice" onClick={() => answer(true)}>
                     ✓&nbsp; Fact
-                  </button>
+                  </GameButton>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -319,22 +432,46 @@ function EntryGame({ onClose }) {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         >
           <p className="text-caption" style={{ color: 'var(--ink-60)', marginBottom: '12px' }}>Your score</p>
-          <p style={{ fontFamily: 'Anton', fontSize: 'clamp(4rem, 14vw, 6.5rem)', lineHeight: 1, color: 'var(--ink)' }}>
-            {score}<span style={{ color: 'var(--ink-40)' }}>/5</span>
-          </p>
-          <h2 className="game-title" style={{ fontSize: 'clamp(1.6rem, 5vw, 2.4rem)', marginTop: '16px' }}>
+          <motion.p
+            style={{ fontFamily: 'Anton', fontSize: 'clamp(4rem, 14vw, 6.5rem)', lineHeight: 1, color: 'var(--ink)' }}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 16, delay: 0.05 }}
+          >
+            {displayScore}<span style={{ color: 'var(--ink-40)' }}>/5</span>
+          </motion.p>
+          <motion.h2
+            className="game-title"
+            style={{ fontSize: 'clamp(1.6rem, 5vw, 2.4rem)', marginTop: '16px' }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 0.45 }}
+          >
             {verdict.title}
-          </h2>
-          <p className="text-body" style={{ maxWidth: '420px', margin: '16px auto 0' }}>{verdict.line}</p>
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '32px', flexWrap: 'wrap' }}>
-            <button className="btn-pill" style={{ padding: '16px 28px' }} onClick={() => onClose('book')}>
+          </motion.h2>
+          <motion.p
+            className="text-body"
+            style={{ maxWidth: '420px', margin: '16px auto 0' }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.48, duration: 0.45 }}
+          >
+            {verdict.line}
+          </motion.p>
+          <motion.div
+            style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '32px', flexWrap: 'wrap' }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.62, duration: 0.45 }}
+          >
+            <GameButton className="btn-pill" style={{ padding: '16px 28px' }} onClick={() => onClose('book')}>
               Book a free call
               <span className="btn-arrow">→</span>
-            </button>
-            <button className="btn-pill btn-pill--ghost" style={{ padding: '16px 28px' }} onClick={() => onClose(null)}>
+            </GameButton>
+            <GameButton className="btn-pill btn-pill--ghost" style={{ padding: '16px 28px' }} onClick={() => onClose(null)}>
               Explore the website
-            </button>
-          </div>
+            </GameButton>
+          </motion.div>
         </motion.div>
       )}
     </motion.div>
@@ -1636,14 +1773,6 @@ function BookSection() {
     setBusy(false);
   };
 
-  const bookAgain = () => {
-    try {
-      localStorage.removeItem('ubm_booked');
-    } catch {}
-    setForm({ name: '', phone: '', email: '' });
-    setBooked(false);
-  };
-
   return (
     <section id="book" className="section-pad" style={{ background: 'var(--paper-dim)' }}>
       <div className="container" style={{ maxWidth: '640px', textAlign: 'center' }}>
@@ -1688,13 +1817,10 @@ function BookSection() {
             <p style={{ fontFamily: 'Anton', fontSize: '26px', color: 'var(--ink)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
               Booking done.
             </p>
-            <p className="text-body" style={{ fontSize: '15px', maxWidth: '380px', margin: '0 auto 28px' }}>
+            <p className="text-body" style={{ fontSize: '15px', maxWidth: '380px', margin: '0 auto' }}>
               Your details are with Lakhan — he'll personally call you to set up
               your session, usually within a day.
             </p>
-            <button onClick={bookAgain} className="btn-pill btn-pill--ghost">
-              Send another enquiry
-            </button>
           </motion.div>
         ) : (
           <motion.form

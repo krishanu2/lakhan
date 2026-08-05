@@ -75,8 +75,19 @@ export const deleteFaq = (id) => sql('DELETE FROM faqs WHERE id = $1', [id]);
 
 /* ---------- Leads (booking enquiries) ---------- */
 
+/* One person, one query: skip the insert if this phone number (digits
+   only) already has an enquiry on file, so the admin never sees the
+   same person twice even from a different device or browser. */
 export const addLead = (name, phone, email) =>
-  sql('INSERT INTO leads (name, phone, email) VALUES ($1, $2, $3) RETURNING id', [name, phone, email]);
+  sql(
+    `INSERT INTO leads (name, phone, email)
+     SELECT $1, $2, $3
+     WHERE NOT EXISTS (
+       SELECT 1 FROM leads WHERE regexp_replace(phone, '\\D', '', 'g') = regexp_replace($2, '\\D', '', 'g')
+     )
+     RETURNING id`,
+    [name, phone, email]
+  );
 
 export const fetchLeads = () =>
   sql("SELECT id, name, phone, email, to_char(created_at AT TIME ZONE 'Asia/Kolkata', 'DD Mon YYYY, HH12:MI AM') AS at FROM leads ORDER BY id DESC");
