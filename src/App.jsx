@@ -193,7 +193,7 @@ function EntryGame({ onClose }) {
     const onKey = (e) => {
       if (e.key === 'ArrowLeft') answer(false);
       if (e.key === 'ArrowRight') answer(true);
-      if (e.key === 'Escape') onClose(null);
+      if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -229,13 +229,34 @@ function EntryGame({ onClose }) {
   const verdict = gameVerdict(score);
   const showHint = phase === 'play' && idx === 0 && !interacted && !feedback;
 
+  /* Finishing the game earns a staged reveal: a quick dark flash, then the
+     whole overlay lifts away like a curtain. Skipping stays instant — the
+     reward is only for people who actually played. */
+  const [leaving, setLeaving] = useState(false);
+  const finish = () => {
+    if (leaving) return;
+    setLeaving(true);
+    setTimeout(onClose, reduceMotion ? 0 : 260);
+  };
+
   return (
     <motion.div
       className="game-overlay"
-      initial={{ opacity: 1 }}
-      exit={{ opacity: 0, transition: { duration: 0.45 } }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { duration: 0.35 } }}
+      exit={{ y: '-100%', transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } }}
     >
       <GameOrbs reduceMotion={reduceMotion} />
+
+      <AnimatePresence>
+        {leaving && (
+          <motion.div
+            className="game-flash"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.22, ease: 'easeOut' } }}
+          />
+        )}
+      </AnimatePresence>
 
       <div className="game-topbar">
         <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -244,7 +265,7 @@ function EntryGame({ onClose }) {
             Lakhan
           </span>
         </span>
-        <button className="game-skip" onClick={() => onClose(null)}>
+        <button className="game-skip" onClick={() => onClose()}>
           Skip to website →
         </button>
       </div>
@@ -459,17 +480,14 @@ function EntryGame({ onClose }) {
             {verdict.line}
           </motion.p>
           <motion.div
-            style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '32px', flexWrap: 'wrap' }}
+            style={{ marginTop: '32px' }}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.62, duration: 0.45 }}
           >
-            <GameButton className="btn-pill" style={{ padding: '16px 28px' }} onClick={() => onClose('book')}>
-              Book a free call
+            <GameButton className="btn-pill" style={{ padding: '18px 40px' }} onClick={finish}>
+              Step Inside
               <span className="btn-arrow">→</span>
-            </GameButton>
-            <GameButton className="btn-pill btn-pill--ghost" style={{ padding: '16px 28px' }} onClick={() => onClose(null)}>
-              Explore the website
             </GameButton>
           </motion.div>
         </motion.div>
@@ -3070,17 +3088,18 @@ export default function App() {
     logVisit();
   }, [isAdmin]);
 
-  const closeGame = (target) => {
+  /* Bumped every time the game hands off to the site, so the hero remounts
+     and its entrance replays right as the curtain lifts — the payoff feels
+     staged for the person who just played, not just "game closes, page
+     was already sitting there." */
+  const [heroReplay, setHeroReplay] = useState(0);
+
+  const closeGame = () => {
     try {
       sessionStorage.setItem('ubm_game_done', '1');
     } catch {}
+    setHeroReplay((k) => k + 1);
     setGameOpen(false);
-    if (target === 'book') {
-      setTimeout(() => {
-        const el = document.getElementById('book');
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 500);
-    }
   };
 
   if (isAdmin) return <AdminPage />;
@@ -3090,7 +3109,7 @@ export default function App() {
       <AnimatePresence>{gameOpen && <EntryGame onClose={closeGame} />}</AnimatePresence>
       <Navbar />
       <main>
-        <HeroSection />
+        <HeroSection key={heroReplay} />
         <CredentialStrip />
         <StatsSection />
         <ProcessSection />
