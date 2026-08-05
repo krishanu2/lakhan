@@ -1740,13 +1740,12 @@ const bookInputStyle = {
 };
 
 function BookSection() {
-  const [booked, setBooked] = useState(() => {
-    try {
-      return localStorage.getItem('ubm_booked') === '1';
-    } catch {
-      return false;
-    }
-  });
+  /* Not persisted to localStorage on purpose: whether someone can submit
+     again is decided by the backend (addLead silently no-ops while their
+     last enquiry is still open, and quietly accepts a new one the moment
+     Lakhan marks the old one done) — never by a permanent flag on their
+     browser. The person never sees or needs to know which case applied. */
+  const [booked, setBooked] = useState(false);
   const [form, setForm] = useState({ name: '', phone: '', email: '' });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -1763,9 +1762,6 @@ function BookSection() {
     setError('');
     try {
       await addLead(name, phone, form.email.trim());
-      try {
-        localStorage.setItem('ubm_booked', '1');
-      } catch {}
       setBooked(true);
     } catch {
       setError("That didn't go through — check your internet and try again.");
