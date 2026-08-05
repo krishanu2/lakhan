@@ -98,7 +98,7 @@ function PillLink({ href, children, light, ghost, style }) {
    ============================================================ */
 
 const gameCards = [
-  { text: 'You must give up dal-chawal to lose fat', fact: false, why: 'Count it, don’t quit it — the maths still works.' },
+  { text: 'You must give up dal-chawal to lose fat', fact: false, why: 'Count it, don’t quit it. The maths still works.' },
   { text: 'Skipping dinner speeds up fat loss', fact: false, why: 'It just moves the binge to breakfast.' },
   { text: 'Diet plans stop working the day you stop them', fact: true, why: 'Exactly why Lakhan builds habits, not plans.' },
   { text: '10,000 steps can be split into 3 short walks', fact: true, why: 'Same maths. Much easier life.' },
@@ -106,9 +106,9 @@ const gameCards = [
 ];
 
 const gameVerdict = (score) => {
-  if (score === 5) return { title: 'You think in systems.', line: 'Rare. Now imagine that thinking applied to your actual week — with someone keeping the maths honest.' };
-  if (score >= 3) return { title: 'Good instincts.', line: 'The gaps you missed? They’re the exact things a diet plan never teaches — and coaching fixes.' };
-  return { title: 'The internet has been lying to you.', line: 'Not your fault — this is what most “fitness advice” gets wrong. It’s also exactly what Lakhan un-teaches.' };
+  if (score === 5) return { title: 'You think in systems.', line: 'Rare. Now imagine that thinking applied to your actual week, with someone keeping the maths honest.' };
+  if (score >= 3) return { title: 'Good instincts.', line: 'The gaps you missed? They’re the exact things a diet plan never teaches, and coaching fixes.' };
+  return { title: 'The internet has been lying to you.', line: 'Not your fault. This is what most “fitness advice” gets wrong. It’s also exactly what Lakhan un-teaches.' };
 };
 
 function GameOrbs({ reduceMotion }) {
@@ -284,7 +284,7 @@ function EntryGame({ onClose }) {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.1, duration: 0.4 }}
           >
-            Before you scroll — a 20-second game
+            Before you scroll, a 20-second game
           </motion.p>
           <motion.h1
             className="game-title"
@@ -301,7 +301,7 @@ function EntryGame({ onClose }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.32, duration: 0.5 }}
           >
-            5 cards about fat loss. Swipe left for myth, right for fact — and find
+            5 cards about fat loss. Swipe left for myth, right for fact, and find
             out how much the internet has been lying to you.
           </motion.p>
           <motion.div
@@ -731,7 +731,7 @@ function HeroSection() {
             className="text-body"
             style={{ marginTop: '28px', maxWidth: '420px' }}
           >
-            Diet plans end — and their results end with them. I coach habits
+            Diet plans end, and their results end with them. I coach habits
             instead: your food, your routine, rebuilt to last. Built around
             dal-chawal, not despite it.
           </motion.p>
@@ -909,7 +909,7 @@ function StatsSection() {
             give you.
           </h2>
           <p className="text-body" style={{ marginTop: '24px', maxWidth: '440px' }}>
-            Every number here comes from habit tracking — clean days counted
+            Every number here comes from habit tracking: clean days counted
             honestly, week after week. Most clients lose 4–8 kg in three months,
             and keep it off, because nothing here expires.
           </p>
@@ -937,7 +937,7 @@ function ProcessSection() {
     {
       num: '01',
       title: 'Build the Habits',
-      desc: 'No diet plan to follow — we rebuild how you already eat, one habit at a time. Dal-chawal stays; the results come anyway.',
+      desc: 'No diet plan to follow. We rebuild how you already eat, one habit at a time. Dal-chawal stays; the results come anyway.',
     },
     {
       num: '02',
@@ -947,7 +947,7 @@ function ProcessSection() {
     {
       num: '03',
       title: 'Track What Sticks',
-      desc: 'Habit tracking, week after week — clean days, movement, consistency. That’s how clients average 4–8 kg in three months, and keep it off.',
+      desc: 'Habit tracking, week after week: clean days, movement, consistency. That’s how clients average 4–8 kg in three months, and keep it off.',
     },
   ];
 
@@ -966,7 +966,7 @@ function ProcessSection() {
             </h2>
             <p className="text-body" style={{ marginBottom: '40px', maxWidth: '440px' }}>
               Not a diet plan you'll start and quit. A habit practice built into
-              your real life — the same one used with 100+ clients.
+              your real life, the same one used with 100+ clients.
             </p>
           </motion.div>
 
@@ -1018,10 +1018,10 @@ function ProcessSection() {
    ============================================================ */
 
 const differences = [
-  { them: 'A diet-plan PDF on day one', us: 'No diet plan — habits built into how you already eat' },
+  { them: 'A diet-plan PDF on day one', us: 'No diet plan: habits built into how you already eat' },
   { them: '"Did you follow the plan?" texts', us: 'A 45-minute personal video call every 7–10 days' },
   { them: 'One workout chart, repeated for a month', us: 'A fresh 45-minute workout video, every single day' },
-  { them: 'Generic "avoid junk food" advice', us: 'Recipes, supplements — even what to pick on Blinkit' },
+  { them: 'Generic "avoid junk food" advice', us: 'Recipes, supplements, even what to pick on Blinkit' },
   { them: 'Results that end when the plan ends', us: 'Habits that stay long after coaching does' },
 ];
 
@@ -1092,7 +1092,7 @@ const mythTruths = [
   { myth: 'Roti is worse than bread for fat loss', truth: 'Portion and count matter more than the carb source', tag: 'MYTH', color: 'bad' },
   { myth: 'You need 10,000 steps in one go', truth: '3 walks of 3,300 steps works identically', tag: 'TRUTH', color: 'good' },
   { myth: 'Paneer is off-limits on a cut', truth: "It's one of the best high-protein Indian foods available", tag: 'TRUTH', color: 'good' },
-  { myth: 'Cheat days ruin your progress', truth: 'One meal ≠ one week — the math survives it', tag: 'TRUTH', color: 'good' },
+  { myth: 'Cheat days ruin your progress', truth: 'One meal ≠ one week. The math survives it', tag: 'TRUTH', color: 'good' },
   { myth: 'Fat loss requires giving up dal-chawal', truth: 'It requires counting it, not quitting it', tag: 'TRUTH', color: 'good' },
 ];
 
@@ -1172,7 +1172,7 @@ const quizQuestions = [
       { text: 'Having rice for lunch', correct: false },
       { text: 'Drinking chai with sugar', correct: false },
     ],
-    explain: "It's rarely the meal you planned — it's the 300 unplanned calories from snacking you didn't log.",
+    explain: "It's rarely the meal you planned. It's the 300 unplanned calories from snacking you didn't log.",
   },
   {
     q: "What's the fastest way to hit 10,000 steps daily?",
@@ -1182,7 +1182,7 @@ const quizQuestions = [
       { text: 'Buy a treadmill', correct: false },
       { text: 'Take stairs only', correct: false },
     ],
-    explain: "You don't need an hour to complete 10,000 steps — you need to stop waiting for the 'perfect' time to walk.",
+    explain: "You don't need an hour to complete 10,000 steps. You need to stop waiting for the 'perfect' time to walk.",
   },
   {
     q: "A client with thyroid issues asks about fat loss. What's true?",
@@ -1192,17 +1192,17 @@ const quizQuestions = [
       { text: 'They need to eliminate carbs completely', correct: false },
       { text: 'Only medication can help', correct: false },
     ],
-    explain: 'Thyroid conditions change the pace, not the fundamentals — this is exactly why systems matter more than willpower.',
+    explain: 'Thyroid conditions change the pace, not the fundamentals. This is exactly why systems matter more than willpower.',
   },
   {
     q: 'Best way to handle a wedding season / festival week?',
     options: [
       { text: 'Skip all events to stay on track', correct: false },
-      { text: 'Plan around it — eat lighter before/after, enjoy the event itself', correct: true },
+      { text: 'Plan around it: eat lighter before/after, enjoy the event itself', correct: true },
       { text: 'Fast the entire day of the event', correct: false },
       { text: 'Give up and restart after the season', correct: false },
     ],
-    explain: "Ithaca isn't a straight line — the real reward is building a system flexible enough to survive real life.",
+    explain: "Ithaca isn't a straight line. The real reward is building a system flexible enough to survive real life.",
   },
 ];
 
@@ -1366,13 +1366,13 @@ function QuizSection() {
                   {score === quizQuestions.length
                     ? 'You think in systems already.'
                     : score >= 2
-                      ? 'Good instincts — the gaps are fixable.'
+                      ? 'Good instincts. The gaps are fixable.'
                       : 'The internet has been lying to you.'}
                 </h3>
                 <p className="text-body" style={{ maxWidth: '400px', margin: '0 auto 28px' }}>
                   {score === quizQuestions.length
-                    ? 'Now imagine that thinking applied to your actual week — with real numbers and someone keeping the math honest.'
-                    : 'None of this is about willpower. It’s about knowing which lever actually moves the outcome — that’s what coaching fixes.'}
+                    ? 'Now imagine that thinking applied to your actual week, with real numbers and someone keeping the math honest.'
+                    : 'None of this is about willpower. It’s about knowing which lever actually moves the outcome. That’s what coaching fixes.'}
                 </p>
                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
                   <PillLink href="#book">Book a Call</PillLink>
@@ -1531,14 +1531,14 @@ function GallerySection() {
    ============================================================ */
 
 const testimonialsSetA = [
-  { name: 'Rohit K.', condition: 'Thyroid Managed', result: '14 kg lost in 7 months', quote: 'You always make sure to convey how weight loss can be achieved with simple discipline — not restriction.', img: images.t1 },
+  { name: 'Rohit K.', condition: 'Thyroid Managed', result: '14 kg lost in 7 months', quote: 'You always make sure to convey how weight loss can be achieved with simple discipline, not restriction.', img: images.t1 },
   { name: 'Ananya P.', condition: 'PCOS Improved', result: 'Cycle regularized, 9 kg lost', quote: "First coach who didn't ask me to give up rice. Turns out I didn't need to.", img: images.t2 },
   { name: 'Vikram S.', condition: 'Pre-Diabetes Reversed', result: 'HbA1c normalized', quote: 'The Odyssey post about the Lotus-Eaters is literally how I think about cheat meals now.', img: images.t3 },
 ];
 
 const testimonialsSetB = [
   { name: 'Priya M.', condition: 'All-or-Nothing Mindset Fixed', result: '11 kg, sustained 8 months', quote: 'I stopped treating one bad meal like a failed week. That mindset shift did more than any meal plan.', img: images.t4 },
-  { name: 'Karan D.', condition: 'Desk-Job Weight Loss', result: '16 kg in 9 months', quote: '3 walks of 3,300 steps instead of one long walk — sounds small, changed everything.', img: images.t5 },
+  { name: 'Karan D.', condition: 'Desk-Job Weight Loss', result: '16 kg in 9 months', quote: '3 walks of 3,300 steps instead of one long walk. Sounds small, changed everything.', img: images.t5 },
   { name: 'Meera J.', condition: 'Post-Pregnancy Recomposition', result: '13 kg, energy restored', quote: 'Real dal-chawal, real portions, real math. No fads. It actually worked.', img: images.t6 },
 ];
 
@@ -1636,14 +1636,14 @@ const programs = [
   {
     name: 'Foundation',
     duration: '3 Months',
-    desc: 'Rebuild your everyday eating habits — and watch the first 4–8 kg go.',
-    features: ['Habit-first coaching — zero diet plans', '45-min video consult every 7–10 days', 'Weekly habit tracking', 'A fresh 45-min workout video daily'],
+    desc: 'Rebuild your everyday eating habits, and watch the first 4–8 kg go.',
+    features: ['Habit-first coaching: zero diet plans', '45-min video consult every 7–10 days', 'Weekly habit tracking', 'A fresh 45-min workout video daily'],
     highlight: false,
   },
   {
     name: 'Transformation',
     duration: '6 Months',
-    desc: "The full practice — the program behind every result you've read above.",
+    desc: "The full practice: the program behind every result you've read above.",
     features: ['Everything in Foundation', 'Travel & eating-out strategy calls', 'Home or gym workout plans', 'Recipes & supplement guidance', 'Direct WhatsApp access'],
     highlight: true,
   },
@@ -1651,13 +1651,13 @@ const programs = [
     name: 'Sustained',
     duration: '12 Months',
     desc: 'For deeper lifestyle change that needs longer, careful pacing.',
-    features: ['Everything in Transformation', 'Quarterly deep reviews', 'Product guidance — down to your Blinkit cart', 'Lifetime community access'],
+    features: ['Everything in Transformation', 'Quarterly deep reviews', 'Product guidance, down to your Blinkit cart', 'Lifetime community access'],
     highlight: false,
   },
   {
     name: 'One-Time Plan',
     duration: 'Pay Once',
-    desc: 'Just need it once? Get it once — no subscription, no coaching commitment.',
+    desc: 'Just need it once? Get it once. No subscription, no coaching commitment.',
     features: ['One-time training videos', 'One-time nutrition plan videos', 'Yours to keep, forever', 'No lock-in of any kind'],
     highlight: false,
     price: '₹1,999',
@@ -1782,7 +1782,7 @@ function BookSection() {
       await addLead(name, phone, form.email.trim());
       setBooked(true);
     } catch {
-      setError("That didn't go through — check your internet and try again.");
+      setError("That didn't go through. Check your internet and try again.");
     }
     setBusy(false);
   };
@@ -1796,7 +1796,7 @@ function BookSection() {
             Book your <span className="serif-accent">30-minute call.</span>
           </h2>
           <p className="text-body" style={{ marginBottom: '40px', maxWidth: '460px', marginLeft: 'auto', marginRight: 'auto' }}>
-            Leave your details — Lakhan will personally reach out to schedule your
+            Leave your details. Lakhan will personally reach out to schedule your
             call. No spam, no salesy follow-ups.
           </p>
         </motion.div>
@@ -1832,7 +1832,7 @@ function BookSection() {
               Booking done.
             </p>
             <p className="text-body" style={{ fontSize: '15px', maxWidth: '380px', margin: '0 auto' }}>
-              Your details are with Lakhan — he'll personally call you to set up
+              Your details are with Lakhan. He'll personally call you to set up
               your session, usually within a day.
             </p>
           </motion.div>
@@ -1889,23 +1889,23 @@ function BookSection() {
 const fallbackFaqs = [
   {
     q: "Why don't you give diet plans?",
-    a: "Because a diet plan is something you start and stop — and when it stops, the results stop with it. We rebuild your everyday eating habits instead, so there's nothing to quit and nothing to expire.",
+    a: "Because a diet plan is something you start and stop, and when it stops, the results stop with it. We rebuild your everyday eating habits instead, so there's nothing to quit and nothing to expire.",
   },
   {
     q: 'Do I have to give up dal-chawal / rice / roti?',
-    a: 'No. The habits are built around the food you already eat — real Indian food, portioned and timed sensibly, not replaced with a Western meal plan.',
+    a: 'No. The habits are built around the food you already eat: real Indian food, portioned and timed sensibly, not replaced with a Western meal plan.',
   },
   {
     q: 'What results can I realistically expect?',
-    a: 'Most clients lose 4–8 kg in the 3-month program — through habit changes that hold, not water-weight crashes. Slower than a fad, permanent unlike one.',
+    a: 'Most clients lose 4–8 kg in the 3-month program: through habit changes that hold, not water-weight crashes. Slower than a fad, permanent unlike one.',
   },
   {
-    q: 'What about workouts — I have no gym / no time?',
-    a: "You get a fresh 45-minute on-demand workout video every day — strength, cardio, flexibility, and mobility, doable at home on your schedule. Prefer the gym? You get a gym plan instead.",
+    q: 'What about workouts: no gym, no time?',
+    a: "You get a fresh 45-minute on-demand workout video every day: strength, cardio, flexibility, and mobility, doable at home on your schedule. Prefer the gym? You get a gym plan instead.",
   },
   {
     q: 'What if I travel a lot or eat out often?',
-    a: "That's exactly what the 45-minute video consults are for — travel-week strategy, what to order out, what to skip. The system flexes, it doesn't break.",
+    a: "That's exactly what the 45-minute video consults are for: travel-week strategy, what to order out, what to skip. The system flexes, it doesn't break.",
   },
   {
     q: 'How is this different from other coaches?',
@@ -2243,7 +2243,7 @@ function ImgPreview({ url, size = 120 }) {
   if (broken) {
     return (
       <p style={{ fontFamily: 'Inter', fontSize: '12px', color: 'var(--bad)', margin: 0 }}>
-        ⚠ This link doesn't load as an image — double-check the URL.
+        ⚠ This link doesn't load as an image. Double-check the URL.
       </p>
     );
   }
@@ -2291,7 +2291,7 @@ function AdminLogin({ onSuccess }) {
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
           <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--ink)' }} />
           <span style={{ fontFamily: 'Anton', fontSize: '20px', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink)' }}>
-            Lakhan — Admin
+            Lakhan · Admin
           </span>
         </span>
         <p className="text-body" style={{ fontSize: '14px', marginBottom: '24px' }}>
@@ -2332,7 +2332,7 @@ function AdminLogin({ onSuccess }) {
         </div>
         {error && (
           <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--bad)', marginBottom: '12px' }}>
-            That password isn't right — try again.
+            That password isn't right. Try again.
           </p>
         )}
         <button type="submit" className="btn-pill" style={{ width: '100%', justifyContent: 'center' }} disabled={busy || !pw}>
@@ -2383,7 +2383,7 @@ function AdminPhotos() {
   const prepareFile = async (file) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      setError("That file isn't a photo — try a JPG or PNG.");
+      setError("That file isn't a photo. Try a JPG or PNG.");
       return;
     }
     setError('');
@@ -2393,7 +2393,7 @@ function AdminPhotos() {
       setStaged(dataUrl);
       setStagedCaption('');
     } catch {
-      setError("Couldn't read that photo — try a different one.");
+      setError("Couldn't read that photo. Try a different one.");
     }
     setStage('');
   };
@@ -2423,7 +2423,7 @@ function AdminPhotos() {
       const it = items.find((x) => x.id === id);
       await run(() => updateGalleryItem(id, dataUrl, it ? it.caption : '', 320), id);
     } catch {
-      setError("Couldn't read that photo — try a different one.");
+      setError("Couldn't read that photo. Try a different one.");
     }
     setStage('');
   };
@@ -2442,7 +2442,7 @@ function AdminPhotos() {
     <div>
       <p className="text-body" style={{ fontSize: '14px', marginBottom: '20px' }}>
         These photos appear in the sliding gallery on your website. Every photo is
-        automatically resized to the same size, so just upload and go — changes are
+        automatically resized to the same size, so just upload and go. Changes are
         live for everyone instantly.
       </p>
 
@@ -2470,7 +2470,7 @@ function AdminPhotos() {
             {stage === 'reading' ? 'Getting your photo ready…' : 'Add a photo'}
           </p>
           <p className="text-body" style={{ fontSize: '13px', marginTop: '6px' }}>
-            Tap here to choose one from your phone or computer — or drag it in.
+            Tap here to choose one from your phone or computer, or drag it in.
           </p>
         </div>
       )}
@@ -2478,7 +2478,7 @@ function AdminPhotos() {
       {staged && (
         <div className="admin-card" style={{ marginBottom: '16px', display: 'grid', gap: '14px' }}>
           <p style={{ fontFamily: 'Anton', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
-            Looking good — ready to go live?
+            Looking good. Ready to go live?
           </p>
           <img src={staged} alt="Your new photo" style={{ maxHeight: '260px', width: 'auto', maxWidth: '100%', borderRadius: '12px', objectFit: 'cover', justifySelf: 'start' }} />
           <AdminField label="Caption (optional)" hint="A short personal note shown on the photo. Leave empty for no caption.">
@@ -2510,7 +2510,7 @@ function AdminPhotos() {
       {!items && !error && <p className="text-body">Loading your photos…</p>}
       {items && items.length === 0 && (
         <p className="text-body" style={{ textAlign: 'center', padding: '32px 0' }}>
-          No photos yet — add your first one above.
+          No photos yet. Add your first one above.
         </p>
       )}
 
@@ -2665,7 +2665,7 @@ function AdminTestimonials() {
       {!items && !error && <p className="text-body">Loading your testimonials…</p>}
       {items && items.length === 0 && (
         <p className="text-body" style={{ textAlign: 'center', padding: '32px 0' }}>
-          No testimonials yet — add your first one above.
+          No testimonials yet. Add your first one above.
         </p>
       )}
 
@@ -2784,7 +2784,7 @@ function AdminFaqs() {
       {!items && !error && <p className="text-body">Loading your FAQs…</p>}
       {items && items.length === 0 && (
         <p className="text-body" style={{ textAlign: 'center', padding: '32px 0' }}>
-          No questions yet — add your first one above.
+          No questions yet. Add your first one above.
         </p>
       )}
 
@@ -2852,7 +2852,7 @@ function AdminLeads() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
         <p className="text-body" style={{ fontSize: '14px' }}>
-          People who booked a call from your website land here — newest first.
+          People who booked a call from your website land here, newest first.
           Call or WhatsApp them, then remove the card when you're done.
         </p>
         <button className="btn-pill btn-pill--ghost" style={{ padding: '10px 18px' }} onClick={load}>
@@ -2864,7 +2864,7 @@ function AdminLeads() {
       {!items && !error && <p className="text-body">Loading enquiries…</p>}
       {items && items.length === 0 && (
         <p className="text-body" style={{ textAlign: 'center', padding: '32px 0' }}>
-          No enquiries yet — they'll appear here the moment someone books a call
+          No enquiries yet. They'll appear here the moment someone books a call
           on your website.
         </p>
       )}
@@ -2929,7 +2929,7 @@ function AdminStats() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <p className="text-body" style={{ fontSize: '14px' }}>
-          Live from the database — every row is a real page visit.
+          Live from the database. Every row is a real page visit.
         </p>
         <button className="btn-pill btn-pill--ghost" style={{ padding: '10px 18px' }} onClick={load}>
           Refresh
@@ -2955,7 +2955,7 @@ function AdminStats() {
       {daily && (
         <div className="admin-card" style={{ marginTop: '20px' }}>
           <p style={{ fontFamily: 'Anton', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: '20px' }}>
-            Visits — last 14 days
+            Visits: last 14 days
           </p>
           <div className="bars" role="img" aria-label={`Daily visits, last 14 days: ${daily.map((d) => `${d.day}: ${n(d.visits)}`).join(', ')}`}>
             {daily.map((d) => (
@@ -3010,7 +3010,7 @@ function AdminPage() {
           <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--ink)' }} />
             <span style={{ fontFamily: 'Anton', fontSize: '18px', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink)' }}>
-              Lakhan — Admin
+              Lakhan · Admin
             </span>
           </span>
           <div style={{ display: 'flex', gap: '18px', alignItems: 'center' }}>
