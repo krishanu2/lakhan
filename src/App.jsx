@@ -172,6 +172,18 @@ function EntryGame({ onClose }) {
 
   const card = gameCards[idx];
 
+  /* Both pending timers are cleared on unmount so skipping mid-feedback
+     or mid-flash never fires a state update after the game is gone. */
+  const feedbackTimer = useRef(null);
+  const finishTimer = useRef(null);
+  useEffect(
+    () => () => {
+      clearTimeout(feedbackTimer.current);
+      clearTimeout(finishTimer.current);
+    },
+    []
+  );
+
   const answer = (saysFact) => {
     if (feedback || phase !== 'play') return;
     setInteracted(true);
@@ -179,7 +191,7 @@ function EntryGame({ onClose }) {
     if (correct) setScore((s) => s + 1);
     setExitDir(saysFact ? 1 : -1);
     setFeedback({ correct, why: card.why, fact: card.fact });
-    setTimeout(() => {
+    feedbackTimer.current = setTimeout(() => {
       setFeedback(null);
       setExitDir(0);
       x.set(0);
@@ -236,7 +248,7 @@ function EntryGame({ onClose }) {
   const finish = () => {
     if (leaving) return;
     setLeaving(true);
-    setTimeout(onClose, reduceMotion ? 0 : 260);
+    finishTimer.current = setTimeout(onClose, reduceMotion ? 0 : 260);
   };
 
   return (
@@ -1530,17 +1542,54 @@ function GallerySection() {
    9. TESTIMONIALS — AUTO-SCROLL (two tracks, opposite directions)
    ============================================================ */
 
+/* No stock photos here on purpose — real client photos come from the
+   admin Testimonials tab. Until Lakhan uploads one, the card falls
+   back to a plain initial avatar rather than a fake stock face. */
 const testimonialsSetA = [
-  { name: 'Rohit K.', condition: 'Thyroid Managed', result: '14 kg lost in 7 months', quote: 'You always make sure to convey how weight loss can be achieved with simple discipline, not restriction.', img: images.t1 },
-  { name: 'Ananya P.', condition: 'PCOS Improved', result: 'Cycle regularized, 9 kg lost', quote: "First coach who didn't ask me to give up rice. Turns out I didn't need to.", img: images.t2 },
-  { name: 'Vikram S.', condition: 'Pre-Diabetes Reversed', result: 'HbA1c normalized', quote: 'The Odyssey post about the Lotus-Eaters is literally how I think about cheat meals now.', img: images.t3 },
+  { name: 'Rohit K.', condition: 'Thyroid Managed', result: '14 kg lost in 7 months', quote: 'You always make sure to convey how weight loss can be achieved with simple discipline, not restriction.', img: '' },
+  { name: 'Ananya P.', condition: 'PCOS Improved', result: 'Cycle regularized, 9 kg lost', quote: "First coach who didn't ask me to give up rice. Turns out I didn't need to.", img: '' },
+  { name: 'Vikram S.', condition: 'Pre-Diabetes Reversed', result: 'HbA1c normalized', quote: 'The Odyssey post about the Lotus-Eaters is literally how I think about cheat meals now.', img: '' },
 ];
 
 const testimonialsSetB = [
-  { name: 'Priya M.', condition: 'All-or-Nothing Mindset Fixed', result: '11 kg, sustained 8 months', quote: 'I stopped treating one bad meal like a failed week. That mindset shift did more than any meal plan.', img: images.t4 },
-  { name: 'Karan D.', condition: 'Desk-Job Weight Loss', result: '16 kg in 9 months', quote: '3 walks of 3,300 steps instead of one long walk. Sounds small, changed everything.', img: images.t5 },
-  { name: 'Meera J.', condition: 'Post-Pregnancy Recomposition', result: '13 kg, energy restored', quote: 'Real dal-chawal, real portions, real math. No fads. It actually worked.', img: images.t6 },
+  { name: 'Priya M.', condition: 'All-or-Nothing Mindset Fixed', result: '11 kg, sustained 8 months', quote: 'I stopped treating one bad meal like a failed week. That mindset shift did more than any meal plan.', img: '' },
+  { name: 'Karan D.', condition: 'Desk-Job Weight Loss', result: '16 kg in 9 months', quote: '3 walks of 3,300 steps instead of one long walk. Sounds small, changed everything.', img: '' },
+  { name: 'Meera J.', condition: 'Post-Pregnancy Recomposition', result: '13 kg, energy restored', quote: 'Real dal-chawal, real portions, real math. No fads. It actually worked.', img: '' },
 ];
+
+function Avatar({ name, img, size = 44 }) {
+  const [broken, setBroken] = useState(false);
+  const initial = (name || '?').trim().charAt(0).toUpperCase();
+  const showPhoto = img && !broken;
+  return (
+    <div
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        borderRadius: '50%',
+        flexShrink: 0,
+        overflow: 'hidden',
+        background: 'var(--paper-dim)',
+        border: '1px solid var(--border-strong)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {showPhoto ? (
+        <img
+          src={img}
+          alt={name}
+          loading="lazy"
+          onError={() => setBroken(true)}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+      ) : (
+        <span style={{ fontFamily: 'Anton', fontSize: `${size * 0.4}px`, color: 'var(--ink-40)' }}>{initial}</span>
+      )}
+    </div>
+  );
+}
 
 function TestimonialCard({ name, condition, result, quote, img }) {
   return (
@@ -1571,12 +1620,18 @@ function TestimonialCard({ name, condition, result, quote, img }) {
       </p>
       <div
         style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
           borderTop: '1px solid var(--border)',
           paddingTop: '18px',
         }}
       >
-        <p style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '13px', color: 'var(--ink)' }}>{name}</p>
-        <p style={{ fontFamily: 'Inter', fontWeight: 500, fontSize: '11px', color: 'var(--ink-60)', marginTop: '2px' }}>{result}</p>
+        <Avatar name={name} img={img} />
+        <div>
+          <p style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '13px', color: 'var(--ink)' }}>{name}</p>
+          <p style={{ fontFamily: 'Inter', fontWeight: 500, fontSize: '11px', color: 'var(--ink-60)', marginTop: '2px' }}>{result}</p>
+        </div>
       </div>
     </div>
   );
@@ -1657,8 +1712,13 @@ const programs = [
   {
     name: 'One-Time Plan',
     duration: 'Pay Once',
-    desc: 'Just need it once? Get it once. No subscription, no coaching commitment.',
-    features: ['One-time training videos', 'One-time nutrition plan videos', 'Yours to keep, forever', 'No lock-in of any kind'],
+    desc: 'Not looking for a coaching commitment? Pay once, keep it forever.',
+    features: [
+      'One-time consultation call',
+      'Nutrition plan built around your lifestyle, not a generic diet',
+      'Workout plan tailored to your goals',
+      'No subscription, no lock-in, ever',
+    ],
     highlight: false,
     price: '₹1,999',
   },
@@ -2356,6 +2416,15 @@ function AdminPhotos() {
   const addInputRef = useRef(null);
   const replaceInputRef = useRef(null);
   const replaceId = useRef(null);
+  const savedTimer = useRef(null);
+  const stageTimer = useRef(null);
+  useEffect(
+    () => () => {
+      clearTimeout(savedTimer.current);
+      clearTimeout(stageTimer.current);
+    },
+    []
+  );
 
   const load = () => {
     fetchGallery()
@@ -2372,7 +2441,8 @@ function AdminPhotos() {
       load();
       if (id) {
         setSavedId(id);
-        setTimeout(() => setSavedId(null), 2500);
+        clearTimeout(savedTimer.current);
+        savedTimer.current = setTimeout(() => setSavedId(null), 2500);
       }
     } catch {
       setError("That didn't save. Check your internet and try again.");
@@ -2404,7 +2474,8 @@ function AdminPhotos() {
     setStaged(null);
     setStagedCaption('');
     setStage('done');
-    setTimeout(() => setStage(''), 3500);
+    clearTimeout(stageTimer.current);
+    stageTimer.current = setTimeout(() => setStage(''), 3500);
   };
 
   const startReplace = (id) => {
@@ -2568,6 +2639,31 @@ function AdminTestimonials() {
   const [draft, setDraft] = useState(EMPTY_TESTIMONIAL);
 
   const [savedId, setSavedId] = useState(null);
+  const avatarInput = useRef(null);
+  const avatarTarget = useRef(null);
+  const savedTimer = useRef(null);
+  useEffect(() => () => clearTimeout(savedTimer.current), []);
+
+  const pickAvatar = (onChange) => {
+    avatarTarget.current = onChange;
+    avatarInput.current?.click();
+  };
+
+  const onAvatarFile = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setError("That file isn't a photo. Try a JPG or PNG.");
+      return;
+    }
+    try {
+      const dataUrl = await compressImageFile(file, 320);
+      if (avatarTarget.current) avatarTarget.current('img', dataUrl);
+    } catch {
+      setError("Couldn't read that photo. Try a different one.");
+    }
+  };
 
   const load = () => {
     fetchTestimonials()
@@ -2584,7 +2680,8 @@ function AdminTestimonials() {
       load();
       if (id) {
         setSavedId(id);
-        setTimeout(() => setSavedId(null), 2500);
+        clearTimeout(savedTimer.current);
+        savedTimer.current = setTimeout(() => setSavedId(null), 2500);
       }
     } catch {
       setError("That didn't save. Check your internet and try again.");
@@ -2633,6 +2730,29 @@ function AdminTestimonials() {
           style={{ resize: 'vertical', borderRadius: '14px' }}
         />
       </AdminField>
+      <AdminField label="Client photo (optional)" hint="A real photo makes the review land harder. Leave empty to show their initial instead.">
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <Avatar name={t.name} img={t.img} size={44} />
+          <button
+            type="button"
+            className="btn-pill btn-pill--ghost"
+            style={{ padding: '9px 16px', fontSize: '11px' }}
+            onClick={() => pickAvatar(onChange)}
+          >
+            {t.img ? 'Change photo' : 'Upload photo'}
+          </button>
+          {t.img && (
+            <button
+              type="button"
+              className="btn-pill btn-pill--ghost"
+              style={{ padding: '9px 16px', fontSize: '11px' }}
+              onClick={() => onChange('img', '')}
+            >
+              Remove
+            </button>
+          )}
+        </div>
+      </AdminField>
     </div>
   );
 
@@ -2642,6 +2762,8 @@ function AdminTestimonials() {
         These are the client reviews that scroll across your website. Changes go
         live for everyone as soon as you press Save.
       </p>
+
+      <input type="file" accept="image/*" hidden ref={avatarInput} onChange={onAvatarFile} />
 
       <div className="admin-card" style={{ marginBottom: '24px' }}>
         <p style={{ fontFamily: 'Anton', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: '16px' }}>
@@ -2704,6 +2826,8 @@ function AdminFaqs() {
   const [busy, setBusy] = useState(false);
   const [savedId, setSavedId] = useState(null);
   const [draft, setDraft] = useState(EMPTY_FAQ);
+  const savedTimer = useRef(null);
+  useEffect(() => () => clearTimeout(savedTimer.current), []);
 
   const load = () => {
     fetchFaqs()
@@ -2720,7 +2844,8 @@ function AdminFaqs() {
       load();
       if (id) {
         setSavedId(id);
-        setTimeout(() => setSavedId(null), 2500);
+        clearTimeout(savedTimer.current);
+        savedTimer.current = setTimeout(() => setSavedId(null), 2500);
       }
     } catch {
       setError("That didn't save. Check your internet and try again.");
@@ -2846,7 +2971,15 @@ function AdminLeads() {
     setBusy(false);
   };
 
-  const waLink = (phone) => `https://wa.me/${phone.replace(/\D/g, '')}`;
+  /* wa.me needs a full international number to reliably open a chat.
+     Most people type a plain 10-digit Indian mobile number with no
+     country code, so assume +91 when the digits look like that case
+     and leave anything already-prefixed (or a foreign number) alone. */
+  const waLink = (phone) => {
+    const digits = phone.replace(/\D/g, '');
+    const withCountry = digits.length === 10 ? `91${digits}` : digits;
+    return `https://wa.me/${withCountry}`;
+  };
 
   return (
     <div>
