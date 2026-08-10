@@ -30,29 +30,18 @@ import heroPortrait from './assets/hero.jpg';
    Serif italic accents, black pill buttons.
    ============================================================ */
 
+/* Only the entries actually rendered somewhere on the site - dead stock
+   URLs left over from earlier drafts were trimmed out. */
 const images = {
   hero: heroPortrait,
-  hero_alt: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?w=1000&q=85',
   workout_home: 'https://images.unsplash.com/photo-1584735175315-9d5df23860e6?w=900&q=85',
   workout_2: 'https://images.unsplash.com/photo-1599058917765-a780eda07a3e?w=900&q=85',
   food_dal: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=800&q=80',
-  food_paneer: 'https://images.unsplash.com/photo-1631452180539-96aca7d48617?w=800&q=80',
   food_street: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800&q=80',
   method_1: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&q=80',
   method_2: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80',
   process_1: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=900&q=85',
-  gallery_1: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=700&q=80',
-  gallery_2: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=700&q=80',
   gallery_3: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=700&q=80',
-  gallery_4: 'https://images.unsplash.com/photo-1607914123792-11e10d3c9e37?w=700&q=80',
-  gallery_5: 'https://images.unsplash.com/photo-1610276198568-eb6d0ff53e48?w=700&q=80',
-  quiz_bg: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1000&q=80',
-  t1: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&q=80',
-  t2: 'https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?w=120&q=80',
-  t3: 'https://images.unsplash.com/photo-1618835962148-cf177563c6c0?w=120&q=80',
-  t4: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=120&q=80',
-  t5: 'https://images.unsplash.com/photo-1621784563330-caee0b138a00?w=120&q=80',
-  t6: 'https://images.unsplash.com/photo-1611432579699-484f7990b127?w=120&q=80',
 };
 
 const revealProps = {
@@ -2031,7 +2020,7 @@ function FAQSection() {
   }, []);
 
   return (
-    <section style={{ background: 'var(--paper)', padding: 'clamp(64px, 10vw, 140px) 0' }}>
+    <section id="faq" style={{ background: 'var(--paper)', padding: 'clamp(64px, 10vw, 140px) 0' }}>
       <div className="container" style={{ maxWidth: '800px' }}>
         <motion.div {...revealProps} style={{ marginBottom: '32px' }}>
           <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Frequently Asked</span>
@@ -2099,6 +2088,9 @@ function FooterColumn({ title, links }) {
           <a
             key={l.label}
             href={l.href}
+            onClick={l.onClick}
+            target={l.href?.startsWith('http') ? '_blank' : undefined}
+            rel={l.href?.startsWith('http') ? 'noreferrer' : undefined}
             style={{ fontFamily: 'Inter', fontSize: '14px', color: 'var(--ink)', textDecoration: 'none', opacity: 0.7 }}
           >
             {l.label}
@@ -2109,9 +2101,92 @@ function FooterColumn({ title, links }) {
   );
 }
 
+function PrivacyModal({ onClose }) {
+  useEffect(() => {
+    const onKey = (e) => e.key === 'Escape' && onClose();
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [onClose]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 300,
+        background: 'rgba(22,22,20,0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px',
+      }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 16, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 16, scale: 0.98 }}
+        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: 'var(--paper)',
+          borderRadius: '20px',
+          maxWidth: '520px',
+          width: '100%',
+          maxHeight: '85vh',
+          overflowY: 'auto',
+          padding: 'clamp(28px, 4vw, 40px)',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+          <p style={{ fontFamily: 'Anton', fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.02em', color: 'var(--ink)' }}>
+            Privacy, in plain language
+          </p>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '22px', color: 'var(--ink-60)', lineHeight: 1, flexShrink: 0, marginLeft: '12px' }}
+          >
+            ✕
+          </button>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <p className="text-body" style={{ fontSize: '14px' }}>
+            When you book a call, we ask for your name, phone number, and
+            (optionally) your email. That's it, that's the whole form. It's
+            used for one thing: so Lakhan can personally reach out and set up
+            your session.
+          </p>
+          <p className="text-body" style={{ fontSize: '14px' }}>
+            We don't sell it, rent it, or share it with anyone else. It isn't
+            used for ads. We also log anonymous visit counts (how many
+            people viewed the site, roughly when) so Lakhan can see if the
+            page is working, nothing tied to who you are.
+          </p>
+          <p className="text-body" style={{ fontSize: '14px' }}>
+            Want your details removed? Message Lakhan directly and he'll
+            delete them, no forms, no waiting.
+          </p>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function Footer() {
+  const [privacyOpen, setPrivacyOpen] = useState(false);
+
   return (
     <footer style={{ background: 'var(--paper)', padding: 'clamp(48px, 6vw, 80px) 0 0', borderTop: '1px solid var(--border)' }}>
+      <AnimatePresence>{privacyOpen && <PrivacyModal onClose={() => setPrivacyOpen(false)} />}</AnimatePresence>
       <div className="container">
         <div
           className="footer-grid"
@@ -2145,8 +2220,15 @@ function Footer() {
             links={[
               { label: 'About', href: '#top' },
               { label: 'Book a Call', href: '#book' },
-              { label: 'FAQ', href: '#top' },
-              { label: 'Privacy', href: '#top' },
+              { label: 'FAQ', href: '#faq' },
+              {
+                label: 'Privacy',
+                href: '#',
+                onClick: (e) => {
+                  e.preventDefault();
+                  setPrivacyOpen(true);
+                },
+              },
             ]}
           />
           <FooterColumn
