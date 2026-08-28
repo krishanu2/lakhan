@@ -1571,23 +1571,27 @@ function Avatar({ name, img, size = 44 }) {
 function TestimonialCard({ name, condition, result, quote, img }) {
   return (
     <div
+      className="card-hover"
       style={{
         flexShrink: 0,
         width: 'clamp(280px, 80vw, 380px)',
         background: 'var(--paper)',
-        borderRadius: '16px',
-        padding: '28px',
-        border: '1px solid var(--border)',
+        borderRadius: '20px',
+        padding: '32px',
+        border: '1.5px solid var(--border-strong)',
+        boxShadow: 'var(--shadow-card)',
       }}
     >
       <span
         className="text-caption"
         style={{
-          fontSize: '10px',
-          color: 'var(--ink-60)',
+          fontSize: '11px',
+          color: 'var(--ink)',
           background: 'var(--paper-dim)',
-          padding: '5px 12px',
-          borderRadius: '999px',
+          padding: '6px 14px',
+          borderRadius: '8px',
+          fontWeight: 600,
+          display: 'inline-block',
         }}
       >
         {condition}
@@ -1807,11 +1811,14 @@ function ProgramsSection() {
           {programs.map((plan, i) => (
             <div
               key={i}
+              className="card-hover"
               style={{
                 background: 'var(--paper)',
-                padding: 'clamp(28px, 3vw, 40px)',
+                padding: 'clamp(32px, 4vw, 48px)',
                 display: 'flex',
                 flexDirection: 'column',
+                border: '1.5px solid var(--border-strong)',
+                borderRadius: '20px',
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1879,10 +1886,11 @@ const bookInputStyle = {
   color: 'var(--ink)',
   background: 'var(--paper)',
   border: '1.5px solid var(--border-strong)',
-  padding: '16px 22px',
-  borderRadius: '999px',
+  padding: '14px 18px',
+  borderRadius: '12px',
   outline: 'none',
   width: '100%',
+  transition: 'all 200ms cubic-bezier(0.22, 1, 0.36, 1)',
 };
 
 function BookSection() {
