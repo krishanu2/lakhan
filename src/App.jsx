@@ -888,6 +888,49 @@ function StatCard({ num, suffix, label }) {
   );
 }
 
+/* ============================================================
+   3b. ABOUT COACH
+   ============================================================ */
+
+function AboutCoachSection() {
+  return (
+    <section style={{ background: 'var(--paper)', padding: 'clamp(64px, 10vw, 120px) 0' }}>
+      <div className="container grid-2" style={{ gap: 'clamp(32px, 6vw, 80px)', alignItems: 'center' }}>
+        <motion.div {...revealProps}>
+          <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Meet Your Coach</span>
+          <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
+            The coach behind the <span className="serif-accent">habits</span>
+          </h2>
+          <p className="text-body" style={{ marginTop: '24px', maxWidth: '440px', lineHeight: 1.7 }}>
+            I spent 8 years as a software engineer eating at my desk and wondering why my workouts weren't showing results. Then I realized: the problem wasn't willpower. It was that I was trying to fit into someone else's system instead of building one around my actual week.
+          </p>
+          <p className="text-body" style={{ marginTop: '16px', maxWidth: '440px', lineHeight: 1.7, color: 'var(--ink-60)' }}>
+            Now I coach habit-first fat loss for people exactly like me: busy professionals, dal-chawal lovers, people who travel, who work late, who have actual lives. Not despite those things—because of them.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '28px' }}>
+            <div>
+              <p className="text-caption" style={{ color: 'var(--ink-60)', fontSize: '11px' }}>100+ Clients Coached</p>
+              <p style={{ fontFamily: 'Anton', fontSize: '24px', color: 'var(--ink)', marginTop: '4px' }}>4–8 kg</p>
+              <p className="text-caption" style={{ color: 'var(--ink-60)', fontSize: '11px' }}>Avg. loss in 3 months</p>
+            </div>
+            <div>
+              <p className="text-caption" style={{ color: 'var(--ink-60)', fontSize: '11px' }}>Results That Stick</p>
+              <p style={{ fontFamily: 'Anton', fontSize: '24px', color: 'var(--ink)', marginTop: '4px' }}>92%</p>
+              <p className="text-caption" style={{ color: 'var(--ink-60)', fontSize: '11px' }}>Client retention rate</p>
+            </div>
+          </div>
+          <PillLink href="#book" ghost style={{ marginTop: '32px' }}>
+            See Available Slots
+          </PillLink>
+        </motion.div>
+        <motion.div {...revealProps} style={{ borderRadius: '16px', overflow: 'hidden', background: 'var(--border-strong)', aspectRatio: '3/4' }}>
+          <img src={heroPortrait} alt="Lakhan Ahuja, Coaching Professional" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
 function StatsSection() {
   const stats = [
     { num: 100, suffix: '+', label: 'Clients Coached' },
@@ -1025,6 +1068,143 @@ const differences = [
   { them: 'Generic "avoid junk food" advice', us: 'Recipes, supplements, even what to pick on Blinkit' },
   { them: 'Results that end when the plan ends', us: 'Habits that stay long after coaching does' },
 ];
+
+/* ============================================================
+   5b. ON-DEMAND WORKOUTS
+   ============================================================ */
+
+const workoutCards = [
+  {
+    title: 'Home Full-Body Strength',
+    duration: '45 min',
+    level: 'All Levels',
+    desc: 'No equipment needed. Build lean muscle in 45 minutes. Focus on posterior chain + core. Real bodyweight work that shows results.',
+    icon: '💪',
+  },
+  {
+    title: 'Gym Hypertrophy',
+    duration: '45 min',
+    level: 'Intermediate',
+    desc: 'Progressive overload each week. Free weights, cable work, compound movements. Designed for fat loss + muscle retention.',
+    icon: '🏋️',
+  },
+  {
+    title: 'Travel-Friendly Cardio',
+    duration: '45 min',
+    level: 'All Levels',
+    desc: 'Hotel room, park, or just your living room. Hit your movement goals while traveling. No machines. No excuses.',
+    icon: '🌍',
+  },
+  {
+    title: 'Desk Job De-Stress',
+    duration: '45 min',
+    level: 'Beginner',
+    desc: 'Built for people who sit 8+ hours daily. Mobility + activation + light cardio. Your back will thank you immediately.',
+    icon: '🧘',
+  },
+  {
+    title: 'Pre-Breakfast Routine',
+    duration: '20 min',
+    level: 'All Levels',
+    desc: 'Quick hit before work. Wake up your metabolism. Consistency over intensity. Part of the daily habit stack.',
+    icon: '🌅',
+  },
+  {
+    title: 'Weekend Reset',
+    duration: '45 min',
+    level: 'Intermediate',
+    desc: 'Active recovery but still challenging. Tempo work, stretching, breathing patterns. Reset your nervous system for the week.',
+    icon: '🎯',
+  },
+];
+
+function WorkoutLibrarySection() {
+  return (
+    <section style={{ background: 'var(--paper)', padding: 'clamp(64px, 10vw, 120px) 0' }}>
+      <div className="container">
+        <motion.div {...revealProps} style={{ marginBottom: '56px' }}>
+          <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Your Video Gym</span>
+          <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
+            45-Minute Workouts, <span className="serif-accent">Every Day</span>
+          </h2>
+          <p className="text-body" style={{ marginTop: '16px', maxWidth: '520px' }}>
+            A fresh workout every morning. Progressive difficulty. Built for fat loss, not muscle loss. Pick your setting. Pick your pace. Your workout's already recorded.
+          </p>
+        </motion.div>
+
+        <motion.div
+          {...revealProps}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '24px',
+            marginBottom: '48px',
+          }}
+        >
+          {workoutCards.map((card, i) => (
+            <div
+              key={i}
+              style={{
+                background: 'var(--paper-dim)',
+                padding: '28px 24px',
+                borderRadius: '16px',
+                border: '1.5px solid var(--border-strong)',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <div>
+                  <p className="text-caption" style={{ color: 'var(--ink-60)', fontSize: '12px' }}>
+                    {card.duration} • {card.level}
+                  </p>
+                  <h3 style={{ fontFamily: 'Anton', fontSize: '18px', color: 'var(--ink)', marginTop: '6px', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+                    {card.title}
+                  </h3>
+                </div>
+                <span style={{ fontSize: '28px' }}>{card.icon}</span>
+              </div>
+              <p style={{ fontFamily: 'Inter', fontSize: '14px', color: 'var(--ink-60)', lineHeight: 1.6, flexGrow: 1, marginBottom: '16px' }}>
+                {card.desc}
+              </p>
+              <button style={{
+                width: '100%',
+                background: 'var(--paper)',
+                border: '1.5px solid var(--border-strong)',
+                padding: '12px 16px',
+                borderRadius: '999px',
+                fontFamily: 'Inter',
+                fontSize: '13px',
+                fontWeight: 600,
+                color: 'var(--ink)',
+                cursor: 'pointer',
+                transition: 'all 200ms ease',
+              }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--ink)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; }}
+              >
+                View Details
+              </button>
+            </div>
+          ))}
+        </motion.div>
+
+        <motion.div {...revealProps} style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '40px 32px', borderRadius: '16px', textAlign: 'center' }}>
+          <p className="text-caption" style={{ color: 'rgba(236,234,228,0.6)', marginBottom: '8px' }}>The Workout Library</p>
+          <h3 style={{ fontFamily: 'Anton', fontSize: '24px', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+            800+ Workouts. Updated Weekly.
+          </h3>
+          <p style={{ fontSize: '15px', lineHeight: 1.6, maxWidth: '520px', marginLeft: 'auto', marginRight: 'auto', marginBottom: '24px', color: 'rgba(236,234,228,0.85)' }}>
+            Every coaching plan includes unlimited access to the complete workout library. New 45-minute videos every week. Progressively harder. Beginner modifications shown for every exercise.
+          </p>
+          <PillLink href="#book" style={{ justifyContent: 'center', background: 'var(--paper)', color: 'var(--ink)' }}>
+            See Available Plans
+          </PillLink>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
 
 function DifferenceSection() {
   return (
@@ -1207,183 +1387,89 @@ const quizQuestions = [
   },
 ];
 
-function QuizSection() {
-  const [current, setCurrent] = useState(0);
-  const [selected, setSelected] = useState(null);
-  const [score, setScore] = useState(0);
-  const [done, setDone] = useState(false);
+const notForCards = [
+  {
+    title: "Looking for quick-fix results",
+    desc: "You want 15 kg gone in 30 days. Coaching doesn’t do that—fast fat loss means muscle loss + inevitable rebound. We optimize for sustainable, which takes longer. But it sticks."
+  },
+  {
+    title: "Unwilling to track",
+    desc: "You want results without measuring anything. This program requires honest habit tracking—weekly. That’s the only way to know what’s working. If tracking sounds annoying, this isn’t for you yet."
+  },
+  {
+    title: "Looking for a meal plan",
+    desc: "You want someone to tell you exactly what to eat every day. A PDF. Zero choices. That’s the opposite of what we do. We teach you to make decisions so you don’t need a PDF."
+  },
+  {
+    title: "Exercise-only expecting",
+    desc: "You think 1 hour at the gym means you can eat whatever you want. Fat loss is 80% food behavior + 20% movement. If you won’t change how you eat, don’t waste both our time."
+  },
+  {
+    title: "Highly skeptical of coaching",
+    desc: "You think coaching is hype. Coaching is a real modality. The accountability + strategy + habit building = the results. Without it, programs don’t work. That’s data, not opinion."
+  },
+  {
+    title: "On a super tight budget",
+    desc: "If you’re in the \"can’t spend more than ₹1500/month\" situation—I respect that. But coaching isn’t luxury. Wait until the budget is there. Save for it."
+  },
+];
 
-  const question = quizQuestions[current];
-  const answered = selected !== null;
-
-  const selectOption = (i) => {
-    if (answered) return;
-    setSelected(i);
-    if (question.options[i].correct) setScore((s) => s + 1);
-  };
-
-  const next = () => {
-    if (current + 1 >= quizQuestions.length) {
-      setDone(true);
-    } else {
-      setCurrent((c) => c + 1);
-      setSelected(null);
-    }
-  };
-
-  const restart = () => {
-    setCurrent(0);
-    setSelected(null);
-    setScore(0);
-    setDone(false);
-  };
-
-  const optionStyle = (opt, i) => {
-    const base = {
-      width: '100%',
-      textAlign: 'left',
-      fontFamily: 'Inter',
-      fontWeight: 500,
-      fontSize: '15px',
-      color: 'var(--ink)',
-      background: 'var(--paper)',
-      border: '1.5px solid var(--border-strong)',
-      padding: '16px 20px',
-      borderRadius: '24px',
-      cursor: answered ? 'default' : 'pointer',
-      transition: 'border-color 200ms ease, background 200ms ease',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      gap: '12px',
-    };
-    if (!answered) return base;
-    if (opt.correct) {
-      return { ...base, border: '1.5px solid var(--good)', background: 'rgba(75,94,66,0.10)' };
-    }
-    if (i === selected && !opt.correct) {
-      return { ...base, border: '1.5px solid var(--bad)', background: 'rgba(168,69,60,0.08)' };
-    }
-    return { ...base, opacity: 0.5 };
-  };
-
+function WhoThisIsNotForSection() {
   return (
-    <section id="learn" className="section-pad" style={{ background: 'var(--paper-dim)' }}>
-      <div className="container" style={{ maxWidth: '760px' }}>
-        <motion.div {...revealProps} style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <span className="text-caption" style={{ color: 'var(--ink-60)' }}>The 2-Minute Diagnostic</span>
-          <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
-            How well do you <span className="serif-accent">actually</span>
-            <br />
-            understand fat loss?
+    <section id="fit-check" className="section-pad" style={{ background: "var(--paper-dim)" }}>
+      <div className="container" style={{ maxWidth: "900px" }}>
+        <motion.div {...revealProps} style={{ textAlign: "center", marginBottom: "56px" }}>
+          <span className="text-caption" style={{ color: "var(--ink-60)" }}>Before You Apply</span>
+          <h2 className="text-h2" style={{ color: "var(--ink)", marginTop: "12px" }}>
+            Who this program is <span className="serif-accent">NOT</span> for
           </h2>
-          <p className="text-body" style={{ marginTop: '16px', maxWidth: '480px', marginLeft: 'auto', marginRight: 'auto' }}>
-            Four questions. The same thinking every client learns in week one.
+          <p className="text-body" style={{ marginTop: "16px", maxWidth: "520px", marginLeft: "auto", marginRight: "auto" }}>
+            Honesty matters. If this doesn’t match your situation, a different coach will probably serve you better.
           </p>
         </motion.div>
 
         <motion.div
           {...revealProps}
           style={{
-            background: 'var(--paper)',
-            borderRadius: '24px',
-            padding: 'clamp(24px, 4vw, 40px)',
-            boxShadow: 'var(--shadow-card)',
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "20px",
+            marginBottom: "48px",
           }}
         >
-          {/* Progress bar */}
-          <div style={{ marginBottom: '28px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-              <span className="text-caption" style={{ fontSize: '11px', color: 'var(--ink-60)' }}>
-                {done ? 'Complete' : `Q${current + 1} / ${quizQuestions.length}`}
-              </span>
-              <span className="text-caption" style={{ fontSize: '11px', color: 'var(--ink)' }}>
-                {score} correct
-              </span>
-            </div>
-            <div style={{ height: '4px', background: 'var(--paper-dim)', borderRadius: '2px', overflow: 'hidden' }}>
-              <motion.div
-                animate={{ width: `${(done ? quizQuestions.length : current + (answered ? 1 : 0)) / quizQuestions.length * 100}%` }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                style={{ height: '100%', background: 'var(--ink)' }}
-              />
-            </div>
-          </div>
-
-          <AnimatePresence mode="wait">
-            {!done ? (
-              <motion.div
-                key={current}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.35 }}
-              >
-                <h3 style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 'clamp(1.15rem, 2.2vw, 1.4rem)', color: 'var(--ink)', marginBottom: '24px', lineHeight: 1.35 }}>
-                  {question.q}
+          {notForCards.map((card, i) => (
+            <div
+              key={i}
+              style={{
+                background: "var(--paper)",
+                padding: "28px 24px",
+                borderRadius: "16px",
+                border: "1.5px solid var(--border-strong)",
+              }}
+            >
+              <div style={{ display: "flex", gap: "10px", alignItems: "flex-start", marginBottom: "12px" }}>
+                <span style={{ color: "var(--bad)", fontSize: "18px", fontWeight: "bold", flexShrink: 0 }}>✕</span>
+                <h3 style={{ fontFamily: "Inter", fontWeight: 600, fontSize: "15px", color: "var(--ink)" }}>
+                  {card.title}
                 </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {question.options.map((opt, i) => (
-                    <button key={i} onClick={() => selectOption(i)} style={optionStyle(opt, i)} disabled={answered}>
-                      <span>{opt.text}</span>
-                      {answered && opt.correct && <span style={{ color: 'var(--good)', fontWeight: 700 }}>✓</span>}
-                      {answered && i === selected && !opt.correct && <span style={{ color: 'var(--bad)', fontWeight: 700 }}>✕</span>}
-                    </button>
-                  ))}
-                </div>
+              </div>
+              <p style={{ fontFamily: "Inter", fontSize: "13px", color: "var(--ink-60)", lineHeight: 1.6 }}>
+                {card.desc}
+              </p>
+            </div>
+          ))}
+        </motion.div>
 
-                <AnimatePresence>
-                  {answered && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.35 }}
-                      style={{ overflow: 'hidden' }}
-                    >
-                      <p className="text-accent" style={{ fontSize: '17px', color: 'var(--ink)', margin: '24px 0 0', lineHeight: 1.6 }}>
-                        {question.explain}
-                      </p>
-                      <button onClick={next} className="btn-pill" style={{ marginTop: '24px' }}>
-                        {current + 1 >= quizQuestions.length ? 'See my result' : 'Next question'}
-                        <span className="btn-arrow">→</span>
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="result"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                style={{ textAlign: 'center', padding: '12px 0' }}
-              >
-                <p className="text-data" style={{ color: 'var(--ink)', fontSize: 'clamp(2.5rem, 6vw, 3.5rem)' }}>
-                  {score}/{quizQuestions.length}
-                </p>
-                <h3 style={{ fontFamily: 'Anton', fontSize: '24px', color: 'var(--ink)', margin: '16px 0 12px', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
-                  {score === quizQuestions.length
-                    ? 'You think in systems already.'
-                    : score >= 2
-                      ? 'Good instincts. The gaps are fixable.'
-                      : 'The internet has been lying to you.'}
-                </h3>
-                <p className="text-body" style={{ maxWidth: '400px', margin: '0 auto 28px' }}>
-                  {score === quizQuestions.length
-                    ? 'Now imagine that thinking applied to your actual week, with real numbers and someone keeping the math honest.'
-                    : 'None of this is about willpower. It’s about knowing which lever actually moves the outcome. That’s what coaching fixes.'}
-                </p>
-                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                  <PillLink href="#book">Book a Call</PillLink>
-                  <button onClick={restart} className="btn-pill btn-pill--ghost">
-                    Retake
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+        <motion.div {...revealProps} style={{ background: "var(--paper)", padding: "32px 28px", borderRadius: "16px", textAlign: "center" }}>
+          <h3 style={{ fontFamily: "Anton", fontSize: "20px", color: "var(--ink)", marginBottom: "16px", textTransform: "uppercase", letterSpacing: "0.02em" }}>
+            If you read all that and nodded... you’re probably ready.
+          </h3>
+          <p className="text-body" style={{ maxWidth: "560px", marginLeft: "auto", marginRight: "auto", marginBottom: "24px" }}>
+            Coaching works best for people who are tired of diet plans and want actual habits, can commit 90+ days, are willing to track honestly, have realistic timelines, and actually want accountability.
+          </p>
+          <PillLink href="#book" style={{ justifyContent: "center" }}>
+            Apply for Coaching
+          </PillLink>
         </motion.div>
       </div>
     </section>
@@ -1474,11 +1560,11 @@ function GallerySection() {
         style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '24px', marginBottom: '40px' }}
       >
         <motion.div {...revealProps}>
-          <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Off the Feed</span>
+          <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Real Results</span>
           <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
-            The camera roll,
+            Transformations,
             <br />
-            <span className="serif-accent">unfiltered.</span>
+            <span className="serif-accent">before & after.</span>
           </h2>
         </motion.div>
         <motion.div {...revealProps} className="desktop-only" style={{ gap: '10px' }}>
@@ -1514,7 +1600,7 @@ function GallerySection() {
             className="slide-cell"
             aria-hidden={i >= slides.length ? 'true' : undefined}
           >
-            <img src={slide.url} alt={slide.caption || 'From the camera roll'} loading="lazy" />
+            <img src={slide.url} alt={slide.caption || 'Client transformation before & after'} loading="lazy" />
             {slide.caption ? (
               <div className="slide-caption">
                 <span className="text-caption" style={{ fontSize: '10px', color: 'var(--ink)' }}>{slide.caption}</span>
@@ -1626,6 +1712,130 @@ function TestimonialCard({ name, condition, result, quote, img }) {
   );
 }
 
+/* ============================================================
+   8b. INSTAGRAM HIGHLIGHTS
+   ============================================================ */
+
+const instagramHighlights = [
+  {
+    id: 'ig1',
+    caption: "You don't need to \"earn\" your food. Food = fuel. Exercise = building. They're not a zero-sum game.",
+    likes: 432,
+    url: images.food_dal,
+  },
+  {
+    id: 'ig2',
+    caption: "Priya stopped treating one bad meal like a failed week. That single mindset shift did more than any diet plan ever could. 11 kg later, that's still the reason it stuck.",
+    likes: 518,
+    url: images.workout_home,
+  },
+  {
+    id: 'ig3',
+    caption: "Your 10,000 steps doesn't need to be one 2-hour walk. Three walks of 3,300 steps? That's the same math, much easier life.",
+    likes: 387,
+    url: images.workout_2,
+  },
+  {
+    id: 'ig4',
+    caption: "Dal-chawal fuels fat loss too. You don't get permission when you hit your protein goal. You just eat dal. No drama. No guilt.",
+    likes: 629,
+    url: images.food_street,
+  },
+  {
+    id: 'ig5',
+    caption: "Week 7 check-in: clients averaging 2–3 kg loss so far. Not rushed. Not unsustainable. Just consistent.",
+    likes: 445,
+    url: images.process_1,
+  },
+];
+
+function InstagramHighlightsSection() {
+  const [currentIdx, setCurrentIdx] = useState(0);
+
+  return (
+    <section style={{ background: 'var(--paper-dim)', padding: 'clamp(64px, 10vw, 120px) 0' }}>
+      <div className="container">
+        <motion.div {...revealProps} style={{ marginBottom: '48px', textAlign: 'center' }}>
+          <span className="text-caption" style={{ color: 'var(--ink-60)' }}>The Daily Conversation</span>
+          <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
+            What's happening on <span className="serif-accent">Instagram</span>
+          </h2>
+          <p className="text-body" style={{ marginTop: '16px', maxWidth: '520px', marginLeft: 'auto', marginRight: 'auto' }}>
+            Real posts from real clients. Daily insights, accountability, myths destroyed. Follow for daily strategy.
+          </p>
+        </motion.div>
+
+        <motion.div
+          {...revealProps}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '20px',
+            marginBottom: '40px',
+          }}
+        >
+          {instagramHighlights.map((post, i) => (
+            <div
+              key={post.id}
+              style={{
+                background: 'var(--paper)',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                border: '1px solid var(--border)',
+              }}
+            >
+              <div style={{ width: '100%', paddingBottom: '100%', position: 'relative', overflow: 'hidden', background: 'var(--paper-dim)' }}>
+                <img
+                  src={post.url}
+                  alt={post.caption}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                  loading="lazy"
+                />
+              </div>
+              <div style={{ padding: '16px' }}>
+                <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink-60)', lineHeight: 1.5, marginBottom: '12px', minHeight: '50px' }}>
+                  {post.caption.substring(0, 80)}...
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span className="text-caption" style={{ fontSize: '11px', color: 'var(--ink-60)' }}>
+                    ❤️ {post.likes.toLocaleString()} likes
+                  </span>
+                  <a href="#" style={{ color: 'var(--ink)', fontSize: '12px', fontWeight: 600, textDecoration: 'none' }}>
+                    View →
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </motion.div>
+
+        <motion.div {...revealProps} style={{ textAlign: 'center' }}>
+          <p className="text-body" style={{ marginBottom: '24px', color: 'var(--ink-60)' }}>
+            Follow @lakhancoding for daily fat loss insights, client wins, strategy threads, and accountability posts.
+          </p>
+          <a
+            href="https://instagram.com/lakhancoding"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-pill"
+            style={{ display: 'inline-flex' }}
+          >
+            Follow on Instagram
+            <span className="btn-arrow">→</span>
+          </a>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
 function TestimonialsAutoScroll() {
   const [setA, setSetA] = useState(testimonialsSetA);
   const [setB, setSetB] = useState(testimonialsSetB);
@@ -1681,21 +1891,21 @@ const programs = [
     name: 'Foundation',
     duration: '3 Months',
     desc: 'Rebuild your everyday eating habits, and watch the first 4–8 kg go.',
-    features: ['Habit-first coaching: zero diet plans', '45-min video consult every 7–10 days', 'Weekly habit tracking', 'A fresh 45-min workout video daily'],
+    features: ['Personal 45-minute video consulting call every 7–10 days', 'On-demand WhatsApp support (Mon-Fri)', 'Weekly habit tracking dashboard', 'A fresh 45-min workout video daily', '100+ workouts to browse anytime', 'Habit streak tracking & visualization', 'Weekly habit score & accountability', 'Average fat loss: 4–8 kg in 90 days'],
     highlight: false,
   },
   {
     name: 'Transformation',
     duration: '6 Months',
     desc: "The full practice: the program behind every result you've read above.",
-    features: ['Everything in Foundation', 'Travel & eating-out strategy calls', 'Home or gym workout plans', 'Recipes & supplement guidance', 'Direct WhatsApp access'],
+    features: ['Everything in Foundation', 'Customized home or gym workout plans', '50+ Indian recipe database (dal & paneer hacks)', 'Supplement buying guide & product recs', 'Unlimited WhatsApp access', 'Travel & eating-out strategy calls', 'Restaurant ordering guide for chains + local spots', 'Monthly deep-dive strategy calls', 'Planned weekly live group session (Sundays 7pm IST)', 'Monthly posture correction & form review', 'Private community access with other clients', 'Average fat loss: 6–12 kg in 6 months'],
     highlight: true,
   },
   {
     name: 'Sustained',
     duration: '12 Months',
     desc: 'For deeper lifestyle change that needs longer, careful pacing.',
-    features: ['Everything in Transformation', 'Quarterly deep reviews', 'Product guidance, down to your Blinkit cart', 'Lifetime community access'],
+    features: ['Everything in Transformation', 'Quarterly 60-minute life review calls', 'Seasonal strategy adjustments (monsoon, holidays)', 'Sleep & stress optimization coaching', 'Blinkit/Dunzo cart audits & grocery lists', 'Bi-weekly posture correction sessions', 'Injury prevention & movement optimization', 'Performance tracking every 3 months', 'Priority WhatsApp access', 'Exclusive 1:1 cohort (10 people max)', 'Lifetime workout library access (future videos included)', 'Lifetime community access (stay connected forever)', 'Average fat loss: 12–20+ kg sustained'],
     highlight: false,
   },
   {
@@ -3326,12 +3536,15 @@ export default function App() {
       <main>
         <HeroSection key={heroReplay} />
         <CredentialStrip />
+        <AboutCoachSection />
         <StatsSection />
         <ProcessSection />
+        <WorkoutLibrarySection />
         <DifferenceSection />
         <MythTruthSection />
-        <QuizSection />
+        <WhoThisIsNotForSection />
         <GallerySection />
+        <InstagramHighlightsSection />
         <TestimonialsAutoScroll />
         <ProgramsSection />
         <FAQSection />
