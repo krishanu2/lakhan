@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://krishanu2.github.io/lakhan/sitemap.xml
