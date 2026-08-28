@@ -1676,7 +1676,7 @@ function InstagramHighlightsSection() {
             Where the real <span className="serif-accent">work happens.</span>
           </h2>
           <p className="text-body" style={{ marginTop: '24px', maxWidth: '440px', lineHeight: 1.7 }}>
-            @lakhancoding is where clients post wins, ask questions, and stay accountable. 500+ people on the story. New posts every day.
+            @functionalcoach101 is where clients post wins, ask questions, and stay accountable. 500+ people following. New posts every day.
           </p>
           <p className="text-body" style={{ marginTop: '16px', maxWidth: '440px', lineHeight: 1.7, color: 'var(--ink-60)' }}>
             You'll see real transformations, myth-busting threads, strategy posts about travel eating + office snacking, and weekly accountability check-ins. Not curated. Not perfect. Real.
@@ -1690,13 +1690,13 @@ function InstagramHighlightsSection() {
             </div>
           </div>
           <a
-            href="https://instagram.com/lakhancoding"
+            href="https://instagram.com/functionalcoach101"
             target="_blank"
             rel="noopener noreferrer"
             className="btn-pill"
             style={{ marginTop: '32px', display: 'inline-flex' }}
           >
-            Follow @lakhancoding
+            Follow @functionalcoach101
             <span className="btn-arrow">→</span>
           </a>
         </motion.div>
@@ -2791,6 +2791,71 @@ function AdminPhotos() {
   );
 }
 
+function AdminInstagram() {
+  return (
+    <div style={{ padding: '32px 0', maxWidth: '800px' }}>
+      <h2 style={{ fontFamily: 'Anton', fontSize: '24px', marginBottom: '24px', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+        Instagram Highlights
+      </h2>
+
+      <div style={{ background: 'var(--paper-dim)', padding: '24px', borderRadius: '16px', marginBottom: '24px' }}>
+        <p style={{ fontFamily: 'Inter', fontSize: '14px', color: 'var(--ink)', lineHeight: 1.6, marginBottom: '16px' }}>
+          <strong>How this works:</strong> The 5 Instagram posts shown on the site are hardcoded. To update them:
+        </p>
+        <ol style={{ fontFamily: 'Inter', fontSize: '14px', color: 'var(--ink-60)', lineHeight: 1.8, paddingLeft: '20px' }}>
+          <li>Find the `instagramHighlights` array in the code</li>
+          <li>Update the caption, likes, and image URL for each post</li>
+          <li>The section pulls from @functionalcoach101 Instagram account</li>
+        </ol>
+      </div>
+
+      <div style={{ background: 'var(--paper)', border: '1px solid var(--border)', borderRadius: '16px', padding: '20px' }}>
+        <h3 style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '15px', marginBottom: '16px' }}>
+          Current Featured Posts
+        </h3>
+        {instagramHighlights.map((post, i) => (
+          <div
+            key={post.id}
+            style={{
+              paddingBottom: '16px',
+              marginBottom: '16px',
+              borderBottom: i < instagramHighlights.length - 1 ? '1px solid var(--border)' : 'none',
+            }}
+          >
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+              <img
+                src={post.url}
+                alt={post.caption}
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  borderRadius: '8px',
+                  objectFit: 'cover',
+                  flexShrink: 0,
+                }}
+              />
+              <div>
+                <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink)', lineHeight: 1.5, marginBottom: '6px' }}>
+                  {post.caption}
+                </p>
+                <p style={{ fontFamily: 'Inter', fontSize: '12px', color: 'var(--ink-60)' }}>
+                  ❤️ {post.likes.toLocaleString()} likes
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ marginTop: '24px', padding: '20px', background: 'rgba(75, 94, 66, 0.08)', borderRadius: '12px', border: '1px solid rgba(75, 94, 66, 0.2)' }}>
+        <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink)', lineHeight: 1.6 }}>
+          <strong>💡 Tip:</strong> To feature a new post, copy the Instagram post image URL and update the `instagramHighlights` array in App.jsx. The section automatically displays the 5 posts you configure.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 const EMPTY_TESTIMONIAL = { name: '', condition: '', result: '', quote: '', img: '', track: 'a' };
 
 function AdminTestimonials() {
@@ -3282,6 +3347,7 @@ function AdminPage() {
   const [tab, setTab] = useState('photos');
   const tabs = [
     { id: 'photos', label: 'Photos' },
+    { id: 'instagram', label: 'Instagram' },
     { id: 'testimonials', label: 'Testimonials' },
     { id: 'faqs', label: 'FAQs' },
     { id: 'leads', label: 'Enquiries' },
@@ -3342,6 +3408,7 @@ function AdminPage() {
         </div>
 
         {tab === 'photos' && <AdminPhotos />}
+        {tab === 'instagram' && <AdminInstagram />}
         {tab === 'testimonials' && <AdminTestimonials />}
         {tab === 'faqs' && <AdminFaqs />}
         {tab === 'leads' && <AdminLeads />}
