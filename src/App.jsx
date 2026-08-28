@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import {
   fetchGallery,
   addGalleryItem,
@@ -79,425 +79,6 @@ function PillLink({ href, children, light, ghost, style }) {
 }
 
 /* ============================================================
-   0. ENTRY GAME — "MYTH or FACT?"
-   A 20-second swipe game built from Lakhan's own myth/truth
-   content format. Swipe left = Myth, right = Fact. Real card
-   physics, instant feedback, score verdict, straight line to
-   booking. Skippable everywhere, shows once per session.
-   ============================================================ */
-
-const gameCards = [
-  { text: 'You must give up dal-chawal to lose fat', fact: false, why: 'Count it, don’t quit it. The maths still works.' },
-  { text: 'Skipping dinner speeds up fat loss', fact: false, why: 'It just moves the binge to breakfast.' },
-  { text: 'Diet plans stop working the day you stop them', fact: true, why: 'Exactly why Lakhan builds habits, not plans.' },
-  { text: '10,000 steps can be split into 3 short walks', fact: true, why: 'Same maths. Much easier life.' },
-  { text: 'Paneer is off-limits when losing weight', fact: false, why: 'One of the best high-protein Indian foods there is.' },
-];
-
-const gameVerdict = (score) => {
-  if (score === 5) return { title: 'You think in systems.', line: 'Rare. Now imagine that thinking applied to your actual week, with someone keeping the maths honest.' };
-  if (score >= 3) return { title: 'Good instincts.', line: 'The gaps you missed? They’re the exact things a diet plan never teaches, and coaching fixes.' };
-  return { title: 'The internet has been lying to you.', line: 'Not your fault. This is what most “fitness advice” gets wrong. It’s also exactly what Lakhan un-teaches.' };
-};
-
-function GameOrbs({ reduceMotion }) {
-  if (reduceMotion) return null;
-  return (
-    <>
-      <motion.div
-        className="game-orb"
-        style={{ width: '420px', height: '420px', background: 'var(--ink)', top: '-14%', left: '-12%' }}
-        animate={{ x: [0, 36, 0], y: [0, 26, 0] }}
-        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="game-orb"
-        style={{ width: '340px', height: '340px', background: 'var(--border-strong)', bottom: '-16%', right: '-8%' }}
-        animate={{ x: [0, -30, 0], y: [0, -34, 0] }}
-        transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-      />
-    </>
-  );
-}
-
-function GameButton({ children, onClick, className, style, disabled, type = 'button' }) {
-  return (
-    <motion.button
-      type={type}
-      className={className}
-      style={style}
-      onClick={onClick}
-      disabled={disabled}
-      whileHover={disabled ? undefined : { y: -2 }}
-      whileTap={disabled ? undefined : { scale: 0.95, y: 0 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 22 }}
-    >
-      {children}
-    </motion.button>
-  );
-}
-
-function EntryGame({ onClose }) {
-  const [phase, setPhase] = useState('intro');
-  const [idx, setIdx] = useState(0);
-  const [score, setScore] = useState(0);
-  const [displayScore, setDisplayScore] = useState(0);
-  const [feedback, setFeedback] = useState(null);
-  const [exitDir, setExitDir] = useState(0);
-  const [interacted, setInteracted] = useState(false);
-  const [reduceMotion] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  );
-
-  const x = useMotionValue(0);
-  const rawRotate = useTransform(x, [-240, 240], [-14, 14]);
-  const rotate = useSpring(rawRotate, { stiffness: 400, damping: 32 });
-  const rawScale = useTransform(x, [-240, 0, 240], [1.035, 1, 1.035]);
-  const dragScale = useSpring(rawScale, { stiffness: 400, damping: 32 });
-  const mythStampOpacity = useTransform(x, [-110, -30], [1, 0]);
-  const mythStampScale = useTransform(x, [-110, -30], [1, 0.55]);
-  const factStampOpacity = useTransform(x, [30, 110], [0, 1]);
-  const factStampScale = useTransform(x, [30, 110], [0.55, 1]);
-
-  const card = gameCards[idx];
-
-  /* Both pending timers are cleared on unmount so skipping mid-feedback
-     or mid-flash never fires a state update after the game is gone. */
-  const feedbackTimer = useRef(null);
-  const finishTimer = useRef(null);
-  useEffect(
-    () => () => {
-      clearTimeout(feedbackTimer.current);
-      clearTimeout(finishTimer.current);
-    },
-    []
-  );
-
-  const answer = (saysFact) => {
-    if (feedback || phase !== 'play') return;
-    setInteracted(true);
-    const correct = saysFact === card.fact;
-    if (correct) setScore((s) => s + 1);
-    setExitDir(saysFact ? 1 : -1);
-    setFeedback({ correct, why: card.why, fact: card.fact });
-    feedbackTimer.current = setTimeout(() => {
-      setFeedback(null);
-      setExitDir(0);
-      x.set(0);
-      if (idx + 1 >= gameCards.length) setPhase('result');
-      else setIdx((i) => i + 1);
-    }, 1600);
-  };
-
-  useEffect(() => {
-    if (phase !== 'play') return;
-    const onKey = (e) => {
-      if (e.key === 'ArrowLeft') answer(false);
-      if (e.key === 'ArrowRight') answer(true);
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  });
-
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, []);
-
-  /* Score counts up on the result screen instead of snapping in — small
-     touch, reads as far more satisfying than a static number. */
-  useEffect(() => {
-    if (phase !== 'result') return;
-    if (reduceMotion) {
-      setDisplayScore(score);
-      return;
-    }
-    let raf;
-    const start = performance.now();
-    const duration = 700;
-    const step = (t) => {
-      const p = Math.min((t - start) / duration, 1);
-      setDisplayScore(Math.round(p * score));
-      if (p < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [phase, score, reduceMotion]);
-
-  const verdict = gameVerdict(score);
-  const showHint = phase === 'play' && idx === 0 && !interacted && !feedback;
-
-  /* Finishing the game earns a staged reveal: a quick dark flash, then the
-     whole overlay lifts away like a curtain. Skipping stays instant — the
-     reward is only for people who actually played. */
-  const [leaving, setLeaving] = useState(false);
-  const finish = () => {
-    if (leaving) return;
-    setLeaving(true);
-    finishTimer.current = setTimeout(onClose, reduceMotion ? 0 : 260);
-  };
-
-  return (
-    <motion.div
-      className="game-overlay"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1, transition: { duration: 0.35 } }}
-      exit={{ y: '-100%', transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } }}
-    >
-      <GameOrbs reduceMotion={reduceMotion} />
-
-      <AnimatePresence>
-        {leaving && (
-          <motion.div
-            className="game-flash"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, transition: { duration: 0.22, ease: 'easeOut' } }}
-          />
-        )}
-      </AnimatePresence>
-
-      <div className="game-topbar">
-        <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--ink)' }} />
-          <span style={{ fontFamily: 'Anton', fontSize: '16px', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--ink)' }}>
-            Lakhan
-          </span>
-        </span>
-        <button className="game-skip" onClick={() => onClose()}>
-          Skip to website →
-        </button>
-      </div>
-
-      {phase === 'intro' && (
-        <motion.div
-          className="game-stage"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <motion.p
-            className="text-caption"
-            style={{ color: 'var(--ink-60)', marginBottom: '16px' }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.1, duration: 0.4 }}
-          >
-            Before you scroll, a 20-second game
-          </motion.p>
-          <motion.h1
-            className="game-title"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.18, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          >
-            Myth <span className="serif-accent">or</span> Fact?
-          </motion.h1>
-          <motion.p
-            className="text-body"
-            style={{ maxWidth: '400px', margin: '20px auto 0' }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.32, duration: 0.5 }}
-          >
-            5 cards about fat loss. Swipe left for myth, right for fact, and find
-            out how much the internet has been lying to you.
-          </motion.p>
-          <motion.div
-            style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '32px', flexWrap: 'wrap' }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.46, duration: 0.5 }}
-          >
-            <GameButton className="btn-pill" style={{ padding: '16px 32px' }} onClick={() => setPhase('play')}>
-              Play
-              <span className="btn-arrow">→</span>
-            </GameButton>
-          </motion.div>
-        </motion.div>
-      )}
-
-      {phase === 'play' && (
-        <div className="game-stage">
-          {/* progress dots */}
-          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '24px' }}>
-            {gameCards.map((_, i) => (
-              <motion.span
-                key={i}
-                animate={{ scale: i === idx && !feedback ? 1.35 : 1 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 26 }}
-                style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  background: i < idx || (i === idx && feedback) ? 'var(--ink)' : 'var(--border-strong)',
-                  transition: 'background 300ms ease',
-                }}
-              />
-            ))}
-          </div>
-
-          <div className="game-stack">
-            {/* card behind — subtle fan for a "deck" feel */}
-            {idx + 1 < gameCards.length && (
-              <div className="game-card game-card--under" aria-hidden="true">
-                <p className="game-card-text" style={{ opacity: 0.25 }}>{gameCards[idx + 1].text}</p>
-              </div>
-            )}
-
-            {/* top card */}
-            <motion.div
-              key={idx}
-              className="game-card"
-              drag={feedback ? false : 'x'}
-              dragSnapToOrigin
-              dragElastic={0.7}
-              style={{ x, rotate, scale: feedback ? 1 : dragScale }}
-              initial={{ y: 18, opacity: 0 }}
-              animate={
-                feedback
-                  ? { x: exitDir * 640, rotate: exitDir * 18, opacity: 0, transition: { duration: 0.45, ease: 'easeIn' } }
-                  : { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 26 } }
-              }
-              onDragStart={() => setInteracted(true)}
-              onDragEnd={(e, info) => {
-                if (info.offset.x > 90 || info.velocity.x > 600) answer(true);
-                else if (info.offset.x < -90 || info.velocity.x < -600) answer(false);
-              }}
-            >
-              <motion.span className="game-stamp game-stamp--myth" style={{ opacity: mythStampOpacity, scale: mythStampScale }}>
-                Myth
-              </motion.span>
-              <motion.span className="game-stamp game-stamp--fact" style={{ opacity: factStampOpacity, scale: factStampScale }}>
-                Fact
-              </motion.span>
-              <p className="game-card-text">{card.text}</p>
-
-              {/* swipe hint — teaches the gesture on card one, then gone for good */}
-              <AnimatePresence>
-                {showHint && (
-                  <motion.div
-                    className="game-hint"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0, transition: { duration: 0.25 } }}
-                    transition={{ delay: 0.6, duration: 0.4 }}
-                  >
-                    <motion.span
-                      animate={reduceMotion ? {} : { x: [-10, 10, -10] }}
-                      transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-                    >
-                      ← swipe →
-                    </motion.span>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          </div>
-
-          {/* feedback / controls area — fixed height so nothing jumps */}
-          <div className="game-belt">
-            <AnimatePresence mode="wait">
-              {feedback ? (
-                <motion.div
-                  key="fb"
-                  initial={{ opacity: 0, y: 10, scale: 0.96 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ type: 'spring', stiffness: 380, damping: 24 }}
-                  style={{ textAlign: 'center' }}
-                >
-                  <p
-                    style={{
-                      fontFamily: 'Anton',
-                      fontSize: '18px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.04em',
-                      color: feedback.correct ? 'var(--good)' : 'var(--bad)',
-                    }}
-                  >
-                    {feedback.correct ? '✓ You got it' : `✕ It’s a ${feedback.fact ? 'fact' : 'myth'}`}
-                  </p>
-                  <p className="text-accent" style={{ fontSize: '16px', color: 'var(--ink)', marginTop: '6px' }}>
-                    {feedback.why}
-                  </p>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="btns"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                  style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}
-                >
-                  <GameButton className="btn-pill btn-pill--ghost game-choice" onClick={() => answer(false)}>
-                    ✕&nbsp; Myth
-                  </GameButton>
-                  <GameButton className="btn-pill game-choice" onClick={() => answer(true)}>
-                    ✓&nbsp; Fact
-                  </GameButton>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      )}
-
-      {phase === 'result' && (
-        <motion.div
-          className="game-stage"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <p className="text-caption" style={{ color: 'var(--ink-60)', marginBottom: '12px' }}>Your score</p>
-          <motion.p
-            style={{ fontFamily: 'Anton', fontSize: 'clamp(4rem, 14vw, 6.5rem)', lineHeight: 1, color: 'var(--ink)' }}
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 16, delay: 0.05 }}
-          >
-            {displayScore}<span style={{ color: 'var(--ink-40)' }}>/5</span>
-          </motion.p>
-          <motion.h2
-            className="game-title"
-            style={{ fontSize: 'clamp(1.6rem, 5vw, 2.4rem)', marginTop: '16px' }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35, duration: 0.45 }}
-          >
-            {verdict.title}
-          </motion.h2>
-          <motion.p
-            className="text-body"
-            style={{ maxWidth: '420px', margin: '16px auto 0' }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.48, duration: 0.45 }}
-          >
-            {verdict.line}
-          </motion.p>
-          <motion.div
-            style={{ marginTop: '32px' }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.62, duration: 0.45 }}
-          >
-            <GameButton className="btn-pill" style={{ padding: '18px 40px' }} onClick={finish}>
-              Step Inside
-              <span className="btn-arrow">→</span>
-            </GameButton>
-          </motion.div>
-        </motion.div>
-      )}
-    </motion.div>
-  );
-}
-
-/* ============================================================
    1. NAVBAR
    ============================================================ */
 
@@ -521,7 +102,7 @@ function Navbar() {
   const links = [
     { label: 'Method', href: '#method' },
     { label: 'Results', href: '#results' },
-    { label: 'Learn', href: '#learn' },
+    { label: 'Fit Check', href: '#fit-check' },
     { label: 'Programs', href: '#programs' },
   ];
 
@@ -743,7 +324,7 @@ function HeroSection() {
             transition={{ duration: 0.5, delay: 0.75 }}
             style={{ marginTop: '36px' }}
           >
-            <PillLink href="#learn">Start the 2-Minute Diagnostic</PillLink>
+            <PillLink href="#book">Book a Call</PillLink>
           </motion.div>
 
           {/* Service tags row */}
@@ -1246,51 +827,8 @@ function MythTruthSection() {
 }
 
 /* ============================================================
-   7. INTERACTIVE DIAGNOSTIC QUIZ
+   7. WHO THIS IS NOT FOR
    ============================================================ */
-
-const quizQuestions = [
-  {
-    q: 'Which is most likely to ruin your fat-loss deficit?',
-    options: [
-      { text: 'Two rotis at dinner', correct: false },
-      { text: 'Mindless evening snacking while scrolling', correct: true },
-      { text: 'Having rice for lunch', correct: false },
-      { text: 'Drinking chai with sugar', correct: false },
-    ],
-    explain: "It's rarely the meal you planned. It's the 300 unplanned calories from snacking you didn't log.",
-  },
-  {
-    q: "What's the fastest way to hit 10,000 steps daily?",
-    options: [
-      { text: 'One long walk before work', correct: false },
-      { text: 'Break it into 3 short walks across the day', correct: true },
-      { text: 'Buy a treadmill', correct: false },
-      { text: 'Take stairs only', correct: false },
-    ],
-    explain: "You don't need an hour to complete 10,000 steps. You need to stop waiting for the 'perfect' time to walk.",
-  },
-  {
-    q: "A client with thyroid issues asks about fat loss. What's true?",
-    options: [
-      { text: 'Fat loss is impossible with thyroid conditions', correct: false },
-      { text: "It's slower, but the same deficit principles apply, managed carefully", correct: true },
-      { text: 'They need to eliminate carbs completely', correct: false },
-      { text: 'Only medication can help', correct: false },
-    ],
-    explain: 'Thyroid conditions change the pace, not the fundamentals. This is exactly why systems matter more than willpower.',
-  },
-  {
-    q: 'Best way to handle a wedding season / festival week?',
-    options: [
-      { text: 'Skip all events to stay on track', correct: false },
-      { text: 'Plan around it: eat lighter before/after, enjoy the event itself', correct: true },
-      { text: 'Fast the entire day of the event', correct: false },
-      { text: 'Give up and restart after the season', correct: false },
-    ],
-    explain: "Ithaca isn't a straight line. The real reward is building a system flexible enough to survive real life.",
-  },
-];
 
 const notForCards = [
   {
@@ -2299,7 +1837,7 @@ function Footer() {
               { label: 'Method', href: '#method' },
               { label: 'Results', href: '#results' },
               { label: 'Programs', href: '#programs' },
-              { label: 'Learn', href: '#learn' },
+              { label: 'Fit Check', href: '#fit-check' },
             ]}
           />
           <FooterColumn
@@ -3432,13 +2970,6 @@ function AdminPage() {
 
 export default function App() {
   const [hash, setHash] = useState(window.location.hash);
-  const [gameOpen, setGameOpen] = useState(() => {
-    try {
-      return !sessionStorage.getItem('ubm_game_done') && !window.location.hash.replace(/^#\/?/, '').startsWith('admin');
-    } catch {
-      return false;
-    }
-  });
 
   useEffect(() => {
     const onHash = () => setHash(window.location.hash);
@@ -3457,28 +2988,13 @@ export default function App() {
     logVisit();
   }, [isAdmin]);
 
-  /* Bumped every time the game hands off to the site, so the hero remounts
-     and its entrance replays right as the curtain lifts — the payoff feels
-     staged for the person who just played, not just "game closes, page
-     was already sitting there." */
-  const [heroReplay, setHeroReplay] = useState(0);
-
-  const closeGame = () => {
-    try {
-      sessionStorage.setItem('ubm_game_done', '1');
-    } catch {}
-    setHeroReplay((k) => k + 1);
-    setGameOpen(false);
-  };
-
   if (isAdmin) return <AdminPage />;
 
   return (
     <>
-      <AnimatePresence>{gameOpen && <EntryGame onClose={closeGame} />}</AnimatePresence>
       <Navbar />
       <main>
-        <HeroSection key={heroReplay} />
+        <HeroSection />
         <CredentialStrip />
         <AboutCoachSection />
         <StatsSection />
