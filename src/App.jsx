@@ -895,36 +895,27 @@ function StatCard({ num, suffix, label }) {
 function AboutCoachSection() {
   return (
     <section style={{ background: 'var(--paper)', padding: 'clamp(64px, 10vw, 120px) 0' }}>
-      <div className="container grid-2" style={{ gap: 'clamp(32px, 6vw, 80px)', alignItems: 'center' }}>
+      <div className="container grid-2" style={{ gap: 'clamp(40px, 6vw, 80px)', alignItems: 'center' }}>
         <motion.div {...revealProps}>
-          <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Meet Your Coach</span>
+          <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Your Coach</span>
           <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
-            The coach behind the <span className="serif-accent">habits</span>
+            Who you're working <span className="serif-accent">with.</span>
           </h2>
           <p className="text-body" style={{ marginTop: '24px', maxWidth: '440px', lineHeight: 1.7 }}>
-            I spent 8 years as a software engineer eating at my desk and wondering why my workouts weren't showing results. Then I realized: the problem wasn't willpower. It was that I was trying to fit into someone else's system instead of building one around my actual week.
+            Eight years as a software engineer, eating lunch at my desk, wondering why 5ams and meal plans weren't working. The answer wasn't more discipline. It was building a system around how I actually lived instead of fighting my life.
           </p>
           <p className="text-body" style={{ marginTop: '16px', maxWidth: '440px', lineHeight: 1.7, color: 'var(--ink-60)' }}>
-            Now I coach habit-first fat loss for people exactly like me: busy professionals, dal-chawal lovers, people who travel, who work late, who have actual lives. Not despite those things—because of them.
+            Now I coach busy professionals, dal-chawal eaters, people who travel, who work late. People with actual lives. The same system that worked for me works for them—because it's built for real people, not for spreadsheets.
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '28px' }}>
-            <div>
-              <p className="text-caption" style={{ color: 'var(--ink-60)', fontSize: '11px' }}>100+ Clients Coached</p>
-              <p style={{ fontFamily: 'Anton', fontSize: '24px', color: 'var(--ink)', marginTop: '4px' }}>4–8 kg</p>
-              <p className="text-caption" style={{ color: 'var(--ink-60)', fontSize: '11px' }}>Avg. loss in 3 months</p>
-            </div>
-            <div>
-              <p className="text-caption" style={{ color: 'var(--ink-60)', fontSize: '11px' }}>Results That Stick</p>
-              <p style={{ fontFamily: 'Anton', fontSize: '24px', color: 'var(--ink)', marginTop: '4px' }}>92%</p>
-              <p className="text-caption" style={{ color: 'var(--ink-60)', fontSize: '11px' }}>Client retention rate</p>
-            </div>
+          <div style={{ marginTop: '32px' }}>
+            <p className="text-caption" style={{ color: 'var(--ink-60)', marginBottom: '8px' }}>100+ clients. 4–8 kg average. 92% keep it off.</p>
           </div>
-          <PillLink href="#book" ghost style={{ marginTop: '32px' }}>
-            See Available Slots
+          <PillLink href="#book" ghost style={{ marginTop: '28px' }}>
+            Book a Slot
           </PillLink>
         </motion.div>
         <motion.div {...revealProps} style={{ borderRadius: '16px', overflow: 'hidden', background: 'var(--border-strong)', aspectRatio: '3/4' }}>
-          <img src={heroPortrait} alt="Lakhan Ahuja, Coaching Professional" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <img src={heroPortrait} alt="Lakhan" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </motion.div>
       </div>
     </section>
@@ -1073,133 +1064,47 @@ const differences = [
    5b. ON-DEMAND WORKOUTS
    ============================================================ */
 
-const workoutCards = [
-  {
-    title: 'Home Full-Body Strength',
-    duration: '45 min',
-    level: 'All Levels',
-    desc: 'No equipment needed. Build lean muscle in 45 minutes. Focus on posterior chain + core. Real bodyweight work that shows results.',
-    icon: '💪',
-  },
-  {
-    title: 'Gym Hypertrophy',
-    duration: '45 min',
-    level: 'Intermediate',
-    desc: 'Progressive overload each week. Free weights, cable work, compound movements. Designed for fat loss + muscle retention.',
-    icon: '🏋️',
-  },
-  {
-    title: 'Travel-Friendly Cardio',
-    duration: '45 min',
-    level: 'All Levels',
-    desc: 'Hotel room, park, or just your living room. Hit your movement goals while traveling. No machines. No excuses.',
-    icon: '🌍',
-  },
-  {
-    title: 'Desk Job De-Stress',
-    duration: '45 min',
-    level: 'Beginner',
-    desc: 'Built for people who sit 8+ hours daily. Mobility + activation + light cardio. Your back will thank you immediately.',
-    icon: '🧘',
-  },
-  {
-    title: 'Pre-Breakfast Routine',
-    duration: '20 min',
-    level: 'All Levels',
-    desc: 'Quick hit before work. Wake up your metabolism. Consistency over intensity. Part of the daily habit stack.',
-    icon: '🌅',
-  },
-  {
-    title: 'Weekend Reset',
-    duration: '45 min',
-    level: 'Intermediate',
-    desc: 'Active recovery but still challenging. Tempo work, stretching, breathing patterns. Reset your nervous system for the week.',
-    icon: '🎯',
-  },
-];
-
 function WorkoutLibrarySection() {
   return (
     <section style={{ background: 'var(--paper)', padding: 'clamp(64px, 10vw, 120px) 0' }}>
-      <div className="container">
-        <motion.div {...revealProps} style={{ marginBottom: '56px' }}>
+      <div className="container grid-2" style={{ gap: 'clamp(40px, 6vw, 80px)' }}>
+        <motion.div {...revealProps}>
           <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Your Video Gym</span>
           <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
-            45-Minute Workouts, <span className="serif-accent">Every Day</span>
+            New workout every <span className="serif-accent">morning.</span>
           </h2>
-          <p className="text-body" style={{ marginTop: '16px', maxWidth: '520px' }}>
-            A fresh workout every morning. Progressive difficulty. Built for fat loss, not muscle loss. Pick your setting. Pick your pace. Your workout's already recorded.
+          <p className="text-body" style={{ marginTop: '24px', maxWidth: '440px', lineHeight: 1.7 }}>
+            45-minute videos, every single day. Home, gym, or traveling—doesn't matter. Your workout is already filmed, already designed, already tested on clients.
           </p>
+          <p className="text-body" style={{ marginTop: '16px', maxWidth: '440px', lineHeight: 1.7, color: 'var(--ink-60)' }}>
+            Progressive difficulty. Beginner modifications shown for every exercise. Week 1 to Week 12, the programming gets slightly harder. That's how you avoid plateaus.
+          </p>
+          <div style={{ marginTop: '32px' }}>
+            <p className="text-caption" style={{ color: 'var(--ink-60)', marginBottom: '12px' }}>Examples this week:</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink)' }}>• Home Full-Body Strength (no equipment)</p>
+              <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink)' }}>• Travel-Friendly Cardio (20 min hotel room)</p>
+              <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink)' }}>• Gym Hypertrophy (heavy compounds)</p>
+            </div>
+          </div>
+          <PillLink href="#book" ghost style={{ marginTop: '32px' }}>
+            See Full Schedule
+          </PillLink>
         </motion.div>
 
         <motion.div
-          {...revealProps}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '24px',
-            marginBottom: '48px',
-          }}
+          initial={{ opacity: 0, scale: 1.03 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          style={{ borderRadius: '24px', overflow: 'hidden', height: 'clamp(400px, 50vw, 560px)' }}
         >
-          {workoutCards.map((card, i) => (
-            <div
-              key={i}
-              style={{
-                background: 'var(--paper-dim)',
-                padding: '28px 24px',
-                borderRadius: '16px',
-                border: '1.5px solid var(--border-strong)',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <div>
-                  <p className="text-caption" style={{ color: 'var(--ink-60)', fontSize: '12px' }}>
-                    {card.duration} • {card.level}
-                  </p>
-                  <h3 style={{ fontFamily: 'Anton', fontSize: '18px', color: 'var(--ink)', marginTop: '6px', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
-                    {card.title}
-                  </h3>
-                </div>
-                <span style={{ fontSize: '28px' }}>{card.icon}</span>
-              </div>
-              <p style={{ fontFamily: 'Inter', fontSize: '14px', color: 'var(--ink-60)', lineHeight: 1.6, flexGrow: 1, marginBottom: '16px' }}>
-                {card.desc}
-              </p>
-              <button style={{
-                width: '100%',
-                background: 'var(--paper)',
-                border: '1.5px solid var(--border-strong)',
-                padding: '12px 16px',
-                borderRadius: '999px',
-                fontFamily: 'Inter',
-                fontSize: '13px',
-                fontWeight: 600,
-                color: 'var(--ink)',
-                cursor: 'pointer',
-                transition: 'all 200ms ease',
-              }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--ink)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; }}
-              >
-                View Details
-              </button>
-            </div>
-          ))}
-        </motion.div>
-
-        <motion.div {...revealProps} style={{ background: 'var(--ink)', color: 'var(--paper)', padding: '40px 32px', borderRadius: '16px', textAlign: 'center' }}>
-          <p className="text-caption" style={{ color: 'rgba(236,234,228,0.6)', marginBottom: '8px' }}>The Workout Library</p>
-          <h3 style={{ fontFamily: 'Anton', fontSize: '24px', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
-            800+ Workouts. Updated Weekly.
-          </h3>
-          <p style={{ fontSize: '15px', lineHeight: 1.6, maxWidth: '520px', marginLeft: 'auto', marginRight: 'auto', marginBottom: '24px', color: 'rgba(236,234,228,0.85)' }}>
-            Every coaching plan includes unlimited access to the complete workout library. New 45-minute videos every week. Progressively harder. Beginner modifications shown for every exercise.
-          </p>
-          <PillLink href="#book" style={{ justifyContent: 'center', background: 'var(--paper)', color: 'var(--ink)' }}>
-            See Available Plans
-          </PillLink>
+          <img
+            src={images.workout_home}
+            alt="Workout in progress"
+            loading="lazy"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
         </motion.div>
       </div>
     </section>
@@ -1418,56 +1323,53 @@ function WhoThisIsNotForSection() {
   return (
     <section id="fit-check" className="section-pad" style={{ background: "var(--paper-dim)" }}>
       <div className="container" style={{ maxWidth: "900px" }}>
-        <motion.div {...revealProps} style={{ textAlign: "center", marginBottom: "56px" }}>
+        <motion.div {...revealProps} style={{ marginBottom: "56px" }}>
           <span className="text-caption" style={{ color: "var(--ink-60)" }}>Before You Apply</span>
           <h2 className="text-h2" style={{ color: "var(--ink)", marginTop: "12px" }}>
             Who this program is <span className="serif-accent">NOT</span> for
           </h2>
-          <p className="text-body" style={{ marginTop: "16px", maxWidth: "520px", marginLeft: "auto", marginRight: "auto" }}>
-            Honesty matters. If this doesn’t match your situation, a different coach will probably serve you better.
+          <p className="text-body" style={{ marginTop: "16px", maxWidth: "620px" }}>
+            Real talk: if you recognize yourself below, a different coach will serve you better. No shame. Just honesty.
           </p>
         </motion.div>
 
-        <motion.div
-          {...revealProps}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "20px",
-            marginBottom: "48px",
-          }}
-        >
+        <motion.div {...revealProps} style={{ marginBottom: "56px" }}>
           {notForCards.map((card, i) => (
-            <div
+            <motion.div
               key={i}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "0px 0px -40px 0px" }}
+              transition={{ duration: 0.5, delay: i * 0.06 }}
               style={{
-                background: "var(--paper)",
-                padding: "28px 24px",
-                borderRadius: "16px",
-                border: "1.5px solid var(--border-strong)",
+                paddingBottom: "28px",
+                marginBottom: "28px",
+                borderBottom: i < notForCards.length - 1 ? "1px solid var(--border)" : "none",
               }}
             >
-              <div style={{ display: "flex", gap: "10px", alignItems: "flex-start", marginBottom: "12px" }}>
-                <span style={{ color: "var(--bad)", fontSize: "18px", fontWeight: "bold", flexShrink: 0 }}>✕</span>
-                <h3 style={{ fontFamily: "Inter", fontWeight: 600, fontSize: "15px", color: "var(--ink)" }}>
-                  {card.title}
-                </h3>
+              <div style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
+                <span style={{ color: "var(--bad)", fontSize: "16px", fontWeight: "bold", flexShrink: 0, lineHeight: 1.6 }}>✕</span>
+                <div>
+                  <h3 style={{ fontFamily: "Inter", fontWeight: 600, fontSize: "15px", color: "var(--ink)", marginBottom: "6px" }}>
+                    {card.title}
+                  </h3>
+                  <p style={{ fontFamily: "Inter", fontSize: "14px", color: "var(--ink-60)", lineHeight: 1.6 }}>
+                    {card.desc}
+                  </p>
+                </div>
               </div>
-              <p style={{ fontFamily: "Inter", fontSize: "13px", color: "var(--ink-60)", lineHeight: 1.6 }}>
-                {card.desc}
-              </p>
-            </div>
+            </motion.div>
           ))}
         </motion.div>
 
-        <motion.div {...revealProps} style={{ background: "var(--paper)", padding: "32px 28px", borderRadius: "16px", textAlign: "center" }}>
-          <h3 style={{ fontFamily: "Anton", fontSize: "20px", color: "var(--ink)", marginBottom: "16px", textTransform: "uppercase", letterSpacing: "0.02em" }}>
-            If you read all that and nodded... you’re probably ready.
+        <motion.div {...revealProps} style={{ background: "var(--paper)", padding: "36px 32px", borderRadius: "16px" }}>
+          <h3 style={{ fontFamily: "Anton", fontSize: "18px", color: "var(--ink)", marginBottom: "16px", textTransform: "uppercase", letterSpacing: "0.02em" }}>
+            If you didn’t see yourself above, apply.
           </h3>
-          <p className="text-body" style={{ maxWidth: "560px", marginLeft: "auto", marginRight: "auto", marginBottom: "24px" }}>
-            Coaching works best for people who are tired of diet plans and want actual habits, can commit 90+ days, are willing to track honestly, have realistic timelines, and actually want accountability.
+          <p className="text-body" style={{ marginBottom: "24px" }}>
+            Coaching works for people tired of diet plans, willing to commit 90+ days, honest about tracking, realistic about timelines, and genuinely wanting accountability.
           </p>
-          <PillLink href="#book" style={{ justifyContent: "center" }}>
+          <PillLink href="#book">
             Apply for Coaching
           </PillLink>
         </motion.div>
@@ -1750,84 +1652,51 @@ const instagramHighlights = [
 ];
 
 function InstagramHighlightsSection() {
-  const [currentIdx, setCurrentIdx] = useState(0);
-
   return (
     <section style={{ background: 'var(--paper-dim)', padding: 'clamp(64px, 10vw, 120px) 0' }}>
-      <div className="container">
-        <motion.div {...revealProps} style={{ marginBottom: '48px', textAlign: 'center' }}>
+      <div className="container grid-2" style={{ gap: 'clamp(40px, 6vw, 80px)', alignItems: 'center' }}>
+        <motion.div
+          initial={{ opacity: 0, scale: 1.03 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          style={{ borderRadius: '24px', overflow: 'hidden', height: 'clamp(400px, 50vw, 560px)' }}
+        >
+          <img
+            src={images.food_dal}
+            alt="Instagram post"
+            loading="lazy"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        </motion.div>
+
+        <motion.div {...revealProps}>
           <span className="text-caption" style={{ color: 'var(--ink-60)' }}>The Daily Conversation</span>
           <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
-            What's happening on <span className="serif-accent">Instagram</span>
+            Where the real <span className="serif-accent">work happens.</span>
           </h2>
-          <p className="text-body" style={{ marginTop: '16px', maxWidth: '520px', marginLeft: 'auto', marginRight: 'auto' }}>
-            Real posts from real clients. Daily insights, accountability, myths destroyed. Follow for daily strategy.
+          <p className="text-body" style={{ marginTop: '24px', maxWidth: '440px', lineHeight: 1.7 }}>
+            @lakhancoding is where clients post wins, ask questions, and stay accountable. 500+ people on the story. New posts every day.
           </p>
-        </motion.div>
-
-        <motion.div
-          {...revealProps}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '20px',
-            marginBottom: '40px',
-          }}
-        >
-          {instagramHighlights.map((post, i) => (
-            <div
-              key={post.id}
-              style={{
-                background: 'var(--paper)',
-                borderRadius: '12px',
-                overflow: 'hidden',
-                border: '1px solid var(--border)',
-              }}
-            >
-              <div style={{ width: '100%', paddingBottom: '100%', position: 'relative', overflow: 'hidden', background: 'var(--paper-dim)' }}>
-                <img
-                  src={post.url}
-                  alt={post.caption}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                  }}
-                  loading="lazy"
-                />
-              </div>
-              <div style={{ padding: '16px' }}>
-                <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink-60)', lineHeight: 1.5, marginBottom: '12px', minHeight: '50px' }}>
-                  {post.caption.substring(0, 80)}...
-                </p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span className="text-caption" style={{ fontSize: '11px', color: 'var(--ink-60)' }}>
-                    ❤️ {post.likes.toLocaleString()} likes
-                  </span>
-                  <a href="#" style={{ color: 'var(--ink)', fontSize: '12px', fontWeight: 600, textDecoration: 'none' }}>
-                    View →
-                  </a>
-                </div>
-              </div>
+          <p className="text-body" style={{ marginTop: '16px', maxWidth: '440px', lineHeight: 1.7, color: 'var(--ink-60)' }}>
+            You'll see real transformations, myth-busting threads, strategy posts about travel eating + office snacking, and weekly accountability check-ins. Not curated. Not perfect. Real.
+          </p>
+          <div style={{ marginTop: '32px' }}>
+            <p className="text-caption" style={{ color: 'var(--ink-60)', marginBottom: '12px' }}>Recent topics:</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink)' }}>• Food isn't a debt you pay off at the gym</p>
+              <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink)' }}>• 10k steps can be three walks of 3,300</p>
+              <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink)' }}>• Why diet plans end and results end with them</p>
             </div>
-          ))}
-        </motion.div>
-
-        <motion.div {...revealProps} style={{ textAlign: 'center' }}>
-          <p className="text-body" style={{ marginBottom: '24px', color: 'var(--ink-60)' }}>
-            Follow @lakhancoding for daily fat loss insights, client wins, strategy threads, and accountability posts.
-          </p>
+          </div>
           <a
             href="https://instagram.com/lakhancoding"
             target="_blank"
             rel="noopener noreferrer"
             className="btn-pill"
-            style={{ display: 'inline-flex' }}
+            style={{ marginTop: '32px', display: 'inline-flex' }}
           >
-            Follow on Instagram
+            Follow @lakhancoding
             <span className="btn-arrow">→</span>
           </a>
         </motion.div>
