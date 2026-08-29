@@ -463,16 +463,16 @@ function AboutCoachSection() {
             Who you're working <span className="serif-accent">with.</span>
           </h2>
           <p className="text-body" style={{ marginTop: '24px', lineHeight: 1.7 }}>
-            I'm Lakhan, a certified fitness coach and nutritionist (CrossFit Level 2, Precision Nutrition). I've helped 500+ clients with weight loss, reversing diabetes, and managing thyroid conditions. My methodology is simple, effective, and sustainable — I simplify meal plans and focus on habit building, so you can maintain a healthy lifestyle for life.
+            I'm Lakhan, a certified fitness coach and nutritionist (CrossFit Level 2, Precision Nutrition). I've helped 100+ clients with weight loss, reversing diabetes, and managing thyroid conditions. My methodology is simple, effective, and sustainable. I simplify meal plans and focus on habit building, so you can maintain a healthy lifestyle for life.
           </p>
           <p className="text-body" style={{ marginTop: '16px', lineHeight: 1.7, color: 'var(--ink-60)' }}>
-            My own journey began with personal struggles: insulin resistance and being severely overweight. From that experience, I've built a plan that's effective and easy to follow. I'll help you work through whatever you're facing — management, motivation, or clearing up the misconceptions around health and wellness.
+            My own journey began with personal struggles: insulin resistance and being severely overweight. From that experience, I've built a plan that's effective and easy to follow. I'll help you work through whatever you're facing, whether that's management, motivation, or clearing up the misconceptions around health and wellness.
           </p>
           <p className="text-body" style={{ marginTop: '16px', lineHeight: 1.7, color: 'var(--ink-60)' }}>
-            No matter your goal — weight loss, weight gain, reversing diabetes or pre-diabetes, or simply maintaining good health — I've built a protocol that's easy to follow and focused on habits you can keep for the long run.
+            Whether your goal is weight loss, weight gain, reversing diabetes or pre-diabetes, or simply maintaining good health, I've built a protocol that's easy to follow and focused on habits you can keep for the long run.
           </p>
           <div style={{ marginTop: '32px' }}>
-            <p className="text-caption" style={{ color: 'var(--ink-60)', marginBottom: '8px' }}>500+ clients. Diabetes & thyroid reversed. Habits that last.</p>
+            <p className="text-caption" style={{ color: 'var(--ink-60)', marginBottom: '8px' }}>100+ clients. Diabetes & thyroid reversed. Habits that last.</p>
           </div>
           <PillLink href="#book" ghost style={{ marginTop: '28px' }}>
             Book a Slot
@@ -635,7 +635,7 @@ function WorkoutLibrarySection() {
             New workout every <span className="serif-accent">morning.</span>
           </h2>
           <p className="text-body" style={{ marginTop: '24px', maxWidth: '440px', lineHeight: 1.7 }}>
-            45-minute videos, every single day. Home, gym, or traveling—doesn't matter. Your workout is already filmed, already designed, already tested on clients.
+            45-minute videos, every single day. Home, gym, or traveling, it doesn't matter. Your workout is already filmed, already designed, already tested on clients.
           </p>
           <p className="text-body" style={{ marginTop: '16px', maxWidth: '440px', lineHeight: 1.7, color: 'var(--ink-60)' }}>
             Progressive difficulty. Beginner modifications shown for every exercise. Week 1 to Week 12, the programming gets slightly harder. That's how you avoid plateaus.
@@ -813,11 +813,11 @@ function MythTruthSection() {
 const notForCards = [
   {
     title: "Looking for quick-fix results",
-    desc: "You want 15 kg gone in 30 days. Coaching doesn’t do that—fast fat loss means muscle loss + inevitable rebound. We optimize for sustainable, which takes longer. But it sticks."
+    desc: "You want 15 kg gone in 30 days. Coaching doesn’t do that: fast fat loss means muscle loss + inevitable rebound. We optimize for sustainable, which takes longer. But it sticks."
   },
   {
     title: "Unwilling to track",
-    desc: "You want results without measuring anything. This program requires honest habit tracking—weekly. That’s the only way to know what’s working. If tracking sounds annoying, this isn’t for you yet."
+    desc: "You want results without measuring anything. This program requires honest habit tracking, every week. That’s the only way to know what’s working. If tracking sounds annoying, this isn’t for you yet."
   },
   {
     title: "Looking for a meal plan",
@@ -833,7 +833,7 @@ const notForCards = [
   },
   {
     title: "On a super tight budget",
-    desc: "If you’re in the \"can’t spend more than ₹1500/month\" situation—I respect that. But coaching isn’t luxury. Wait until the budget is there. Save for it."
+    desc: "If you’re in the \"can’t spend more than ₹1500/month\" situation, I respect that. But coaching isn’t luxury. Wait until the budget is there. Save for it."
   },
 ];
 
