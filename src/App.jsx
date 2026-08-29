@@ -1143,7 +1143,7 @@ function TestimonialCard({ name, condition, result, quote, img }) {
       >
         {condition}
       </span>
-      <p className="text-accent" style={{ fontSize: '17px', color: 'var(--ink)', margin: '20px 0', lineHeight: 1.6 }}>
+      <p style={{ fontFamily: 'Inter', fontWeight: 500, fontSize: '15px', color: 'var(--ink)', margin: '20px 0', lineHeight: 1.6 }}>
         "{quote}"
       </p>
       <div
@@ -1260,13 +1260,18 @@ function TestimonialsAutoScroll() {
   const [setA, setSetA] = useState(testimonialsSetA);
   const [setB, setSetB] = useState(testimonialsSetB);
 
+  /* Always applies whatever the database actually has, including empty —
+     the hardcoded arrays are only ever the initial state, shown before
+     this fetch resolves (or if it fails outright). Previously this only
+     overwrote a track when it had rows, so deleting everything in the
+     admin (or emptying just one track) left the old hardcoded
+     testimonials stuck on screen forever. */
   useEffect(() => {
     fetchTestimonials()
       .then((rows) => {
-        if (!rows.length) return;
         const a = rows.filter((r) => r.track !== 'b');
         const b = rows.filter((r) => r.track === 'b');
-        if (a.length) setSetA(a);
+        setSetA(a);
         setSetB(b.length ? b : a);
       })
       .catch(() => {});
@@ -3007,12 +3012,12 @@ export default function App() {
         <CredentialStrip />
         <AboutCoachSection />
         <StatsSection />
+        <GallerySection />
         <ProcessSection />
         <WorkoutLibrarySection />
         <DifferenceSection />
         <MythTruthSection />
         <WhoThisIsNotForSection />
-        <GallerySection />
         <InstagramHighlightsSection />
         <TestimonialsAutoScroll />
         <ProgramsSection />
