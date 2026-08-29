@@ -3239,13 +3239,13 @@ export default function App() {
         <AboutCoachSection />
         <StatsSection />
         <GallerySection />
+        <TestimonialsAutoScroll />
         <ProcessSection />
         <WorkoutLibrarySection />
         <DifferenceSection />
         <MythTruthSection />
         <WhoThisIsNotForSection />
         <InstagramHighlightsSection />
-        <TestimonialsAutoScroll />
         <ProgramsSection />
         <FAQSection />
         <BookSection />
