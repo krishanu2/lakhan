@@ -489,7 +489,7 @@ function AboutCoachSection() {
             Now I coach busy professionals, dal-chawal eaters, people who travel, who work late. People with actual lives. The same system that worked for me works for them—because it's built for real people, not for spreadsheets.
           </p>
           <div style={{ marginTop: '32px' }}>
-            <p className="text-caption" style={{ color: 'var(--ink-60)', marginBottom: '8px' }}>100+ clients. 4–8 kg average. 92% keep it off.</p>
+            <p className="text-caption" style={{ color: 'var(--ink-60)', marginBottom: '8px' }}>100+ clients. 4–8 kg average fat loss. 92% keep it off.</p>
           </div>
           <PillLink href="#book" ghost style={{ marginTop: '28px' }}>
             Book a Slot
@@ -844,8 +844,8 @@ const notForCards = [
     desc: "You want someone to tell you exactly what to eat every day. A PDF. Zero choices. That’s the opposite of what we do. We teach you to make decisions so you don’t need a PDF."
   },
   {
-    title: "Exercise-only expecting",
-    desc: "You think 1 hour at the gym means you can eat whatever you want. Fat loss is 80% food behavior + 20% movement. If you won’t change how you eat, don’t waste both our time."
+    title: "Relying on exercise alone",
+    desc: "You think 1 hour at the gym means you can eat whatever you want. Fat loss is 80% food behavior + 20% movement. If you won’t change how you eat, don’t waste both of our time."
   },
   {
     title: "Highly skeptical of coaching",
