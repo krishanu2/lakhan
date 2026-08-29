@@ -28,6 +28,7 @@ import {
 
 import heroPortrait from './assets/hero.jpg';
 import workoutDeadlift from './assets/workout-deadlift.jpg';
+import coachingCycle from './assets/coaching-cycle.jpg';
 
 /* ============================================================
    FUNCTIONALCOACH101.COM — Lakhan Ahuja · The Weight Loss Coach
@@ -907,7 +908,7 @@ function WhoThisIsNotForSection() {
 
 const fallbackSlides = [
   { id: 'f1', url: images.hero, caption: '', width: 420 },
-  { id: 'f2', url: images.food_dal, caption: '', width: 300 },
+  { id: 'f2', url: coachingCycle, caption: '', width: 300 },
   { id: 'f3', url: images.workout_home, caption: '', width: 340 },
   { id: 'f4', url: images.food_street, caption: '', width: 420 },
   { id: 'f5', url: images.workout_2, caption: '', width: 300 },
