@@ -931,6 +931,11 @@ const fallbackSlides = [
   { id: 'f8', url: images.method_1, caption: '', width: 300 },
 ];
 
+/* Below this many photos, the loop-scroll trick (rendering the list
+   twice) never scrolls far enough to hide the repeat — every photo
+   just visibly appears twice on screen, which looks like a bug. */
+const GALLERY_LOOP_MIN = 6;
+
 function GallerySection() {
   const [slides, setSlides] = useState(fallbackSlides);
   useEffect(() => {
@@ -953,10 +958,14 @@ function GallerySection() {
   };
 
   /* Slow continuous drift; slides are rendered twice, so wrapping
-     scrollLeft at the halfway point loops seamlessly. */
+     scrollLeft at the halfway point loops seamlessly. Only worth doing
+     once there are enough photos that the repeat scrolls off-screen —
+     with only a handful, duplicating the list just makes every photo
+     visibly appear twice at once, which reads as a bug, not a loop. */
   useEffect(() => {
     const el = trackRef.current;
     if (!el) return;
+    if (slides.length < GALLERY_LOOP_MIN) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let raf;
     const step = () => {
@@ -1034,7 +1043,7 @@ function GallerySection() {
         onTouchStart={() => pauseFor(4000)}
         onWheel={() => pauseFor(2500)}
       >
-        {[...slides, ...slides].map((slide, i) => (
+        {(slides.length >= GALLERY_LOOP_MIN ? [...slides, ...slides] : slides).map((slide, i) => (
           <div
             key={`${slide.id}-${i}`}
             className="slide-cell"
