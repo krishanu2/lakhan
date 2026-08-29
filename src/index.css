@@ -470,15 +470,21 @@ button {
   animation: scrollRTL 18s linear infinite;
 }
 
-.testimonial-track-ltr:hover,
-.testimonial-track-rtl:hover {
-  animation-play-state: paused;
+/* Pause-on-hover only for real pointer devices — on touchscreens, tapping
+   or swiping a card can leave it "stuck" in a phantom :hover state (a
+   known iOS/Android quirk), which froze the whole scroll indefinitely
+   with no way to un-stick it since there's nothing else to hover away to. */
+@media (hover: hover) {
+  .testimonial-track-ltr:hover,
+  .testimonial-track-rtl:hover {
+    animation-play-state: paused;
+  }
 }
 
 @media (max-width: 768px) {
   .testimonial-track-ltr,
   .testimonial-track-rtl {
-    animation-duration: 22s;
+    animation-duration: 14s;
   }
 }
 
