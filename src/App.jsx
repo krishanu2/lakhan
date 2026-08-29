@@ -602,8 +602,8 @@ function ProcessSection() {
           style={{ borderRadius: '24px', overflow: 'hidden', height: 'clamp(400px, 50vw, 560px)' }}
         >
           <img
-            src={images.process_1}
-            alt="Coaching consultation"
+            src={coachingCycle}
+            alt="The coaching cycle"
             loading="lazy"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
