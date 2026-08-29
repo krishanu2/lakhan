@@ -22,6 +22,7 @@ import {
 } from './api.js';
 
 import heroPortrait from './assets/hero.jpg';
+import workoutDeadlift from './assets/workout-deadlift.jpg';
 
 /* ============================================================
    FUNCTIONALCOACH101.COM — Lakhan Ahuja · The Weight Loss Coach
@@ -660,8 +661,8 @@ function WorkoutLibrarySection() {
           style={{ borderRadius: '24px', overflow: 'hidden', height: 'clamp(400px, 50vw, 560px)' }}
         >
           <img
-            src={images.workout_home}
-            alt="Workout in progress"
+            src={workoutDeadlift}
+            alt="Lakhan deadlifting"
             loading="lazy"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
