@@ -456,27 +456,27 @@ function StatCard({ num, suffix, label }) {
 function AboutCoachSection() {
   return (
     <section style={{ background: 'var(--paper)', padding: 'clamp(64px, 10vw, 120px) 0' }}>
-      <div className="container grid-2" style={{ gap: 'clamp(40px, 6vw, 80px)', alignItems: 'center' }}>
+      <div className="container" style={{ maxWidth: '760px' }}>
         <motion.div {...revealProps}>
           <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Your Coach</span>
           <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
             Who you're working <span className="serif-accent">with.</span>
           </h2>
-          <p className="text-body" style={{ marginTop: '24px', maxWidth: '440px', lineHeight: 1.7 }}>
-            Eight years as a software engineer, eating lunch at my desk, wondering why 5ams and meal plans weren't working. The answer wasn't more discipline. It was building a system around how I actually lived instead of fighting my life.
+          <p className="text-body" style={{ marginTop: '24px', lineHeight: 1.7 }}>
+            I'm Lakhan, a certified fitness coach and nutritionist (CrossFit Level 2, Precision Nutrition). I've helped 500+ clients with weight loss, reversing diabetes, and managing thyroid conditions. My methodology is simple, effective, and sustainable — I simplify meal plans and focus on habit building, so you can maintain a healthy lifestyle for life.
           </p>
-          <p className="text-body" style={{ marginTop: '16px', maxWidth: '440px', lineHeight: 1.7, color: 'var(--ink-60)' }}>
-            Now I coach busy professionals, dal-chawal eaters, people who travel, who work late. People with actual lives. The same system that worked for me works for them—because it's built for real people, not for spreadsheets.
+          <p className="text-body" style={{ marginTop: '16px', lineHeight: 1.7, color: 'var(--ink-60)' }}>
+            My own journey began with personal struggles: insulin resistance and being severely overweight. From that experience, I've built a plan that's effective and easy to follow. I'll help you work through whatever you're facing — management, motivation, or clearing up the misconceptions around health and wellness.
+          </p>
+          <p className="text-body" style={{ marginTop: '16px', lineHeight: 1.7, color: 'var(--ink-60)' }}>
+            No matter your goal — weight loss, weight gain, reversing diabetes or pre-diabetes, or simply maintaining good health — I've built a protocol that's easy to follow and focused on habits you can keep for the long run.
           </p>
           <div style={{ marginTop: '32px' }}>
-            <p className="text-caption" style={{ color: 'var(--ink-60)', marginBottom: '8px' }}>100+ clients. 4–8 kg average fat loss. 92% keep it off.</p>
+            <p className="text-caption" style={{ color: 'var(--ink-60)', marginBottom: '8px' }}>500+ clients. Diabetes & thyroid reversed. Habits that last.</p>
           </div>
           <PillLink href="#book" ghost style={{ marginTop: '28px' }}>
             Book a Slot
           </PillLink>
-        </motion.div>
-        <motion.div {...revealProps} style={{ borderRadius: '16px', overflow: 'hidden', background: 'var(--border-strong)', aspectRatio: '3/4' }}>
-          <img src={heroPortrait} alt="Lakhan" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </motion.div>
       </div>
     </section>
