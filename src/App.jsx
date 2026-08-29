@@ -326,27 +326,6 @@ function HeroSection() {
           >
             <PillLink href="#book">Book a Call</PillLink>
           </motion.div>
-
-          {/* Service tags row */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            className="service-tags"
-            style={{ marginTop: 'clamp(40px, 7vw, 64px)', paddingTop: '24px', borderTop: '1px solid var(--border)' }}
-          >
-            {[
-              { title: 'Habit-First Coaching', desc: 'No diet plans. Nothing to start or quit.' },
-              { title: '1:1 Video Consults', desc: '45 minutes, every 7–10 days.' },
-            ].map((item, i) => (
-              <div key={i}>
-                <p className="text-caption" style={{ color: 'var(--ink)', marginBottom: '6px' }}>
-                  {item.title}
-                </p>
-                <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink-60)' }}>{item.desc}</p>
-              </div>
-            ))}
-          </motion.div>
         </div>
 
         {/* RIGHT: portrait */}

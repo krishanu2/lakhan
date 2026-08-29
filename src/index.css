@@ -226,18 +226,6 @@ button {
   }
 }
 
-.service-tags {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
-}
-
-@media (min-width: 480px) {
-  .service-tags {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
