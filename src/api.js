@@ -43,6 +43,30 @@ export const updateGalleryItem = (id, url, caption, width) =>
 
 export const deleteGalleryItem = (id) => sql('DELETE FROM gallery WHERE id = $1', [id]);
 
+/* ---------- Instagram Highlights ---------- */
+
+export const fetchInstagramHighlights = () =>
+  sql('SELECT id, url, caption, link, likes FROM instagram_highlights ORDER BY position, id');
+
+export const addInstagramHighlight = (url, caption, link, likes) =>
+  sql(
+    'INSERT INTO instagram_highlights (url, caption, link, likes, position) VALUES ($1, $2, $3, $4, coalesce((SELECT max(position) FROM instagram_highlights), 0) + 1) RETURNING id',
+    [url, caption, link, likes]
+  );
+
+export const updateInstagramHighlight = (id, url, caption, link, likes) =>
+  sql('UPDATE instagram_highlights SET url = $2, caption = $3, link = $4, likes = $5 WHERE id = $1', [id, url, caption, link, likes]);
+
+export const deleteInstagramHighlight = (id) => sql('DELETE FROM instagram_highlights WHERE id = $1', [id]);
+
+/* Moves one post to the front (lowest position), so it becomes the big
+   featured photo on the website instead of whichever was added first. */
+export const featureInstagramHighlight = (id) =>
+  sql(
+    'UPDATE instagram_highlights SET position = coalesce((SELECT min(position) FROM instagram_highlights), 0) - 1 WHERE id = $1',
+    [id]
+  );
+
 /* ---------- Testimonials ---------- */
 
 export const fetchTestimonials = () =>

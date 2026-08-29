@@ -5,6 +5,11 @@ import {
   addGalleryItem,
   updateGalleryItem,
   deleteGalleryItem,
+  fetchInstagramHighlights,
+  addInstagramHighlight,
+  updateInstagramHighlight,
+  deleteInstagramHighlight,
+  featureInstagramHighlight,
   fetchTestimonials,
   addTestimonial,
   updateTestimonial,
@@ -1149,40 +1154,43 @@ function TestimonialCard({ name, condition, result, quote, img }) {
    8b. INSTAGRAM HIGHLIGHTS
    ============================================================ */
 
-const instagramHighlights = [
+/* Fallback shown before the database fetch resolves, or if it fails
+   outright. Once Lakhan adds real posts in admin, these are replaced
+   entirely — see fetchInstagramHighlights() below. */
+const fallbackInstagramHighlights = [
   {
     id: 'ig1',
     caption: "You don't need to \"earn\" your food. Food = fuel. Exercise = building. They're not a zero-sum game.",
     likes: 432,
     url: images.food_dal,
+    link: 'https://instagram.com/functionalcoach101',
   },
   {
     id: 'ig2',
     caption: "Priya stopped treating one bad meal like a failed week. That single mindset shift did more than any diet plan ever could. 11 kg later, that's still the reason it stuck.",
     likes: 518,
     url: images.workout_home,
+    link: 'https://instagram.com/functionalcoach101',
   },
   {
     id: 'ig3',
     caption: "Your 10,000 steps doesn't need to be one 2-hour walk. Three walks of 3,300 steps? That's the same math, much easier life.",
     likes: 387,
     url: images.workout_2,
-  },
-  {
-    id: 'ig4',
-    caption: "Dal-chawal fuels fat loss too. You don't get permission when you hit your protein goal. You just eat dal. No drama. No guilt.",
-    likes: 629,
-    url: images.food_street,
-  },
-  {
-    id: 'ig5',
-    caption: "Week 7 check-in: clients averaging 2–3 kg loss so far. Not rushed. Not unsustainable. Just consistent.",
-    likes: 445,
-    url: images.process_1,
+    link: 'https://instagram.com/functionalcoach101',
   },
 ];
 
 function InstagramHighlightsSection() {
+  const [posts, setPosts] = useState(fallbackInstagramHighlights);
+  useEffect(() => {
+    fetchInstagramHighlights()
+      .then((rows) => setPosts(rows))
+      .catch(() => {});
+  }, []);
+
+  const [featured, ...rest] = posts;
+
   return (
     <section style={{ background: 'var(--paper-dim)', padding: 'clamp(64px, 10vw, 120px) 0' }}>
       <div className="container grid-2" style={{ gap: 'clamp(40px, 6vw, 80px)', alignItems: 'center' }}>
@@ -1191,14 +1199,37 @@ function InstagramHighlightsSection() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          style={{ borderRadius: '24px', overflow: 'hidden', height: 'clamp(400px, 50vw, 560px)' }}
         >
-          <img
-            src={images.food_dal}
-            alt="Instagram post"
-            loading="lazy"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
+          {featured && (
+            <a
+              href={featured.link || 'https://instagram.com/functionalcoach101'}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'block', borderRadius: '24px', overflow: 'hidden', height: 'clamp(400px, 50vw, 560px)' }}
+            >
+              <img
+                src={featured.url}
+                alt={featured.caption || 'Instagram post'}
+                loading="lazy"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </a>
+          )}
+          {rest.length > 0 && (
+            <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
+              {rest.slice(0, 4).map((post) => (
+                <a
+                  key={post.id}
+                  href={post.link || 'https://instagram.com/functionalcoach101'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: 'block', borderRadius: '10px', overflow: 'hidden', width: '64px', height: '64px', flexShrink: 0 }}
+                >
+                  <img src={post.url} alt={post.caption || 'Instagram post'} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </a>
+              ))}
+            </div>
+          )}
         </motion.div>
 
         <motion.div {...revealProps}>
@@ -1206,20 +1237,17 @@ function InstagramHighlightsSection() {
           <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
             Where the real <span className="serif-accent">work happens.</span>
           </h2>
-          <p className="text-body" style={{ marginTop: '24px', maxWidth: '440px', lineHeight: 1.7 }}>
-            @functionalcoach101 is where clients post wins, ask questions, and stay accountable. 500+ people following. New posts every day.
+          {featured?.caption && (
+            <p style={{ fontFamily: 'Inter', fontWeight: 500, fontSize: '15px', color: 'var(--ink)', marginTop: '20px', lineHeight: 1.6 }}>
+              "{featured.caption}"
+            </p>
+          )}
+          {featured?.likes > 0 && (
+            <p className="text-caption" style={{ color: 'var(--ink-60)', marginTop: '10px' }}>❤️ {featured.likes.toLocaleString()} likes</p>
+          )}
+          <p className="text-body" style={{ marginTop: '20px', maxWidth: '440px', lineHeight: 1.7, color: 'var(--ink-60)' }}>
+            @functionalcoach101 is where clients post wins, ask questions, and stay accountable. New posts every day, real transformations, myth-busting threads, and weekly accountability check-ins. Not curated. Not perfect. Real.
           </p>
-          <p className="text-body" style={{ marginTop: '16px', maxWidth: '440px', lineHeight: 1.7, color: 'var(--ink-60)' }}>
-            You'll see real transformations, myth-busting threads, strategy posts about travel eating + office snacking, and weekly accountability check-ins. Not curated. Not perfect. Real.
-          </p>
-          <div style={{ marginTop: '32px' }}>
-            <p className="text-caption" style={{ color: 'var(--ink-60)', marginBottom: '12px' }}>Recent topics:</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink)' }}>• Food isn't a debt you pay off at the gym</p>
-              <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink)' }}>• 10k steps can be three walks of 3,300</p>
-              <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink)' }}>• Why diet plans end and results end with them</p>
-            </div>
-          </div>
           <a
             href="https://instagram.com/functionalcoach101"
             target="_blank"
@@ -2332,66 +2360,283 @@ function AdminPhotos() {
 }
 
 function AdminInstagram() {
+  const [items, setItems] = useState(null);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [savedId, setSavedId] = useState(null);
+  const [stage, setStage] = useState('');
+  const [staged, setStaged] = useState(null);
+  const [stagedCaption, setStagedCaption] = useState('');
+  const [stagedLink, setStagedLink] = useState('');
+  const [stagedLikes, setStagedLikes] = useState('');
+  const [dragOver, setDragOver] = useState(false);
+
+  const addInputRef = useRef(null);
+  const replaceInputRef = useRef(null);
+  const replaceId = useRef(null);
+  const savedTimer = useRef(null);
+  const stageTimer = useRef(null);
+  useEffect(
+    () => () => {
+      clearTimeout(savedTimer.current);
+      clearTimeout(stageTimer.current);
+    },
+    []
+  );
+
+  const load = () => {
+    fetchInstagramHighlights()
+      .then(setItems)
+      .catch(() => setError("Couldn't load the posts. Check your internet and refresh the page."));
+  };
+  useEffect(load, []);
+
+  const run = async (fn, id) => {
+    setBusy(true);
+    setError('');
+    try {
+      await fn();
+      load();
+      if (id) {
+        setSavedId(id);
+        clearTimeout(savedTimer.current);
+        savedTimer.current = setTimeout(() => setSavedId(null), 2500);
+      }
+    } catch {
+      setError("That didn't save. Check your internet and try again.");
+    }
+    setBusy(false);
+  };
+
+  const prepareFile = async (file) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setError("That file isn't a photo. Try a JPG or PNG.");
+      return;
+    }
+    setError('');
+    setStage('reading');
+    try {
+      const dataUrl = await compressImageFile(file);
+      setStaged(dataUrl);
+      setStagedCaption('');
+      setStagedLink('');
+      setStagedLikes('');
+    } catch {
+      setError("Couldn't read that photo. Try a different one.");
+    }
+    setStage('');
+  };
+
+  const publishStaged = async () => {
+    if (!staged) return;
+    await run(() => addInstagramHighlight(staged, stagedCaption.trim(), stagedLink.trim(), Number(stagedLikes) || 0));
+    setStaged(null);
+    setStagedCaption('');
+    setStagedLink('');
+    setStagedLikes('');
+    setStage('done');
+    clearTimeout(stageTimer.current);
+    stageTimer.current = setTimeout(() => setStage(''), 3500);
+  };
+
+  const startReplace = (id) => {
+    replaceId.current = id;
+    replaceInputRef.current?.click();
+  };
+
+  const onReplaceFile = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    const id = replaceId.current;
+    if (!file || !id) return;
+    setStage('reading');
+    try {
+      const dataUrl = await compressImageFile(file);
+      const it = items.find((x) => x.id === id);
+      await run(() => updateInstagramHighlight(id, dataUrl, it ? it.caption : '', it ? it.link : '', it ? it.likes : 0), id);
+    } catch {
+      setError("Couldn't read that photo. Try a different one.");
+    }
+    setStage('');
+  };
+
+  const remove = (it) => {
+    if (window.confirm('Delete this post from the website? This cannot be undone.')) {
+      run(() => deleteInstagramHighlight(it.id));
+    }
+  };
+
+  const edit = (id, field, value) => {
+    setItems((prev) => prev.map((it) => (it.id === id ? { ...it, [field]: value } : it)));
+  };
+
   return (
-    <div style={{ padding: '32px 0', maxWidth: '800px' }}>
-      <h2 style={{ fontFamily: 'Anton', fontSize: '24px', marginBottom: '24px', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
-        Instagram Highlights
-      </h2>
+    <div>
+      <p className="text-body" style={{ fontSize: '14px', marginBottom: '20px' }}>
+        These are the Instagram posts featured on your website. The first one shown
+        here becomes the big featured photo; the rest appear as small thumbnails next
+        to it. Add a screenshot of any post you want to highlight, along with its
+        caption and like count. Changes are live for everyone instantly.
+      </p>
 
-      <div style={{ background: 'var(--paper-dim)', padding: '24px', borderRadius: '16px', marginBottom: '24px' }}>
-        <p style={{ fontFamily: 'Inter', fontSize: '14px', color: 'var(--ink)', lineHeight: 1.6, marginBottom: '16px' }}>
-          <strong>How this works:</strong> The 5 Instagram posts shown on the site are hardcoded. To update them:
+      <input type="file" accept="image/*" hidden ref={addInputRef} onChange={(e) => { prepareFile(e.target.files && e.target.files[0]); e.target.value = ''; }} />
+      <input type="file" accept="image/*" hidden ref={replaceInputRef} onChange={onReplaceFile} />
+
+      {!staged && (
+        <div
+          className={`drop-zone${dragOver ? ' dragging' : ''}`}
+          style={{ marginBottom: '16px' }}
+          onClick={() => addInputRef.current?.click()}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragOver(true);
+          }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDragOver(false);
+            prepareFile(e.dataTransfer.files && e.dataTransfer.files[0]);
+          }}
+        >
+          <p style={{ fontSize: '32px', marginBottom: '8px' }}>📸</p>
+          <p style={{ fontFamily: 'Anton', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.03em', color: 'var(--ink)' }}>
+            {stage === 'reading' ? 'Getting your photo ready…' : 'Feature a post'}
+          </p>
+          <p className="text-body" style={{ fontSize: '13px', marginTop: '6px' }}>
+            Add a screenshot of the Instagram post you want to feature.
+          </p>
+        </div>
+      )}
+
+      {staged && (
+        <div className="admin-card" style={{ marginBottom: '16px', display: 'grid', gap: '14px' }}>
+          <p style={{ fontFamily: 'Anton', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+            Looking good. Ready to go live?
+          </p>
+          <img src={staged} alt="Your new post" style={{ maxHeight: '260px', width: 'auto', maxWidth: '100%', borderRadius: '12px', objectFit: 'cover', justifySelf: 'start' }} />
+          <AdminField label="Caption" hint="What the post says. Shown next to the photo on your website.">
+            <input
+              className="admin-input"
+              value={stagedCaption}
+              onChange={(e) => setStagedCaption(e.target.value)}
+              placeholder="e.g. Dal-chawal fuels fat loss too..."
+            />
+          </AdminField>
+          <AdminField label="Link to the real post" hint="Where 'View' takes people, when you click on it. Paste the Instagram post URL.">
+            <input
+              className="admin-input"
+              value={stagedLink}
+              onChange={(e) => setStagedLink(e.target.value)}
+              placeholder="https://instagram.com/p/..."
+            />
+          </AdminField>
+          <AdminField label="Likes" hint="The like count shown on your website. Optional.">
+            <input
+              className="admin-input"
+              type="number"
+              value={stagedLikes}
+              onChange={(e) => setStagedLikes(e.target.value)}
+              placeholder="e.g. 432"
+            />
+          </AdminField>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button className="btn-pill" disabled={busy} onClick={publishStaged}>
+              {busy ? 'Publishing…' : 'Put it on the website'}
+            </button>
+            <button className="btn-pill btn-pill--ghost" disabled={busy} onClick={() => setStaged(null)}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {stage === 'done' && (
+        <p style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '14px', color: 'var(--good)', background: 'rgba(75,94,66,0.10)', border: '1px solid rgba(75,94,66,0.3)', borderRadius: '10px', padding: '10px 14px', marginBottom: '16px' }}>
+          🎉 It's live! Your post is now on the website.
         </p>
-        <ol style={{ fontFamily: 'Inter', fontSize: '14px', color: 'var(--ink-60)', lineHeight: 1.8, paddingLeft: '20px' }}>
-          <li>Find the `instagramHighlights` array in the code</li>
-          <li>Update the caption, likes, and image URL for each post</li>
-          <li>The section pulls from @functionalcoach101 Instagram account</li>
-        </ol>
-      </div>
+      )}
 
-      <div style={{ background: 'var(--paper)', border: '1px solid var(--border)', borderRadius: '16px', padding: '20px' }}>
-        <h3 style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: '15px', marginBottom: '16px' }}>
-          Current Featured Posts
-        </h3>
-        {instagramHighlights.map((post, i) => (
-          <div
-            key={post.id}
-            style={{
-              paddingBottom: '16px',
-              marginBottom: '16px',
-              borderBottom: i < instagramHighlights.length - 1 ? '1px solid var(--border)' : 'none',
-            }}
-          >
-            <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-              <img
-                src={post.url}
-                alt={post.caption}
-                style={{
-                  width: '80px',
-                  height: '80px',
-                  borderRadius: '8px',
-                  objectFit: 'cover',
-                  flexShrink: 0,
-                }}
+      {error && <p className="admin-error">{error}</p>}
+      {!items && !error && <p className="text-body">Loading your posts…</p>}
+      {items && items.length === 0 && (
+        <p className="text-body" style={{ textAlign: 'center', padding: '32px 0' }}>
+          No posts featured yet. Add your first one above.
+        </p>
+      )}
+
+      {items && items.length > 0 && (
+        <div className="admin-photo-grid" style={{ marginTop: '8px' }}>
+          {items.map((it, i) => (
+            <div key={it.id} className="admin-card admin-photo-card" style={{ display: 'grid', gap: '10px', padding: '14px' }}>
+              {i === 0 && (
+                <span
+                  className="text-caption"
+                  style={{ fontSize: '10px', color: 'var(--ink)', background: 'var(--paper-dim)', padding: '4px 10px', borderRadius: '999px', justifySelf: 'start' }}
+                >
+                  Featured photo
+                </span>
+              )}
+              <img src={it.url} alt="" className="admin-thumb" />
+              <input
+                className="admin-input"
+                value={it.caption}
+                placeholder="Caption"
+                onChange={(e) => edit(it.id, 'caption', e.target.value)}
               />
-              <div>
-                <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink)', lineHeight: 1.5, marginBottom: '6px' }}>
-                  {post.caption}
-                </p>
-                <p style={{ fontFamily: 'Inter', fontSize: '12px', color: 'var(--ink-60)' }}>
-                  ❤️ {post.likes.toLocaleString()} likes
-                </p>
+              <input
+                className="admin-input"
+                value={it.link}
+                placeholder="Link to the real post"
+                onChange={(e) => edit(it.id, 'link', e.target.value)}
+              />
+              <input
+                className="admin-input"
+                type="number"
+                value={it.likes}
+                placeholder="Likes"
+                onChange={(e) => edit(it.id, 'likes', e.target.value)}
+              />
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <button
+                  className="btn-pill"
+                  style={{ padding: '9px 14px', fontSize: '11px' }}
+                  disabled={busy}
+                  onClick={() => run(() => updateInstagramHighlight(it.id, it.url, it.caption, it.link, Number(it.likes) || 0), it.id)}
+                >
+                  {savedId === it.id ? 'Saved ✓' : 'Save'}
+                </button>
+                {i !== 0 && (
+                  <button
+                    className="btn-pill btn-pill--ghost"
+                    style={{ padding: '9px 14px', fontSize: '11px' }}
+                    disabled={busy}
+                    onClick={() => run(() => featureInstagramHighlight(it.id))}
+                  >
+                    Make featured
+                  </button>
+                )}
+                <button
+                  className="btn-pill btn-pill--ghost"
+                  style={{ padding: '9px 14px', fontSize: '11px' }}
+                  disabled={busy}
+                  onClick={() => startReplace(it.id)}
+                >
+                  Change photo
+                </button>
+                <button
+                  className="btn-pill btn-pill--ghost"
+                  style={{ padding: '9px 14px', fontSize: '11px' }}
+                  disabled={busy}
+                  onClick={() => remove(it)}
+                >
+                  Delete
+                </button>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      <div style={{ marginTop: '24px', padding: '20px', background: 'rgba(75, 94, 66, 0.08)', borderRadius: '12px', border: '1px solid rgba(75, 94, 66, 0.2)' }}>
-        <p style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink)', lineHeight: 1.6 }}>
-          <strong>💡 Tip:</strong> To feature a new post, copy the Instagram post image URL and update the `instagramHighlights` array in App.jsx. The section automatically displays the 5 posts you configure.
-        </p>
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
