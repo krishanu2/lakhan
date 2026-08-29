@@ -460,14 +460,14 @@ button {
   display: flex;
   gap: 16px;
   width: max-content;
-  animation: scrollLTR 38s linear infinite;
+  animation: scrollLTR 16s linear infinite;
 }
 
 .testimonial-track-rtl {
   display: flex;
   gap: 16px;
   width: max-content;
-  animation: scrollRTL 42s linear infinite;
+  animation: scrollRTL 18s linear infinite;
 }
 
 .testimonial-track-ltr:hover,
@@ -478,7 +478,7 @@ button {
 @media (max-width: 768px) {
   .testimonial-track-ltr,
   .testimonial-track-rtl {
-    animation-duration: 48s;
+    animation-duration: 22s;
   }
 }
 
