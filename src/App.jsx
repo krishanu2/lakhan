@@ -737,82 +737,6 @@ function DifferenceSection() {
 }
 
 /* ============================================================
-   6. MYTH / TRUTH
-   ============================================================ */
-
-const mythTruths = [
-  { myth: 'You need a diet plan to lose fat', truth: "Plans end, and results end with them. Habits don't", tag: 'MYTH', color: 'bad' },
-  { myth: 'Roti is worse than bread for fat loss', truth: 'Portion and count matter more than the carb source', tag: 'MYTH', color: 'bad' },
-  { myth: 'You need 10,000 steps in one go', truth: '3 walks of 3,300 steps works identically', tag: 'TRUTH', color: 'good' },
-  { myth: 'Paneer is off-limits on a cut', truth: "It's one of the best high-protein Indian foods available", tag: 'TRUTH', color: 'good' },
-  { myth: 'Cheat days ruin your progress', truth: 'One meal ≠ one week. The math survives it', tag: 'TRUTH', color: 'good' },
-  { myth: 'Fat loss requires giving up dal-chawal', truth: 'It requires counting it, not quitting it', tag: 'TRUTH', color: 'good' },
-];
-
-function MythTruthSection() {
-  return (
-    <section style={{ background: 'var(--paper)', padding: 'clamp(64px, 10vw, 140px) 0' }}>
-      <motion.div {...revealProps} className="container" style={{ marginBottom: '48px' }}>
-        <span className="text-caption" style={{ color: 'var(--ink-60)' }}>Myth vs. Truth</span>
-        <h2 className="text-h2" style={{ color: 'var(--ink)', marginTop: '12px' }}>
-          What the internet gets <span className="serif-accent">wrong</span>
-          <br />
-          about fat loss
-        </h2>
-      </motion.div>
-
-      <div className="myth-scroll">
-        {mythTruths.map((card, i) => (
-          <motion.div
-            key={i}
-            className="myth-card"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
-            style={{
-              background: 'var(--paper-dim)',
-              borderRadius: '12px',
-              padding: '28px',
-              borderTop: `3px solid var(--${card.color})`,
-            }}
-          >
-            <span
-              style={{
-                fontFamily: 'Inter',
-                fontSize: '11px',
-                fontWeight: 600,
-                letterSpacing: '2px',
-                color: `var(--${card.color})`,
-                background: card.color === 'bad' ? 'rgba(168,69,60,0.10)' : 'rgba(75,94,66,0.10)',
-                padding: '4px 10px',
-                borderRadius: '4px',
-              }}
-            >
-              {card.tag}
-            </span>
-            <p
-              style={{
-                fontFamily: 'Inter',
-                fontWeight: 600,
-                fontSize: '16px',
-                color: 'var(--ink)',
-                marginTop: '16px',
-                lineHeight: 1.4,
-              }}
-            >
-              {card.myth}
-            </p>
-            <div style={{ width: '24px', height: '1px', background: 'var(--border-strong)', margin: '16px 0' }} />
-            <p className="text-body" style={{ fontSize: '14px' }}>{card.truth}</p>
-          </motion.div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ============================================================
    7. WHO THIS IS NOT FOR
    ============================================================ */
 
@@ -1268,6 +1192,12 @@ function InstagramHighlightsSection() {
 function TestimonialsAutoScroll() {
   const [setA, setSetA] = useState(testimonialsSetA);
   const [setB, setSetB] = useState(testimonialsSetB);
+  /* Explicit tap-to-pause, independent of the CSS :hover rule — hover
+     already pauses on real pointer devices, but touchscreens have no
+     hover at all, so without this there's no way to stop the scroll
+     on a phone to actually read a card. Tapping either track toggles
+     both together. */
+  const [tapPaused, setTapPaused] = useState(false);
 
   /* Always applies whatever the database actually has, including empty —
      the hardcoded arrays are only ever the initial state, shown before
@@ -1286,6 +1216,9 @@ function TestimonialsAutoScroll() {
       .catch(() => {});
   }, []);
 
+  const trackStyle = { animationPlayState: tapPaused ? 'paused' : undefined, cursor: 'pointer' };
+  const togglePause = () => setTapPaused((p) => !p);
+
   return (
     <section id="results" style={{ background: 'var(--paper-dim)', padding: 'clamp(64px, 10vw, 120px) 0', overflow: 'hidden' }}>
       <motion.div {...revealProps} className="container" style={{ marginBottom: '48px' }}>
@@ -1295,10 +1228,13 @@ function TestimonialsAutoScroll() {
           <br />
           <span className="serif-accent">Health markers.</span>
         </h2>
+        <p className="text-caption mobile-only" style={{ color: 'var(--ink-60)', marginTop: '10px' }}>
+          {tapPaused ? 'Tap a card to resume' : 'Tap a card to pause'}
+        </p>
       </motion.div>
 
       <div style={{ overflow: 'hidden', marginBottom: '16px' }}>
-        <div className="testimonial-track-ltr">
+        <div className="testimonial-track-ltr" style={trackStyle} onClick={togglePause}>
           {[...setA, ...setA].map((t, i) => (
             <TestimonialCard key={i} {...t} />
           ))}
@@ -1306,7 +1242,7 @@ function TestimonialsAutoScroll() {
       </div>
 
       <div style={{ overflow: 'hidden' }}>
-        <div className="testimonial-track-rtl">
+        <div className="testimonial-track-rtl" style={trackStyle} onClick={togglePause}>
           {[...setB, ...setB].map((t, i) => (
             <TestimonialCard key={i} {...t} />
           ))}
@@ -1325,21 +1261,21 @@ const programs = [
     name: 'Foundation',
     duration: '3 Months',
     desc: 'Rebuild your everyday eating habits, and watch the first 4–8 kg go.',
-    features: ['Personal 45-minute video consulting call every 7–10 days', 'On-demand WhatsApp support (Mon-Fri)', 'Weekly habit tracking dashboard', 'A fresh 45-min workout video daily', '100+ workouts to browse anytime', 'Habit streak tracking & visualization', 'Weekly habit score & accountability', 'Average fat loss: 4–8 kg in 90 days'],
+    features: ['App-based coaching', 'Personal 45-minute video consulting call every 7–10 days', 'On-demand WhatsApp support (Mon-Fri)', 'Weekly habit tracking dashboard', 'A fresh 45-min workout video daily', '100+ workouts to browse anytime', 'Habit streak tracking & visualization', 'Weekly habit score & accountability', 'Average fat loss: 4–8 kg in 90 days'],
     highlight: false,
   },
   {
     name: 'Transformation',
     duration: '6 Months',
     desc: "The full practice: the program behind every result you've read above.",
-    features: ['Everything in Foundation', 'Customized home or gym workout plans', '50+ Indian recipe database (dal & paneer hacks)', 'Supplement buying guide & product recs', 'Unlimited WhatsApp access', 'Travel & eating-out strategy calls', 'Restaurant ordering guide for chains + local spots', 'Monthly deep-dive strategy calls', 'Planned weekly live group session (Sundays 7pm IST)', 'Monthly posture correction & form review', 'Private community access with other clients', 'Average fat loss: 6–12 kg in 6 months'],
+    features: ['Everything in Foundation', 'App-based coaching', 'Customized home or gym workout plans', '50+ Indian recipe database (dal & paneer hacks)', 'Supplement buying guide & product recs', 'Unlimited WhatsApp access', 'Travel & eating-out strategy calls', 'Restaurant ordering guide for chains + local spots', 'Monthly deep-dive strategy calls', 'Planned weekly live group session (Sundays 7pm IST)', 'Monthly posture correction & form review', 'Private community access with other clients', 'Average fat loss: 6–12 kg in 6 months'],
     highlight: true,
   },
   {
     name: 'Sustained',
     duration: '12 Months',
     desc: 'For deeper lifestyle change that needs longer, careful pacing.',
-    features: ['Everything in Transformation', 'Quarterly 60-minute life review calls', 'Seasonal strategy adjustments (monsoon, holidays)', 'Sleep & stress optimization coaching', 'Blinkit/Dunzo cart audits & grocery lists', 'Bi-weekly posture correction sessions', 'Injury prevention & movement optimization', 'Performance tracking every 3 months', 'Priority WhatsApp access', 'Exclusive 1:1 cohort (10 people max)', 'Lifetime workout library access (future videos included)', 'Lifetime community access (stay connected forever)', 'Average fat loss: 12–20+ kg sustained'],
+    features: ['Everything in Transformation', 'App-based coaching', 'Quarterly 60-minute life review calls', 'Seasonal strategy adjustments (monsoon, holidays)', 'Sleep & stress optimization coaching', 'Blinkit/Dunzo cart audits & grocery lists', 'Bi-weekly posture correction sessions', 'Injury prevention & movement optimization', 'Performance tracking every 3 months', 'Priority WhatsApp access', 'Exclusive 1:1 cohort (10 people max)', 'Average fat loss: 12–20+ kg sustained'],
     highlight: false,
   },
   {
@@ -1352,8 +1288,9 @@ const programs = [
       'Workout plan tailored to your goals',
       'No subscription, no lock-in, ever',
     ],
+    exclusions: ['No accountability or hand-holding'],
     highlight: false,
-    price: '₹1,999',
+    price: '₹3,000',
   },
 ];
 
@@ -1420,6 +1357,12 @@ function ProgramsSection() {
                 {plan.features.map((f, j) => (
                   <div key={j} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', marginBottom: '12px' }}>
                     <span style={{ color: 'var(--ink)', fontSize: '14px' }}>✓</span>
+                    <span style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink-60)' }}>{f}</span>
+                  </div>
+                ))}
+                {plan.exclusions && plan.exclusions.map((f, j) => (
+                  <div key={`x${j}`} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', marginBottom: '12px' }}>
+                    <span style={{ color: 'var(--bad)', fontSize: '14px' }}>✕</span>
                     <span style={{ fontFamily: 'Inter', fontSize: '13px', color: 'var(--ink-60)' }}>{f}</span>
                   </div>
                 ))}
@@ -3243,7 +3186,6 @@ export default function App() {
         <ProcessSection />
         <WorkoutLibrarySection />
         <DifferenceSection />
-        <MythTruthSection />
         <WhoThisIsNotForSection />
         <InstagramHighlightsSection />
         <ProgramsSection />

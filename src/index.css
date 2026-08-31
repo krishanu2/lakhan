@@ -232,41 +232,6 @@ button {
   gap: 32px 24px;
 }
 
-/* Myth/Truth: horizontal snap-scroll mobile, 3-col grid desktop */
-.myth-scroll {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding: 0 clamp(20px, 5vw, 64px) 16px;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.myth-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.myth-card {
-  flex-shrink: 0;
-  width: clamp(260px, 78vw, 340px);
-  scroll-snap-align: start;
-}
-
-@media (min-width: 768px) {
-  .myth-scroll {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    overflow-x: visible;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .myth-card {
-    width: auto;
-  }
-}
-
 /* Horizontal slide gallery — swipe on touch, drag or arrows on desktop */
 .slide-gallery {
   display: flex;
@@ -460,14 +425,14 @@ button {
   display: flex;
   gap: 16px;
   width: max-content;
-  animation: scrollLTR 16s linear infinite;
+  animation: scrollLTR 30s linear infinite;
 }
 
 .testimonial-track-rtl {
   display: flex;
   gap: 16px;
   width: max-content;
-  animation: scrollRTL 18s linear infinite;
+  animation: scrollRTL 32s linear infinite;
 }
 
 /* Pause-on-hover only for real pointer devices — on touchscreens, tapping
@@ -484,7 +449,7 @@ button {
 @media (max-width: 768px) {
   .testimonial-track-ltr,
   .testimonial-track-rtl {
-    animation-duration: 14s;
+    animation-duration: 26s;
   }
 }
 
